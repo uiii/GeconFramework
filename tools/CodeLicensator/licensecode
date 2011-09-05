@@ -1,4 +1,7 @@
 #!/bin/bash
 
-python codelicensator.py ../../src GPLv3 "*.{hpp,cpp}" -l ./licenses -v YEAR=2011,AUTHOR=Richard\ Jedlička,PROJECT_NAME=Gecon\ Framework,EMAIL=uiii.dev@gmail.com
-python codelicensator.py ../../test GPLv3 "*.{hpp,cpp}" -l ./licenses -v YEAR=2011,AUTHOR=Richard\ Jedlička,PROJECT_NAME=Gecon\ Framework,EMAIL=uiii.dev@gmail.com
+script=$(readlink -f $0)
+dir=$(dirname $script)
+
+python ${dir}/codelicensator.py ${dir}/../../src GPLv3 "*.{hpp,cpp}" -l ${dir}/licenses -v YEAR=2011,AUTHOR=Richard\ Jedlička,PROJECT_NAME=Gecon\ Framework,EMAIL=uiii.dev@gmail.com
+python ${dir}/codelicensator.py ${dir}/../../test GPLv3 "*.{hpp,cpp}" -l ${dir}/licenses -v YEAR=2011,AUTHOR=Richard\ Jedlička,PROJECT_NAME=Gecon\ Framework,EMAIL=uiii.dev@gmail.com
