@@ -1,0 +1,4 @@
+#!/bin/bash
+
+python codelicensator.py ../../src GPLv3 "*.{hpp,cpp}" -l ./licenses -v YEAR=2011,AUTHOR=Richard\ Jedlička,PROJECT_NAME=Gecon\ Framework,EMAIL=uiii.dev@gmail.com
+python codelicensator.py ../../test GPLv3 "*.{hpp,cpp}" -l ./licenses -v YEAR=2011,AUTHOR=Richard\ Jedlička,PROJECT_NAME=Gecon\ Framework,EMAIL=uiii.dev@gmail.com
