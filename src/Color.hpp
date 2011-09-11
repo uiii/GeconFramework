@@ -17,8 +17,8 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_COLOR_H
-#define GECON_COLOR_H
+#ifndef GECON_COLOR_HPP
+#define GECON_COLOR_HPP
 
 namespace Gecon
 {
@@ -46,4 +46,4 @@ namespace Gecon
     };
 }
 
-#endif
+#endif // GECON_COLOR_HPP

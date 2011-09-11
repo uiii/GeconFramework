@@ -17,8 +17,8 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_IMAGE_H
-#define GECON_IMAGE_H
+#ifndef GECON_IMAGE_HPP
+#define GECON_IMAGE_HPP
 
 #include <vector>
 #include <memory>
@@ -64,4 +64,4 @@ namespace Gecon
     };
 }
 
-#endif
+#endif // GECON_IMAGE_HPP
