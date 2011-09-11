@@ -1,5 +1,7 @@
 builddir = "build"
 
+dofile "config/premake4/functions.lua"
+
 solution "GeconFramework"
     configurations { "Debug", "Release" }
 
@@ -24,23 +26,5 @@ solution "GeconFramework"
     configuration "Release"
         flags { "Optimize" }
 
-    project "GeconFramework"
-        kind "SharedLib"
-        language "C++"
-
-        includedirs { "src" }
-
-        files { "src/*.cpp" }
-
-    project "UnitTesting"
-        kind "ConsoleApp"
-        language "C++"
-
-        targetname "unit_tests"
-
-        includedirs { "src" }
-        includedirs { "lib/tut-2009-08-30" }
-
-        files { "test/*.cpp" }
-
-        links { "GeconFramework" }
+    include "src"
+    include "test"
