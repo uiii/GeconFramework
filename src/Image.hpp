@@ -1,5 +1,5 @@
 /**
- * This file is part of the Gecon Framework project.
+ * This file is part of the Gecon Framework project (https://github.com/uiii/Gecon-Framework).
  *
  * Copyright (C) 2011 by Richard Jedlička <uiii.dev@gmail.com>
  *
