@@ -6,7 +6,9 @@ project "GeconFramework"
         require_pkg_config()
         require_pkg("libv4l2")
         files {
-            "CameraManager_v4l2.cpp"
+            "CameraManager_v4l2.cpp",
+            "V4l2CameraDevice.cpp",
+            "V4l2CameraDeviceManager.cpp"
         }
 
     includedirs { "./" }
@@ -14,9 +16,9 @@ project "GeconFramework"
     files {
         "Camera.cpp",
         "CameraDevice.cpp",
+        "CameraDeviceManager.cpp",
         "CameraManager.cpp",
         "CameraManager_v4l2.cpp",
         "Color.cpp",
         "Image.cpp",
-        "V4l2CameraDevice.cpp"
     }

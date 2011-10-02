@@ -12,3 +12,17 @@ project "UnitTesting"
     files { "unit_tests/*.cpp" }
 
     links { "GeconFramework" }
+
+project "ManualTesting"
+    kind "ConsoleApp"
+    language "C++"
+
+    targetname "manual_tests"
+
+    includedirs { "../src" }
+    includedirs { "../config/manual_tests" }
+
+    files { "../config/manual_tests/*.cpp" }
+    files { "manual_tests/*.cpp" }
+
+    links { "GeconFramework" }
