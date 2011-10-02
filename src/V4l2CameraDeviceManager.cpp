@@ -72,7 +72,7 @@ Gecon::CameraDevicePtrList Gecon::V4l2CameraDeviceManager::getAvailableCameraDev
 
 Gecon::V4l2DeviceFileList Gecon::V4l2CameraDeviceManager::listDeviceFiles_() const
 {
-    Gecon::StringList dirList = { "/devv/", "/dev/v4l/" };
+    Gecon::StringList dirList = { "/dev/", "/dev/v4l/" };
 
     Gecon::V4l2DeviceFileList deviceFiles;
 
