@@ -1,6 +1,6 @@
 *.swp
 /nbproject/private/
 build
-src_
+*_
 GeconFramework.*
 tools
