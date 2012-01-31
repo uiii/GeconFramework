@@ -26,5 +26,5 @@ solution "GeconFramework"
     configuration "Release"
         flags { "Optimize" }
 
-    include "src/CaptureModule"
-    include "test"
+    include "src"
+    -- include "test"
