@@ -17,20 +17,38 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#ifndef GECON_V4L2VIDEODEVICEPOLICY_HPP
+#define GECON_V4L2VIDEODEVICEPOLICY_HPP
 
-#include "ManualTester.hpp"
+#include "V4L2VideoDeviceAdapter.hpp"
 
-#include "V4L2VideoDevicePolicyTest.hpp"
+#include <set>
+#include <vector>
+#include <string>
+#include <memory>
 
-int main(int argc, char* argv[])
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
+namespace Gecon
 {
-    ManualTester::argc = argc;
-    ManualTester::argv = argv;
+    class V4L2VideoDevicePolicy
+    {
+    public:
+        typedef V4L2VideoDeviceAdapter DeviceAdapter;
+        typedef std::vector<DeviceAdapter> DeviceAdapterList;
 
-    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest());
+        V4L2VideoDevicePolicy();
 
-    ManualTester::runTests();
+        const DeviceAdapterList& getAvailableDevices();
 
-    return 0;
-}
+    private:
+        std::set<fs::path> getDeviceFiles_() const;
+        bool isVideoDevice_(fs::path filepath) const;
+
+        DeviceAdapterList devices_;
+    };
+} // namespace Gecon
+
+#endif // GECON_V4L2VIDEODEVICEPOLICY_HPP

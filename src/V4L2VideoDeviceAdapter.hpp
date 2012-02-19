@@ -17,34 +17,43 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CAMERADEVICELISTTEST_HPP
-#define CAMERADEVICELISTTEST_HPP
+#ifndef GECON_V4L2VIDEODEVICEADAPTER_HPP
+#define GECON_V4L2VIDEODEVICEADAPTER_HPP
 
-#include <iostream>
+#include <memory>
 
-#include "ManualTest.hpp"
-#include "ManualTester.hpp"
+#include <boost/filesystem.hpp>
 
-#include "CameraManager.hpp"
+#include "V4L2VideoDeviceCapture.hpp"
 
-class CameraDeviceListTest : public ManualTest
+namespace fs = boost::filesystem;
+
+namespace Gecon
 {
-public:
-    CameraDeviceListTest():
-        ManualTest("Camera device list")
+    class V4L2VideoDeviceAdapter
     {
-    }
+    public:
+        typedef V4L2VideoDeviceCapture::Snapshot Snapshot; // TODO
 
-    void run()
-    {
-        Gecon::CameraList list = Gecon::CameraManager::getAvailableCameras();
+        V4L2VideoDeviceAdapter();
+        V4L2VideoDeviceAdapter(const fs::path& file);
+        V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter& another);
+        ~V4L2VideoDeviceAdapter();
 
-        std::cout << "Avaiable camera devices:" << std::endl;
-        for(Gecon::Camera& camera : list)
-        {
-            std::cout << camera.device()->name() << std::endl;
-        }
-    }
-};
+        std::string name() const;
 
-#endif // CAMERADEVICELISTTEST_HPP
+        fs::path file() const;
+
+        void open();
+        void close();
+
+        Snapshot getSnapshot();
+
+    private:
+        bool isOpened_;
+
+        std::shared_ptr<V4L2VideoDeviceCapture> capture_;
+    };
+} // namespace Gecon
+
+#endif // GECON_V4L2VIDEODEVICEADAPTER_HPP

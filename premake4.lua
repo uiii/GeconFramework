@@ -1,12 +1,13 @@
-builddir = "build"
+--builddir = "build"
 
-dofile "config/premake4/functions.lua"
+require "config/premake4/functions"
+require "config/premake4/qt-support"
 
 solution "GeconFramework"
     configurations { "Debug", "Release" }
 
-    location ( builddir )
-    targetdir ( builddir )
+    --location ( builddir )
+    --targetdir ( builddir )
 
     flags { "ExtraWarnings" }
 
@@ -27,4 +28,4 @@ solution "GeconFramework"
         flags { "Optimize" }
 
     include "src"
-    -- include "test"
+    include "test"

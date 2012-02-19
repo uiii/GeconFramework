@@ -17,5 +17,38 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DeviceManager.hpp"
+#ifndef DEVICECAPTUREWINDOW_HPP
+#define DEVICECAPTUREWINDOW_HPP
 
+#include <QWidget>
+#include <QTimer>
+
+#include "V4L2VideoDevicePolicy.hpp"
+
+namespace Ui {
+    class DeviceCaptureWindow;
+}
+
+class DeviceCaptureWindow : public QWidget
+{
+    Q_OBJECT
+    
+public:
+    explicit DeviceCaptureWindow(QWidget *parent = 0);
+    ~DeviceCaptureWindow();
+
+public slots:
+    void setDevice(int index);
+    void startCapture();
+    void stopCapture();
+    void showImage();
+
+private:
+    Ui::DeviceCaptureWindow* ui_;
+    QTimer* timer_;
+
+    Gecon::V4L2VideoDevicePolicy::DeviceAdapter device_;
+    Gecon::V4L2VideoDevicePolicy::DeviceAdapterList devices_;
+};
+
+#endif // DEVICECAPTUREWINDOW_HPP

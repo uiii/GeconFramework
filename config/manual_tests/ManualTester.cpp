@@ -6,19 +6,22 @@ ManualTester::ManualTester()
 {
 }
 
+int ManualTester::argc = 0;
+char** ManualTester::argv = NULL;
+
 void ManualTester::runTests()
 {
     ManualTester* tester = getInstance_();
 
-    if(tester->testList_.empty())
+    if(tester->testSuiteList_.empty())
     {
-        std::cout << "There are no manual test" << std::endl;
+        std::cout << "Nothing to test." << std::endl;
         return;
     }
 
-    for(auto it = tester->testList_.begin(); it != tester->testList_.end(); ++it)
+    for(auto it = tester->testSuiteList_.begin(); it != tester->testSuiteList_.end(); ++it)
     {
-        std::cout << "[" << (it - tester->testList_.begin()) << "] " << (*it)->name() << std::endl;
+        std::cout << "[" << (it - tester->testSuiteList_.begin()) << "] " << (*it)->name() << std::endl;
     }
 
     std::cout << "\nWhat do you want to test?: ";
@@ -28,14 +31,14 @@ void ManualTester::runTests()
 
     std::cout << "--------------------------------------------------" << std::endl;
 
-    tester->testList_.at(choice)->run();
+    tester->testSuiteList_.at(choice)->run();
 }
 
-void ManualTester::registerTest(ManualTest *test)
+void ManualTester::registerTestSuite(ManualTestSuite *test)
 {
     ManualTester* tester = getInstance_();
 
-    tester->testList_.push_back(test);
+    tester->testSuiteList_.push_back(test);
 }
 
 ManualTester * ManualTester::getInstance_()

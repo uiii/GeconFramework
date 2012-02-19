@@ -17,20 +17,33 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#ifndef GECON_COLOR_HPP
+#define GECON_COLOR_HPP
 
-#include "ManualTester.hpp"
-
-#include "V4L2VideoDevicePolicyTest.hpp"
-
-int main(int argc, char* argv[])
+namespace Gecon
 {
-    ManualTester::argc = argc;
-    ManualTester::argv = argv;
+    class Color
+    {
+    public:
+        Color();
+        Color(
+            unsigned char red,
+            unsigned char green,
+            unsigned char blue
+        );
 
-    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest());
+        unsigned char red() const;
+        unsigned char green() const;
+        unsigned char blue() const;
 
-    ManualTester::runTests();
-
-    return 0;
+        bool operator==(const Color& another) const;
+        bool operator!=(const Color& another) const;
+        
+    private:
+        unsigned char red_;
+        unsigned char green_;
+        unsigned char blue_;
+    };
 }
+
+#endif // GECON_COLOR_HPP

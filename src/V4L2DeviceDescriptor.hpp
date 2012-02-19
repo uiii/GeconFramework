@@ -17,20 +17,46 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#ifndef V4L2DEVICEDESCRIPTOR_HPP
+#define V4L2DEVICEDESCRIPTOR_HPP
 
-#include "ManualTester.hpp"
+#include <memory>
+#include <boost/filesystem.hpp>
 
-#include "V4L2VideoDevicePolicyTest.hpp"
+namespace fs = boost::filesystem;
 
-int main(int argc, char* argv[])
+namespace Gecon
 {
-    ManualTester::argc = argc;
-    ManualTester::argv = argv;
+    class V4L2FileDescriptor
+    {
+    public:
+        V4L2FileDescriptor(int fd);
+        ~V4L2FileDescriptor();
 
-    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest());
+        operator int() const;
 
-    ManualTester::runTests();
-
-    return 0;
+    private:
+        int fd_;
+    };
 }
+
+namespace Gecon
+{
+    class V4L2DeviceDescriptor
+    {
+    public:
+        V4L2DeviceDescriptor();
+        V4L2DeviceDescriptor(const fs::path& file);
+
+        operator int() const;
+        fs::path file() const;
+
+        void close(); // TODO mozna odstranit
+
+    private:
+        std::shared_ptr<V4L2FileDescriptor> fd_;
+        fs::path file_;
+    };
+}
+
+#endif //V4L2DEVICEDESCRIPTOR_HPP

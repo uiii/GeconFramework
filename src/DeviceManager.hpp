@@ -58,14 +58,14 @@ namespace Gecon
         {
             if(! selectedDevice_)
             {
-                DeviceAdapterList deviceList = DevicePolicy::listAvailableDevices();
+                DeviceAdapterList deviceList = DevicePolicy::getAvailableDevices();
 
                 if(deviceList.empty())
                 {
                     throw std::logic_error("Cannot select device: No devices available"); // TODO vlastni vyjimky
                 }
 
-                selectDevice(deviceList.first());
+                selectDevice((*deviceList.begin()));
             }
 
             return *selectedDevice_;

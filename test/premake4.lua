@@ -1,3 +1,4 @@
+--[[
 project "UnitTesting"
     kind "ConsoleApp"
     language "C++"
@@ -12,10 +13,17 @@ project "UnitTesting"
     files { "unit_tests/*.cpp" }
 
     links { "GeconFramework" }
+--]]
 
 project "ManualTesting"
     kind "ConsoleApp"
     language "C++"
+
+    uses "QtGui"
+
+    links {
+        "boost_system"
+    }
 
     targetname "manual_tests"
 
@@ -23,6 +31,12 @@ project "ManualTesting"
     includedirs { "../config/manual_tests" }
 
     files { "../config/manual_tests/*.cpp" }
+
+    files { "manual_tests/*.hpp" }
     files { "manual_tests/*.cpp" }
+    files { "manual_tests/*.ui" }
+    files { "manual_tests/*.qrc" }
+
+    --prebuildcommands { "moc " }
 
     links { "GeconFramework" }

@@ -3,21 +3,24 @@
 
 #include <vector>
 
-#include "ManualTest.hpp"
+#include "ManualTestSuite.hpp"
 
 class ManualTester
 {
 public:
-    static void registerTest(ManualTest* test);
+    static void registerTestSuite(ManualTestSuite* test);
 
     static void runTests();
+
+    static int argc;
+    static char** argv;
 
 private:
     ManualTester();
 
     static ManualTester* getInstance_();
 
-    std::vector<ManualTest*> testList_;
+    std::vector<ManualTestSuite*> testSuiteList_;
 };
 
 #endif // MANUALTESTER_HPP

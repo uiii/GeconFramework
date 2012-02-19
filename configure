@@ -1,6 +1,0 @@
-#!/bin/bash
-
-script=$(readlink -f $0)
-dir=$(dirname $script)
-
-premake4 --file=${dir}/premake4.lua gmake
