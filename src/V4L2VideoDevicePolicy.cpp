@@ -19,7 +19,7 @@
 
 #include "V4L2VideoDevicePolicy.hpp"
 
-#include <set>
+#include <string>
 
 #ifndef VIDEO_DEVICE_DIRS
     #define VIDEO_DEVICE_DIRS { "/dev/", "/dev/v4l/" }

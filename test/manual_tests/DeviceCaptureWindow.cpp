@@ -21,6 +21,7 @@
 #include "ui_DeviceCaptureWindow.h"
 
 #include <QPixmap>
+#include <QVariant>
 
 DeviceCaptureWindow::DeviceCaptureWindow(QWidget *parent) :
     QWidget(parent),
@@ -32,7 +33,7 @@ DeviceCaptureWindow::DeviceCaptureWindow(QWidget *parent) :
 
     for(auto device : devices_)
     {
-        ui_->deviceList->addItem(device.name().c_str());
+        ui_->deviceList->addItem(device.name().c_str(), QVariant::fromValue(device));
     }
 
     if(! devices_.empty())
@@ -56,7 +57,7 @@ DeviceCaptureWindow::~DeviceCaptureWindow()
 
 void DeviceCaptureWindow::setDevice(int index)
 {
-    device_ = devices_.at(index);
+    device_ = ui_->deviceList->itemData(index).value<Gecon::V4L2VideoDeviceAdapter>();
 }
 
 void DeviceCaptureWindow::startCapture()

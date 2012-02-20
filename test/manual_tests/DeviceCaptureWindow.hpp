@@ -22,8 +22,11 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QMetaType>
 
 #include "V4L2VideoDevicePolicy.hpp"
+
+Q_DECLARE_METATYPE(Gecon::V4L2VideoDeviceAdapter)
 
 namespace Ui {
     class DeviceCaptureWindow;

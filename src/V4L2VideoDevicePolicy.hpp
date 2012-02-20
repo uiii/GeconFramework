@@ -23,8 +23,7 @@
 #include "V4L2VideoDeviceAdapter.hpp"
 
 #include <set>
-#include <vector>
-#include <string>
+#include <list>
 #include <memory>
 
 #include <boost/filesystem.hpp>
@@ -37,7 +36,7 @@ namespace Gecon
     {
     public:
         typedef V4L2VideoDeviceAdapter DeviceAdapter;
-        typedef std::vector<DeviceAdapter> DeviceAdapterList;
+        typedef std::list<DeviceAdapter> DeviceAdapterList;
 
         const DeviceAdapterList& getAvailableDevices();
 
