@@ -46,11 +46,6 @@ namespace Gecon
         return file_;
     }
 
-    /**
-     * Start capture.
-     *
-     * @throws // TODO
-     */
     void V4L2VideoDeviceCapture::start()
     {
         boost::lock_guard<boost::mutex> lock(startStopMutex_);
@@ -63,9 +58,6 @@ namespace Gecon
         ++startCount_;
     }
 
-    /**
-     * Stop capture.
-     */
     void V4L2VideoDeviceCapture::stop()
     {
         boost::lock_guard<boost::mutex> lock(startStopMutex_);
@@ -93,7 +85,7 @@ namespace Gecon
             }
             else
             {
-                throw v4l2_device_error(file_, "%device% is not opened");
+                throw v4l2_device_error(file_, "capture from %device% is not started");
             }
         }
 
@@ -105,7 +97,7 @@ namespace Gecon
         }
         recentBufferLock.unlock();
 
-        return Image(640, 480, buffers_[capturedBufferIndex_].pointer); // TODO magic
+        return Image(640, 480, buffers_[capturedBufferIndex_].data); // TODO magic
     }
 
     void V4L2VideoDeviceCapture::checkV4L2VideoDevice_(const fs::path& file) const
@@ -208,7 +200,7 @@ namespace Gecon
     {
         for(int i = 0; i < 3; ++i)
         {
-            v4l2_munmap(buffers_[i].pointer, buffers_[i].length);
+            v4l2_munmap(buffers_[i].data, buffers_[i].length);
         }
 
         buffers_.clear();
@@ -240,7 +232,7 @@ namespace Gecon
             }
             else
             {
-                throw v4l2_device_error(device.file(), "response time of %device% has expired");
+                throw v4l2_device_error(device.file(), "%device% is not responding");
             }
         }
     }

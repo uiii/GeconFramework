@@ -40,47 +40,197 @@ namespace Gecon
     struct Buffer
     {
         BufferIndex index;
-        unsigned char* pointer;
+        unsigned char* data;
         std::size_t length;
     };
 
+    /**
+     * Represents V4L2 device capture.
+     *
+     * When started, captures snapshots from the device.
+     * Should be created only once per device file.
+     */
     class V4L2VideoDeviceCapture
     {
     public:
-        typedef Image Snapshot; // TODO
+        typedef Image Snapshot;
 
+        /**
+         * Construct a device capture.
+         *
+         * @param file
+         *     File representing V4L2 device.
+         *
+         * @throws v4l2_device_error
+         *     If file doesn't represent V4L2 device.
+         * @throws v4l2_unsupported_requirement
+         *     If the device doesn't support video capture.
+         */
         V4L2VideoDeviceCapture(const fs::path& file);
 
+        /**
+         * Get path to the system file representing the device.
+         *
+         * @returns
+         *     Path to the device file.
+         */
         const fs::path& file() const;
 
+        /**
+         * Start capture.
+         *
+         * @throws v4l2_unsupported_requirement
+         *     When the device doesn't meet the requirements needed for capture.
+         * @throws v4l2_device_error
+         *     When some error occured while capture starts
+         */
         void start();
+
+        /**
+         * Stop capture.
+         */
         void stop();
 
+        /**
+         * Get the most recently captured snapshot from the device.
+         *
+         * @returns
+         *     Device snapshot.
+         *
+         * @throws v4l2_device_error
+         *     When capture is not started.
+         *     When capture crashed.
+         */
         Snapshot getSnapshot();
 
     private:
         /**
-         * Check if device file represents V4L2 video device.
+         * Checks is the device file is V4L2 device.
          *
-         * @throws std::system_error
-         *     or device is not V4L2 video device.
-         *     If device cannot be checked
+         * If not throws the exception.
+         *
+         * @throws v4l2_device_error
+         *     When the device is not V4L2 device.
+         * @throws v4l2_unsupported_requirement
+         *     When the device doesn't support video capture.
          */
         void checkV4L2VideoDevice_(const fs::path& file) const;
 
-        int openDevice_();
+        /**
+         * Initialize the device capture.
+         *
+         * @param device
+         *     V4L2 device descriptor.
+         *
+         * @throws v4l2_device_error
+         *     When cannot control device. @see controlDevice_.
+         *     When device hasn't enough free memory.
+         *     When memory mapping failed.
+         * @throws v4l2_unsupported_requirement
+         *     When cannot set required pixel format.
+         *     When cannot set memory mapping I/O method.
+         */
         void initialize_(V4L2DeviceDescriptor device);
+
+        /**
+         * Deinitialize the device capture.
+         */
         void deinitialize_();
+
+        /**
+         * Start capture loop.
+         *
+         * Initialize the capture.
+         * Then start capture loop thread and wait for the first filled buffer.
+         *
+         * @throws v4l2_device_error
+         *     When capture loop crashes immediately after start. @see captureLoop_.
+         *     When capture loop is not responding. @see captureLoop_.
+         *     When capture initialization failed. @see initialize_.
+         * @throws v4l2_unsupported_requirement
+         *     When capture initialization failed. @see initialize_.
+         */
         void startCaptureLoop_();
+
+        /**
+         * Stop capture loop.
+         *
+         * Tell the capture loop thread to stop and wait until its end.
+         * Then deinitalize the capture.
+         */
         void stopCaptureLoop_();
 
+        /**
+         * Capture crash.
+         *
+         * Is called when capture loop crashes.
+         */
         void captureCrash_();
 
+        /**
+         * Capture loop.
+         *
+         * Repeatedly fill and rotate the buffers with data from the device
+         * and save the most recently filled buffer index.
+         *
+         * When capture crashes, saves the exception (v4l2_device_error) to captureError_.
+         *
+         * @param device
+         *     V4L2 device descriptor.
+         *
+         * @throws v4l2_device_error
+         *     When cannot start or stop streaming.
+         */
         void captureLoop_(V4L2DeviceDescriptor device);
 
+        /**
+         * Contol the device.
+         *
+         * @param device
+         *     V4L2 device descriptor.
+         * @param request
+         *     Request to the device.
+         *     // TODO odkaz
+         * @param arg
+         *     Request argument.
+         *
+         * @throws v4l2_invalid_request
+         *     When the request is invalid.
+         * @throws v4l2_device_error
+         *     When internal error occures.
+         */
         void controlDevice_(V4L2DeviceDescriptor device, int request, void* arg) const;
+
+        /**
+         * Contol the device.
+         *
+         * @param device
+         *     V4L2 device descriptor.
+         * @param request
+         *     Request to the device.
+         *     // TODO odkaz
+         * @param arg
+         *     Request argument.
+         * @param invalid_request_exception
+         *     The exception to throw when the request is invalid.
+         *
+         * @throws invalid_request_exception
+         *     When the request is invalid.
+         * @throws v4l2_device_error
+         *     When internal error occures.
+         */
         void controlDevice_(V4L2DeviceDescriptor device, int request, void* arg, const v4l2_device_error &invalid_request_exception) const;
 
+        /**
+         * Wait until some new data from device are ready.
+         *
+         * @param device
+         *     V4L2 device descriptor.
+         *
+         * @throws v4l2_device_error
+         *     When internal error occures.
+         *     When the time is out.
+         */
         void waitForData_(V4L2DeviceDescriptor device);
 
         boost::thread captureThread_;
