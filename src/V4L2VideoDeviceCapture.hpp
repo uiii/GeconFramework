@@ -89,7 +89,7 @@ namespace Gecon
          * @throws v4l2_unsupported_requirement
          *     When the device doesn't meet the requirements needed for capture.
          * @throws v4l2_device_error
-         *     When some error occured while capture starts
+         *     When some error related to the device occured while capture starts
          */
         void start();
 
