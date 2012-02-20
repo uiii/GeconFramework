@@ -5,3 +5,4 @@ build
 GeconFramework.*
 tools
 tmp
+*.autosave
