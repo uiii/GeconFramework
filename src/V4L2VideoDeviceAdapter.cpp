@@ -112,6 +112,14 @@ namespace Gecon
             return Snapshot();
         }
 
-        return capture_->getSnapshot();
+        try
+        {
+            return capture_->getSnapshot();
+        }
+        catch(const v4l2_device_error& e)
+        {
+            isOpened_ = false;
+            throw;
+        }
     }
 } // namespace Gecon

@@ -39,8 +39,6 @@ namespace Gecon
         typedef V4L2VideoDeviceAdapter DeviceAdapter;
         typedef std::vector<DeviceAdapter> DeviceAdapterList;
 
-        V4L2VideoDevicePolicy();
-
         const DeviceAdapterList& getAvailableDevices();
 
     private:

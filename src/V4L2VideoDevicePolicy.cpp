@@ -27,10 +27,6 @@
 
 namespace Gecon
 {
-    V4L2VideoDevicePolicy::V4L2VideoDevicePolicy()
-    {
-    }
-
     const V4L2VideoDevicePolicy::DeviceAdapterList& V4L2VideoDevicePolicy::getAvailableDevices()
     {
         std::set<fs::path> deviceFiles = getDeviceFiles_();
@@ -39,22 +35,22 @@ namespace Gecon
 
         for(const fs::path& deviceFile : deviceFiles)
         {
-            if(it == devices_.end())
+            if(it == devices_.end() || deviceFile < it->file()) // new device
             {
-                devices_.push_back(DeviceAdapter(deviceFile));
-                continue;
+                try
+                {
+                    devices_.insert(it, DeviceAdapter(deviceFile));
+                }
+                catch(const std::exception& e)
+                {
+                    // TODO log error
+                }
             }
-
-            fs::path oldDeviceFile = it->file();
-            if(deviceFile < oldDeviceFile)
-            {
-                devices_.insert(it, DeviceAdapter(deviceFile));
-            }
-            else if(deviceFile > oldDeviceFile)
+            else if(deviceFile > it->file()) // device in 'it' is no longer present
             {
                 it = devices_.erase(it);
             }
-            else
+            else // device in 'it' is still present
             {
                 ++it;
             }
