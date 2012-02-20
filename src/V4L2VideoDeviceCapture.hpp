@@ -33,6 +33,13 @@
 #include "V4L2DeviceDescriptor.hpp"
 #include "Image.hpp"
 
+#define SNAPSHOT_WIDTH 640
+#define SNAPSHOT_HEIGHT 480
+
+#define BUFFER_COUNT 3
+
+#define WAIT_FOR_DATA_TIMEOUT 2
+
 namespace Gecon
 {
     typedef __u32 BufferIndex;
@@ -235,12 +242,18 @@ namespace Gecon
 
         boost::thread captureThread_;
 
+        bool doCapture_;
+        boost::mutex doCaptureMutex_;
+
         bool captureCrashed_;
         boost::exception_ptr captureError_;
         boost::mutex captureErrorMutex_;
 
-        bool doCapture_;
-        boost::mutex doCaptureMutex_;
+        std::size_t snapshotWidht_;
+        std::size_t snapshotHeight_;
+
+        std::size_t bufferCount_;
+        std::vector<Buffer> buffers_;
 
         BufferIndex capturedBufferIndex_;
         boost::mutex capturedBufferMutex_;
@@ -249,8 +262,6 @@ namespace Gecon
         bool newRecentBuffer_;
         boost::mutex recentBufferMutex_;
         boost::condition_variable recentBufferChangedCond_;
-
-        std::vector<Buffer> buffers_;
 
         fs::path file_;
 

@@ -31,8 +31,11 @@
 namespace Gecon
 {
     V4L2VideoDeviceCapture::V4L2VideoDeviceCapture(const fs::path &file):
-        captureCrashed_(false),
         doCapture_(false),
+        captureCrashed_(false),
+        snapshotWidht_(0),
+        snapshotHeight_(0),
+        bufferCount_(0),
         capturedBufferIndex_(0),
         recentBufferIndex_(0),
         newRecentBuffer_(false),
@@ -97,7 +100,7 @@ namespace Gecon
         }
         recentBufferLock.unlock();
 
-        return Image(640, 480, buffers_[capturedBufferIndex_].data); // TODO magic
+        return Image(snapshotWidht_, snapshotHeight_, buffers_[capturedBufferIndex_].data);
     }
 
     void V4L2VideoDeviceCapture::checkV4L2VideoDevice_(const fs::path& file) const
@@ -117,11 +120,16 @@ namespace Gecon
 
     void V4L2VideoDeviceCapture::initialize_(V4L2DeviceDescriptor device)
     {
+        snapshotWidht_ = SNAPSHOT_WIDTH;
+        snapshotHeight_ = SNAPSHOT_HEIGHT;
+
+        bufferCount_ = BUFFER_COUNT;
+
         v4l2_format format;
         CLEAR(format);
 
-        format.fmt.pix.width = 640; // TODO magic
-        format.fmt.pix.width = 480; // TODO magic
+        format.fmt.pix.width = snapshotWidht_;
+        format.fmt.pix.height = snapshotHeight_;
         format.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
         format.fmt.pix.field = V4L2_FIELD_INTERLACED;
         format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -133,24 +141,27 @@ namespace Gecon
             throw v4l2_unsupported_requirement(device.file(), "RGB24 pixel format");
         }
 
-        if(format.fmt.pix.width != 640 || format.fmt.pix.height != 480)
+        if(format.fmt.pix.width != snapshotWidht_ || format.fmt.pix.height != snapshotHeight_)
         {
             // TODO log warning
+            snapshotWidht_ = format.fmt.pix.width;
+            snapshotHeight_ = format.fmt.pix.height;
         }
 
         v4l2_requestbuffers bufferRequest;
         CLEAR(bufferRequest);
 
-        bufferRequest.count = 3; // TODO magic
+        bufferRequest.count = bufferCount_;
         bufferRequest.memory = V4L2_MEMORY_MMAP;
         bufferRequest.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
         controlDevice_(device, VIDIOC_REQBUFS, &bufferRequest,
             v4l2_unsupported_requirement(device.file(), "memory mapping I/O"));
 
-        if(bufferRequest.count < 3) // TODO magic
+        if(bufferRequest.count < bufferCount_)
         {
             // free buffers
+            bufferCount_ = 0;
             bufferRequest.count = 0;
             controlDevice_(device, VIDIOC_REQBUFS, &bufferRequest);
 
@@ -159,7 +170,7 @@ namespace Gecon
 
         v4l2_buffer deviceBuffer;
 
-        for(int i = 0; i < 3; ++i) // TODO magic
+        for(std::size_t i = 0; i < bufferCount_; ++i)
         {
             CLEAR(deviceBuffer);
 
@@ -175,12 +186,12 @@ namespace Gecon
                 throw v4l2_device_error(device.file(), "%device% memory mapping failed", errno_message());
             }
 
-            Buffer buffer = { i, (unsigned char*)mapped_memory, deviceBuffer.length };
+            Buffer buffer = { (BufferIndex)i, (unsigned char*)mapped_memory, deviceBuffer.length };
             buffers_.push_back(buffer);
         }
 
         // enque all buffers except last two
-        for(int i = 0; i < 3 - 2; ++i) // TODO magic
+        for(std::size_t i = 0; i < bufferCount_ - 2; ++i)
         {
             CLEAR(deviceBuffer);
 
@@ -192,13 +203,13 @@ namespace Gecon
         }
 
         // last two buffer reserve for exchange
-        recentBufferIndex_ = 3 - 2; // TODO magic
-        capturedBufferIndex_ = 3 - 1; // TODO magic
+        recentBufferIndex_ = bufferCount_ - 2;
+        capturedBufferIndex_ = bufferCount_ - 1;
     }
 
     void V4L2VideoDeviceCapture::deinitialize_()
     {
-        for(int i = 0; i < 3; ++i)
+        for(std::size_t i = 0; i < bufferCount_; ++i)
         {
             v4l2_munmap(buffers_[i].data, buffers_[i].length);
         }
@@ -348,7 +359,7 @@ namespace Gecon
             FD_SET(device, &fds);
 
             timeval tv;
-            tv.tv_sec = 2;
+            tv.tv_sec = WAIT_FOR_DATA_TIMEOUT;
             tv.tv_usec = 0;
 
             result = select(device + 1, &fds, NULL, NULL, &tv);
