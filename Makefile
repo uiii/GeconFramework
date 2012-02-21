@@ -3,11 +3,20 @@ ifndef config
 endif
 export config
 
-.PHONY: all make clean
+.PHONY: all make clean unit-tests
 
 PREMAKE=../config/premake4/premake4
 
-all: build make
+BUILD_DIR=build
+LIB_DIR=${BUILD_DIR}
+
+UNIT_TESTS=${BUILD_DIR}/unit_tests
+MANUAL_TESTS=${BUILD_DIR}/manual_tests
+
+SET_LIB_PATH=LD_LIBRARY_PATH=${LIB_DIR}
+
+
+all: build make unit-tests
 
 build: premake4.lua src/premake4.lua test/premake4.lua
 	rm -rf build
@@ -16,6 +25,12 @@ build: premake4.lua src/premake4.lua test/premake4.lua
 
 make:
 	cd build && ${MAKE} config=$(config)
+
+unit-tests:
+	-@${SET_LIB_PATH} ${UNIT_TESTS}
+
+manual-tests:
+	-@${SET_LIB_PATH} ${MANUAL_TESTS}
 
 clean:
 	rm -rf build

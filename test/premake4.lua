@@ -1,4 +1,3 @@
---[[
 project "UnitTesting"
     kind "ConsoleApp"
     language "C++"
@@ -13,16 +12,12 @@ project "UnitTesting"
     files { "unit_tests/*.cpp" }
 
     links { "GeconFramework" }
---]]
 
 project "ManualTesting"
     kind "ConsoleApp"
     language "C++"
 
     uses "QtGui"
-
-    --require_pkg_config()
-    --require_pkg("libv4l2")
 
     links {
         "boost_system",
@@ -41,7 +36,5 @@ project "ManualTesting"
     files { "manual_tests/*.cpp" }
     files { "manual_tests/*.ui" }
     files { "manual_tests/*.qrc" }
-
-    --prebuildcommands { "moc " }
 
     links { "GeconFramework" }

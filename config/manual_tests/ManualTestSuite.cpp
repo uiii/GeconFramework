@@ -34,16 +34,22 @@ void ManualTestSuite::run()
     int i = 0;
     for(auto it = tests_.begin(); it != tests_.end(); ++it, ++i)
     {
-        std::cout << "[" << i << "] " << it->first << std::endl;
+        std::cout << "[" << i + 1 << "] " << it->first << std::endl;
         testList.push_back(it->second);
     }
 
+    std::cout << "\n[0] Quit" << std::endl;
     std::cout << "\nWhat do you want to test?: ";
 
     int choice;
     std::cin >> choice;
 
+    if(! choice)
+    {
+        return;
+    }
+
     std::cout << "--------------------------------------------------" << std::endl;
 
-    testList[choice]();
+    testList[choice - 1]();
 }

@@ -1,13 +1,8 @@
---builddir = "build"
-
 require "config/premake4/functions"
 require "config/premake4/qt-support"
 
 solution "GeconFramework"
     configurations { "Debug", "Release" }
-
-    --location ( builddir )
-    --targetdir ( builddir )
 
     flags { "ExtraWarnings" }
 
