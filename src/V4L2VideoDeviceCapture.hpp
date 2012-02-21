@@ -36,7 +36,7 @@
 #define SNAPSHOT_WIDTH 640
 #define SNAPSHOT_HEIGHT 480
 
-#define BUFFER_COUNT 3
+#define BUFFER_COUNT 5
 
 #define WAIT_FOR_DATA_TIMEOUT 2
 
@@ -51,6 +51,13 @@ namespace Gecon
         std::size_t length;
     };
 
+    struct RawSnapshot
+    {
+        std::size_t widht;
+        std::size_t height;
+        unsigned char* data;
+    };
+
     /**
      * Represents V4L2 device capture.
      *
@@ -60,8 +67,6 @@ namespace Gecon
     class V4L2VideoDeviceCapture
     {
     public:
-        typedef Image Snapshot;
-
         /**
          * Construct a device capture.
          *
@@ -108,7 +113,7 @@ namespace Gecon
          *     When capture is not started.
          *     When capture crashed.
          */
-        Snapshot getSnapshot();
+        RawSnapshot getSnapshot();
 
     private:
         /**

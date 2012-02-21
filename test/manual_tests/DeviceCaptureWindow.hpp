@@ -26,7 +26,9 @@
 
 #include "V4L2VideoDevicePolicy.hpp"
 
-Q_DECLARE_METATYPE(Gecon::V4L2VideoDeviceAdapter)
+typedef Gecon::V4L2VideoDevicePolicy<Gecon::Image> DevicePolicy;
+
+Q_DECLARE_METATYPE(DevicePolicy::DeviceAdapter)
 
 namespace Ui {
     class DeviceCaptureWindow;
@@ -50,8 +52,8 @@ private:
     Ui::DeviceCaptureWindow* ui_;
     QTimer* timer_;
 
-    Gecon::V4L2VideoDevicePolicy::DeviceAdapter device_;
-    Gecon::V4L2VideoDevicePolicy::DeviceAdapterList devices_;
+    DevicePolicy::DeviceAdapter device_;
+    DevicePolicy::DeviceAdapterList devices_;
 };
 
 #endif // DEVICECAPTUREWINDOW_HPP

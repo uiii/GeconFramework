@@ -27,11 +27,12 @@
 
 namespace Gecon
 {
-    const V4L2VideoDevicePolicy::DeviceAdapterList& V4L2VideoDevicePolicy::getAvailableDevices()
+    template< typename Snapshot >
+    const typename V4L2VideoDevicePolicy<Snapshot>::DeviceAdapterList& V4L2VideoDevicePolicy<Snapshot>::getAvailableDevices()
     {
         std::set<fs::path> deviceFiles = getDeviceFiles_();
 
-        DeviceAdapterList::iterator it = devices_.begin();
+        typename DeviceAdapterList::iterator it = devices_.begin();
 
         for(const fs::path& deviceFile : deviceFiles)
         {
@@ -59,7 +60,8 @@ namespace Gecon
         return devices_;
     }
 
-    std::set<fs::path> V4L2VideoDevicePolicy::getDeviceFiles_() const
+    template< typename Snapshot >
+    std::set<fs::path> V4L2VideoDevicePolicy<Snapshot>::getDeviceFiles_() const
     {
         std::set<fs::path> deviceDirs = VIDEO_DEVICE_DIRS;
 
@@ -119,7 +121,8 @@ namespace Gecon
         return files;
     }
 
-    bool V4L2VideoDevicePolicy::isVideoDevice_(fs::path filepath) const
+    template< typename Snapshot >
+    bool V4L2VideoDevicePolicy<Snapshot>::isVideoDevice_(fs::path filepath) const
     {
         std::string filename = filepath.filename().string();
         return filename.substr(0, 5) == "video";

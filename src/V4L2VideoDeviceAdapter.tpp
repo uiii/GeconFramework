@@ -21,36 +21,42 @@
 
 namespace Gecon
 {
-    V4L2VideoDeviceAdapter::V4L2VideoDeviceAdapter():
+    template< typename Snapshot >
+    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter():
         isOpened_(false),
         capture_(0)
     {
     }
 
-    V4L2VideoDeviceAdapter::V4L2VideoDeviceAdapter(const fs::path& file):
+    template< typename Snapshot >
+    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter(const fs::path& file):
         isOpened_(false),
         capture_(std::make_shared<V4L2VideoDeviceCapture>(file))
     {
     }
 
-    V4L2VideoDeviceAdapter::V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter& another):
+    template< typename Snapshot >
+    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter<Snapshot>& another):
         isOpened_(false),
         capture_(another.capture_)
     {
     }
 
-    V4L2VideoDeviceAdapter::~V4L2VideoDeviceAdapter()
+    template< typename Snapshot >
+    V4L2VideoDeviceAdapter<Snapshot>::~V4L2VideoDeviceAdapter()
     {
         close();
     }
 
-    std::string V4L2VideoDeviceAdapter::name() const
+    template< typename Snapshot >
+    std::string V4L2VideoDeviceAdapter<Snapshot>::name() const
     {
         // TODO - ziskat udaj o nazvu ze zarizeni
         return file().string();
     }
 
-    fs::path V4L2VideoDeviceAdapter::file() const
+    template< typename Snapshot >
+    fs::path V4L2VideoDeviceAdapter<Snapshot>::file() const
     {
         if(! capture_)
         {
@@ -69,7 +75,8 @@ namespace Gecon
      *
      * @throws // TODO
      */
-    void V4L2VideoDeviceAdapter::open()
+    template< typename Snapshot >
+    void V4L2VideoDeviceAdapter<Snapshot>::open()
     {
         if(! capture_)
         {
@@ -90,7 +97,8 @@ namespace Gecon
      * Any opened device should be closed
      * when is not further needed.
      */
-    void V4L2VideoDeviceAdapter::close()
+    template< typename Snapshot >
+    void V4L2VideoDeviceAdapter<Snapshot>::close()
     {
         if(! capture_)
         {
@@ -105,7 +113,8 @@ namespace Gecon
         }
     }
 
-    V4L2VideoDeviceAdapter::Snapshot V4L2VideoDeviceAdapter::getSnapshot()
+    template< typename Snapshot >
+    Snapshot V4L2VideoDeviceAdapter<Snapshot>::getSnapshot()
     {
         if(! capture_)
         {
@@ -114,7 +123,8 @@ namespace Gecon
 
         try
         {
-            return capture_->getSnapshot();
+            RawSnapshot raw = capture_->getSnapshot();
+            return Snapshot(raw.widht, raw.height, raw.data);
         }
         catch(const v4l2_device_error& e)
         {

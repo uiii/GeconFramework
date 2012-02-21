@@ -21,8 +21,13 @@ project "ManualTesting"
 
     uses "QtGui"
 
+    --require_pkg_config()
+    --require_pkg("libv4l2")
+
     links {
-        "boost_system"
+        "boost_system",
+        "boost_filesystem",
+        "boost_thread"
     }
 
     targetname "manual_tests"

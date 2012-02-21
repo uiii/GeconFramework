@@ -32,10 +32,11 @@ namespace fs = boost::filesystem;
 
 namespace Gecon
 {
+    template< typename Snapshot >
     class V4L2VideoDevicePolicy
     {
     public:
-        typedef V4L2VideoDeviceAdapter DeviceAdapter;
+        typedef V4L2VideoDeviceAdapter<Snapshot> DeviceAdapter;
         typedef std::list<DeviceAdapter> DeviceAdapterList;
 
         const DeviceAdapterList& getAvailableDevices();
@@ -47,5 +48,7 @@ namespace Gecon
         DeviceAdapterList devices_;
     };
 } // namespace Gecon
+
+#include "V4L2VideoDevicePolicy.tpp"
 
 #endif // GECON_V4L2VIDEODEVICEPOLICY_HPP

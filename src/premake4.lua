@@ -13,9 +13,9 @@ project "GeconFramework"
         files {
             "V4L2Error.cpp",
             "V4L2DeviceDescriptor.cpp",
-            "V4L2VideoDeviceAdapter.cpp",
+            --"V4L2VideoDeviceAdapter.cpp",
             "V4L2VideoDeviceCapture.cpp",
-            "V4L2VideoDevicePolicy.cpp"
+            --"V4L2VideoDevicePolicy.cpp"
         }
 
     includedirs { "./" }

@@ -28,6 +28,8 @@
 
 #include "V4L2VideoDevicePolicy.hpp"
 
+typedef Gecon::V4L2VideoDevicePolicy<Gecon::Image> DevicePolicy;
+
 #include "DeviceCaptureWindow.hpp"
 
 class V4L2VideoDevicePolicyTest : public ManualTestSuite
@@ -42,10 +44,10 @@ public:
 
     void deviceListTest()
     {
-        Gecon::V4L2VideoDevicePolicy::DeviceAdapterList deviceList = Gecon::V4L2VideoDevicePolicy().getAvailableDevices();
+        DevicePolicy::DeviceAdapterList deviceList = DevicePolicy().getAvailableDevices();
 
         std::cout << "Available V4L2 devices:" << std::endl;
-        for(Gecon::V4L2VideoDevicePolicy::DeviceAdapter& device : deviceList)
+        for(DevicePolicy::DeviceAdapter& device : deviceList)
         {
             std::cout << device.file() << std::endl;
         }

@@ -24,8 +24,6 @@
 #include <sys/mman.h>
 #include <libv4l2.h>
 
-#include <iostream>
-
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
 namespace Gecon
@@ -76,7 +74,7 @@ namespace Gecon
         }
     }
 
-    V4L2VideoDeviceCapture::Snapshot V4L2VideoDeviceCapture::getSnapshot()
+    RawSnapshot V4L2VideoDeviceCapture::getSnapshot()
     {
         boost::lock_guard<boost::mutex> lock(startStopMutex_);
 
@@ -100,7 +98,7 @@ namespace Gecon
         }
         recentBufferLock.unlock();
 
-        return Image(snapshotWidht_, snapshotHeight_, buffers_[capturedBufferIndex_].data);
+        return { snapshotWidht_, snapshotHeight_, buffers_[capturedBufferIndex_].data };
     }
 
     void V4L2VideoDeviceCapture::checkV4L2VideoDevice_(const fs::path& file) const
@@ -195,7 +193,7 @@ namespace Gecon
         {
             CLEAR(deviceBuffer);
 
-            deviceBuffer.index = 1;
+            deviceBuffer.index = i;
             deviceBuffer.memory = V4L2_MEMORY_MMAP;
             deviceBuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 

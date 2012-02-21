@@ -29,7 +29,7 @@ DeviceCaptureWindow::DeviceCaptureWindow(QWidget *parent) :
 {
     ui_->setupUi(this);
 
-    devices_ = Gecon::V4L2VideoDevicePolicy().getAvailableDevices();
+    devices_ = DevicePolicy().getAvailableDevices();
 
     for(auto device : devices_)
     {
@@ -57,7 +57,7 @@ DeviceCaptureWindow::~DeviceCaptureWindow()
 
 void DeviceCaptureWindow::setDevice(int index)
 {
-    device_ = ui_->deviceList->itemData(index).value<Gecon::V4L2VideoDeviceAdapter>();
+    device_ = ui_->deviceList->itemData(index).value<DevicePolicy::DeviceAdapter>();
 }
 
 void DeviceCaptureWindow::startCapture()

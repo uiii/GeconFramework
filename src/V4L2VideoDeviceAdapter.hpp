@@ -30,11 +30,10 @@ namespace fs = boost::filesystem;
 
 namespace Gecon
 {
+    template< typename Snapshot >
     class V4L2VideoDeviceAdapter
     {
     public:
-        typedef V4L2VideoDeviceCapture::Snapshot Snapshot; // TODO
-
         V4L2VideoDeviceAdapter();
         V4L2VideoDeviceAdapter(const fs::path& file);
         V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter& another);
@@ -55,5 +54,7 @@ namespace Gecon
         std::shared_ptr<V4L2VideoDeviceCapture> capture_;
     };
 } // namespace Gecon
+
+#include "V4L2VideoDeviceAdapter.tpp"
 
 #endif // GECON_V4L2VIDEODEVICEADAPTER_HPP
