@@ -57,11 +57,7 @@ namespace Gecon
         typedef std::set< typename ControlPolicy::Control > GestureSet;
         typedef std::set< typename ControlPolicy::Action > ActionSet;
 
-        Control():
-            doControl_(false),
-            isRunning_(false)
-        {
-        }
+        Control();
 
         /**
          * Start control loop.
@@ -70,49 +66,19 @@ namespace Gecon
          * on the currently running control loop.
          * All changes will take effect on the next run.
          */
-        void start()
-        {
-            if(! controlLoop_.isRunning())
-            {
-                controlLoop_ = *this;
-                controlLoop_.doControl_ = true;
-
-                boost::thread thread(&controlLoop_);
-            }
-        }
+        void start();
 
         /**
          * Stop control loop.
          */
-        void stop()
-        {
-            if(controlLoop_.isRunning())
-            {
-                controlLoop_.stop();
-            }
-
-            boost::unique_lock<boost::mutex> doControlLock(doControlMutex_);
-            doControl = false;
-            doControlLock.unlock();
-
-            boost::unique_lock<boost::mutex> isRunningLock(doControlMutex_);
-            while(isRunning_)
-            {
-                stopCond_.wait(isRunningLock);
-            }
-            isRunningLock.unlock();
-        }
+        void stop();
 
         /**
          * Tells if control is currently running.
          *
          * @returns True/False.
          */
-        bool isRunning() const
-        {
-            boost::lock_guard<boost::mutex> lock(isRunningMutex_);
-            return isRunning_;
-        }
+        bool isRunning() const;
 
         /**
          * Main control loop.
@@ -122,38 +88,7 @@ namespace Gecon
          *
          * @see start().
          */
-        void operator()()
-        {
-            boost::lock_guard<boost::mutex> isRunningLock(isRunningMutex_);
-            isRunning_ = true;
-            isRunningLock.unlock();
-
-            beforeRun();
-
-            DeviceManager::DeviceAdapter device = deviceManager_.selectedDevice();
-            device.open();
-
-            boost::unique_lock<boost::mutex> doControlLock(doControlMutex_);
-            while(doControl_)
-            {
-                doControlLock.unlock();
-
-                executeActions(checkGestures(recognizeObjects(device.getSnapshot())));
-
-                doControlLock.lock();
-            }
-            doControlLock.unlock();
-
-            device.close();
-
-            afterRun();
-
-            isRunningLock.lock();
-            isRunning_ = false;
-            isRunningLock.unlock();
-
-            stopCond_.notify_one();
-        }
+        void operator()();
 
         DeviceManager& deviceManager();
 
@@ -179,5 +114,7 @@ namespace Gecon
         ActionSet actions_;
     };
 } // namespace Gecon
+
+#include "Control.tpp"
 
 #endif // GECON_CONTROL_HPP
