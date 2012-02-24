@@ -74,7 +74,7 @@ void DeviceCaptureWindow::stopCapture()
 
 void DeviceCaptureWindow::showImage()
 {
-    Gecon::Image img = device_.getSnapshot();
+    DevicePolicy::Snapshot img = device_.getSnapshot();
 
     ui_->image->setPixmap(QPixmap::fromImage(QImage((const uchar*)&(img.rawData()[0]), img.width(), img.height(), img.width() * 3, QImage::Format_RGB888)));
 }

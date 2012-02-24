@@ -27,24 +27,17 @@
 
 namespace Gecon
 {
-    typedef std::vector<Color> ImageData;
-    typedef std::vector<unsigned char> ImageRawData;
-
+    template< typename ColorSpaceType >
     class Image
     {
-        /* constants determinig the count and
-           order of color components in raw data */
-
-        static const std::size_t COMP_PER_PIXEL = 3;
-        
-        static const std::size_t RED = 2;
-        static const std::size_t GREEN = 1;
-        static const std::size_t BLUE = 0;
+        typedef ColorSpaceType ColorSpace;
+        typedef Gecon::Color<ColorSpace> Color;
+        typedef std::vector<unsigned char> RawData;
 
     public:
         Image();
         Image(int width, int height);
-        Image(int width, int height, const unsigned char* rawData);
+        Image(int width, int height, const unsigned char* rawData, std::size_t dataLength);
 
         std::size_t width() const;
         std::size_t height() const;
@@ -52,7 +45,7 @@ namespace Gecon
         Color at(int x, int y) const;
         void setAt(int x, int y, const Color& color);
 
-        const ImageRawData& rawData() const;
+        const RawData& rawData() const;
 
     private:
         void makeOwnCopyOfData_();
@@ -61,8 +54,10 @@ namespace Gecon
         std::size_t width_;
         std::size_t height_;
 
-        std::shared_ptr<ImageRawData> data_;
+        std::shared_ptr<RawData> data_;
     };
 }
+
+#include "Image.tpp"
 
 #endif // GECON_IMAGE_HPP

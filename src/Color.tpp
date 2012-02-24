@@ -21,49 +21,16 @@
 
 namespace Gecon
 {
-    Color::Color():
-        red_(0),
-        green_(0),
-        blue_(0)
+    template< typename ColorSpace >
+    Color<ColorSpace>::Color(ColorSpace colorSpace):
+        ColorSpace(colorSpace)
     {
     }
 
-    Color::Color(
-        unsigned char red,
-        unsigned char green,
-        unsigned char blue
-    ):
-        red_(red),
-        green_(green),
-        blue_(blue)
+    template< typename ColorSpace >
+    template< typename AnotherColorSpace >
+    Color<AnotherColorSpace> Color<ColorSpace>::convertTo()
     {
-    }
-
-    unsigned char Color::red() const
-    {
-        return red_;
-    }
-
-    unsigned char Color::green() const
-    {
-        return green_;
-    }
-
-    unsigned char Color::blue() const
-    {
-        return blue_;
-    }
-
-    bool Color::operator==(const Color& another) const
-    {
-        return red_ == another.red_
-            && green_ == another.green_
-            && blue_ == another.blue_
-        ;
-    }
-
-    bool Color::operator!=(const Color& another) const
-    {
-        return ! (*this == another);
+        return ColorSpace::template convertTo<AnotherColorSpace>(*this);
     }
 }

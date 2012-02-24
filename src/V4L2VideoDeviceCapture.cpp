@@ -98,7 +98,7 @@ namespace Gecon
         }
         recentBufferLock.unlock();
 
-        return { snapshotWidht_, snapshotHeight_, buffers_[capturedBufferIndex_].data };
+        return { snapshotWidht_, snapshotHeight_, buffers_[capturedBufferIndex_].data, buffers_[capturedBufferIndex_].bytesused };
     }
 
     void V4L2VideoDeviceCapture::checkV4L2VideoDevice_(const fs::path& file) const
@@ -184,7 +184,7 @@ namespace Gecon
                 throw v4l2_device_error(device.file(), "%device% memory mapping failed", errno_message());
             }
 
-            Buffer buffer = { (BufferIndex)i, (unsigned char*)mapped_memory, deviceBuffer.length };
+            Buffer buffer = { (BufferIndex)i, deviceBuffer.length, (unsigned char*)mapped_memory, 0 };
             buffers_.push_back(buffer);
         }
 
@@ -289,6 +289,8 @@ namespace Gecon
                 deviceBuffer.memory = V4L2_MEMORY_MMAP;
                 deviceBuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                 controlDevice_(device, VIDIOC_DQBUF, &deviceBuffer);
+
+                buffers_[deviceBuffer.index].bytesused = deviceBuffer.bytesused;
 
                 boost::unique_lock<boost::mutex> lock(recentBufferMutex_);
                 std::swap(deviceBuffer.index, recentBufferIndex_);

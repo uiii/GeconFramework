@@ -124,7 +124,7 @@ namespace Gecon
         try
         {
             RawSnapshot raw = capture_->getSnapshot();
-            return Snapshot(raw.widht, raw.height, raw.data);
+            return Snapshot(raw.widht, raw.height, raw.data, raw.dataLength);
         }
         catch(const v4l2_device_error& e)
         {

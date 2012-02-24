@@ -22,28 +22,19 @@
 
 namespace Gecon
 {
-    class Color
+    template< typename ColorSpace >
+    class Color : public ColorSpace
     {
     public:
-        Color();
-        Color(
-            unsigned char red,
-            unsigned char green,
-            unsigned char blue
-        );
+        Color(ColorSpace colorSpace = ColorSpace());
 
-        unsigned char red() const;
-        unsigned char green() const;
-        unsigned char blue() const;
-
-        bool operator==(const Color& another) const;
-        bool operator!=(const Color& another) const;
-        
-    private:
-        unsigned char red_;
-        unsigned char green_;
-        unsigned char blue_;
+        template< typename AnotherColorSpace >
+        Color<AnotherColorSpace> convertTo();
     };
 }
+
+#include "Color.tpp"
+
+#include "ColorSpace.hpp"
 
 #endif // GECON_COLOR_HPP

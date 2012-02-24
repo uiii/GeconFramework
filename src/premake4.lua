@@ -23,6 +23,4 @@ project "GeconFramework"
     files {
         "Control.hpp",
         "DeviceManager.hpp",
-        "Color.cpp",
-        "Image.cpp"
     }

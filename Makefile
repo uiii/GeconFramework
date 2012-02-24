@@ -15,8 +15,7 @@ MANUAL_TESTS=${BUILD_DIR}/manual_tests
 
 SET_LIB_PATH=LD_LIBRARY_PATH=${LIB_DIR}
 
-
-all: build make unit-tests
+all: build make
 
 build: premake4.lua src/premake4.lua test/premake4.lua
 	rm -rf build

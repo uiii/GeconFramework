@@ -47,15 +47,19 @@ namespace Gecon
     struct Buffer
     {
         BufferIndex index;
-        unsigned char* data;
         std::size_t length;
+
+        unsigned char* data;
+        std::size_t bytesused;
     };
 
     struct RawSnapshot
     {
         std::size_t widht;
         std::size_t height;
+
         unsigned char* data;
+        std::size_t dataLength;
     };
 
     /**

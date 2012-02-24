@@ -32,10 +32,11 @@ namespace fs = boost::filesystem;
 
 namespace Gecon
 {
-    template< typename Snapshot >
+    template< typename SnapshotType >
     class V4L2VideoDevicePolicy
     {
     public:
+        typedef SnapshotType Snapshot;
         typedef V4L2VideoDeviceAdapter<Snapshot> DeviceAdapter;
         typedef std::list<DeviceAdapter> DeviceAdapterList;
 

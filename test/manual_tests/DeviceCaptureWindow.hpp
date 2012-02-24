@@ -26,7 +26,7 @@
 
 #include "V4L2VideoDevicePolicy.hpp"
 
-typedef Gecon::V4L2VideoDevicePolicy<Gecon::Image> DevicePolicy;
+typedef Gecon::V4L2VideoDevicePolicy<Gecon::Image<Gecon::RGB>> DevicePolicy;
 
 Q_DECLARE_METATYPE(DevicePolicy::DeviceAdapter)
 
