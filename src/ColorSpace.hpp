@@ -22,8 +22,6 @@
 
 #include <cstring>
 
-#include "Color.hpp"
-
 namespace Gecon
 {
     struct RGB
@@ -86,12 +84,6 @@ namespace Gecon
     inline ToColorSpace convert(const FromColorSpace& colorSpace)
     {
         return colorSpace;
-    }
-
-    template< typename ToColorSpace, typename FromColorSpace >
-    inline Color<ToColorSpace> convert(const Color<FromColorSpace>& color)
-    {
-        return convert<ToColorSpace>((const FromColorSpace&) color);
     }
 
     template<>

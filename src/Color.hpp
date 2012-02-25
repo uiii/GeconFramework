@@ -20,21 +20,34 @@
 #ifndef GECON_COLOR_HPP
 #define GECON_COLOR_HPP
 
+#include <iostream>
+
+#include "ColorSpace.hpp"
+
 namespace Gecon
 {
     template< typename ColorSpace >
     class Color : public ColorSpace
     {
     public:
-        Color(ColorSpace colorSpace = ColorSpace());
+        Color(ColorSpace colorSpace = ColorSpace()) {}
 
         template< typename AnotherColorSpace >
-        Color<AnotherColorSpace> convertTo();
+        Color(const Color<AnotherColorSpace>& color);
     };
+
+    template< typename ToColorSpace, typename FromColorSpace >
+    inline Color<ToColorSpace> convert(const Color<FromColorSpace>& color)
+    {
+        return convert<ToColorSpace>((const FromColorSpace&) color);
+    }
+
+    template< typename ColorSpace >
+    template< typename AnotherColorSpace >
+    inline Color<ColorSpace>::Color(const Color<AnotherColorSpace>& color)
+    {
+        *this = convert<ColorSpace>(color);
+    }
 }
-
-#include "Color.tpp"
-
-#include "ColorSpace.hpp"
 
 #endif // GECON_COLOR_HPP
