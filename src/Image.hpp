@@ -51,8 +51,8 @@ namespace Gecon
         void makeOwnCopyOfData_();
         void checkRange_(int x, int y) const;
 
-        std::size_t width_;
-        std::size_t height_;
+        int width_;
+        int height_;
 
         std::shared_ptr<RawData> data_;
     };

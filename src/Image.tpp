@@ -75,7 +75,7 @@ namespace Gecon
 
         const unsigned char* rawPixel = &data_->at((y * width_ + x) * ColorSpace::bytesPerPixel);
 
-        return Color().fromBytes(rawPixel);
+        return Color(rawPixel);
     }
 
     template< typename ColorSpace >

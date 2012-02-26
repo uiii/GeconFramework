@@ -32,13 +32,7 @@ namespace Gecon
 
         RGB(): r(0), g(0), b(0) {}
         RGB(Component r, Component g, Component b): r(r), g(g), b(b) {}
-
-        void fromBytes(const unsigned char* bytes)
-        {
-            r = bytes[0];
-            g = bytes[1];
-            b = bytes[2];
-        }
+        RGB(const unsigned char* bytes): r(bytes[0]), g(bytes[1]), b(bytes[2]) {}
 
         void fillBytes(unsigned char* bytes)
         {
@@ -60,15 +54,9 @@ namespace Gecon
 
         YCbCr(): y(0), cb(0), cr(0) {}
         YCbCr(Component y, Component cb, Component cr): y(y), cb(cb), cr(cr) {}
+        YCbCr(const unsigned char* bytes): y(bytes[0]), cb(bytes[1]), cr(bytes[2]) {}
 
-        void fromBytes(const unsigned char* bytes)
-        {
-            y = bytes[0];
-            cb = bytes[1];
-            cr = bytes[2];
-        }
-
-        void fillBytes(unsigned char* bytes)
+        void fillBytes(unsigned char* bytes) const
         {
             bytes[0] = y;
             bytes[1] = cb;
