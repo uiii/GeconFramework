@@ -8,6 +8,8 @@
 class ManualTester
 {
 public:
+    virtual ~ManualTester();
+
     static void registerTestSuite(ManualTestSuite* test);
 
     static void runTests();

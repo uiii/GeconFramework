@@ -17,15 +17,11 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DeviceCaptureWindow.hpp"
-#include "ui_DeviceCaptureWindow.h"
+#include "ImageProcessUI.hpp"
 
-#include <QPixmap>
-#include <QVariant>
-
-DeviceCaptureWindow::DeviceCaptureWindow(QWidget *parent) :
+ImageProcessUI::ImageProcessUI(QWidget *parent) :
     QWidget(parent),
-    ui_(new Ui::DeviceCaptureWindow)
+    ui_(new Ui::ImageProcessUI)
 {
     ui_->setupUi(this);
 
@@ -47,34 +43,42 @@ DeviceCaptureWindow::DeviceCaptureWindow(QWidget *parent) :
     connect(ui_->deviceList, SIGNAL(currentIndexChanged(int)), this, SLOT(setDevice(int)));
     connect(ui_->openButton, SIGNAL(clicked()), this, SLOT(startCapture()));
     connect(ui_->closeButton, SIGNAL(clicked()), this, SLOT(stopCapture()));
-    connect(timer_, SIGNAL(timeout()), this, SLOT(showImage()));
+    connect(timer_, SIGNAL(timeout()), this, SLOT(processImage()));
 }
 
-DeviceCaptureWindow::~DeviceCaptureWindow()
+ImageProcessUI::~ImageProcessUI()
 {
     delete ui_;
 }
 
-void DeviceCaptureWindow::setDevice(int index)
+ImageProcessUI::Image ImageProcessUI::getImage()
+{
+    return device_.getSnapshot();
+}
+
+void ImageProcessUI::setDevice(int index)
 {
     device_ = ui_->deviceList->itemData(index).value<DevicePolicy::DeviceAdapter>();
 }
 
-void DeviceCaptureWindow::startCapture()
+void ImageProcessUI::startCapture()
 {
     device_.open();
     timer_->start();
 }
 
-void DeviceCaptureWindow::stopCapture()
+void ImageProcessUI::stopCapture()
 {
     timer_->stop();
     device_.close();
 }
 
-void DeviceCaptureWindow::showImage()
+void ImageProcessUI::showImage(const Image &img)
 {
-    DevicePolicy::Snapshot img = device_.getSnapshot();
-
     ui_->image->setPixmap(QPixmap::fromImage(QImage((const uchar*)&(img.rawData()[0]), img.width(), img.height(), img.width() * 3, QImage::Format_RGB888)));
 }
+
+void ImageProcessUI::processImage()
+{
+}
+

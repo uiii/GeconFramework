@@ -23,14 +23,20 @@
 
 #include <QApplication>
 
-#include "ManualTestSuite.hpp"
-#include "ManualTester.hpp"
+#include "ManualTest.hpp"
 
-#include "V4L2VideoDevicePolicy.hpp"
+#include "ImageProcessUI.hpp"
 
-typedef Gecon::V4L2VideoDevicePolicy<Gecon::Image<Gecon::RGB>> DevicePolicy;
+class DeviceCaptureUI : public ImageProcessUI
+{
+public slots:
+    virtual void processImage()
+    {
+        Image img = getImage();
 
-#include "DeviceCaptureWindow.hpp"
+        showImage(img);
+    }
+};
 
 class V4L2VideoDevicePolicyTest : public ManualTestSuite
 {
@@ -57,8 +63,8 @@ public:
     {
         QApplication app(ManualTester::argc, ManualTester::argv);
 
-        DeviceCaptureWindow window;
-        window.show();
+        DeviceCaptureUI ui;
+        ui.show();
 
         app.exec();
     }

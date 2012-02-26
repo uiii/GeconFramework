@@ -17,12 +17,15 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEVICECAPTUREWINDOW_HPP
-#define DEVICECAPTUREWINDOW_HPP
+#ifndef IMAGEPROCESSUI_HPP
+#define IMAGEPROCESSUI_HPP
 
 #include <QWidget>
+
 #include <QTimer>
 #include <QMetaType>
+
+#include "ui_ImageProcessUI.h"
 
 #include "V4L2VideoDevicePolicy.hpp"
 
@@ -31,29 +34,36 @@ typedef Gecon::V4L2VideoDevicePolicy<Gecon::Image<Gecon::RGB>> DevicePolicy;
 Q_DECLARE_METATYPE(DevicePolicy::DeviceAdapter)
 
 namespace Ui {
-    class DeviceCaptureWindow;
+    class ImageProcessUI;
 }
 
-class DeviceCaptureWindow : public QWidget
+class ImageProcessUI : public QWidget
 {
     Q_OBJECT
     
 public:
-    explicit DeviceCaptureWindow(QWidget *parent = 0);
-    ~DeviceCaptureWindow();
+    typedef DevicePolicy::Snapshot Image;
 
+    explicit ImageProcessUI(QWidget *parent = 0);
+    ~ImageProcessUI();
+
+    Image getImage();
+    
 public slots:
     void setDevice(int index);
     void startCapture();
     void stopCapture();
-    void showImage();
+    void showImage(const Image& img);
+    virtual void processImage();
 
-private:
-    Ui::DeviceCaptureWindow* ui_;
-    QTimer* timer_;
+protected:
+    Ui::ImageProcessUI *ui_;
 
     DevicePolicy::DeviceAdapter device_;
     DevicePolicy::DeviceAdapterList devices_;
+
+private:
+    QTimer* timer_;
 };
 
-#endif // DEVICECAPTUREWINDOW_HPP
+#endif // IMAGEPROCESSUI_HPP

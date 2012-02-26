@@ -2,12 +2,20 @@
 
 #include <iostream>
 
-ManualTester::ManualTester()
-{
-}
-
 int ManualTester::argc = 0;
 char** ManualTester::argv = NULL;
+
+ManualTester::~ManualTester()
+{
+    std::for_each(testSuiteList_.begin(), testSuiteList_.end(), [](ManualTestSuite* suite){ delete suite; });
+}
+
+void ManualTester::registerTestSuite(ManualTestSuite *test)
+{
+    ManualTester* tester = getInstance_();
+
+    tester->testSuiteList_.push_back(test);
+}
 
 void ManualTester::runTests()
 {
@@ -40,11 +48,8 @@ void ManualTester::runTests()
     tester->testSuiteList_.at(choice - 1)->run();
 }
 
-void ManualTester::registerTestSuite(ManualTestSuite *test)
+ManualTester::ManualTester()
 {
-    ManualTester* tester = getInstance_();
-
-    tester->testSuiteList_.push_back(test);
 }
 
 ManualTester * ManualTester::getInstance_()
