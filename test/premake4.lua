@@ -1,4 +1,4 @@
---[[project "UnitTesting"
+project "UnitTesting"
     kind "ConsoleApp"
     language "C++"
 
@@ -12,7 +12,6 @@
     files { "unit_tests/*.cpp" }
 
     links { "GeconFramework" }
-    --]]
 
 project "ManualTesting"
     kind "ConsoleApp"

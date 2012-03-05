@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "tut_extended.hpp"
 
 #include <stdexcept>
@@ -85,4 +85,4 @@ namespace tut
         ensure_throws_nothing("non-empty image correct position write access", img2.setAt(5, 15, newColor));
         ensure("color of pixel isn't changed", img2.at(5, 15) == newColor);
     }
-}
+}*/
