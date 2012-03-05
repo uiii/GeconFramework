@@ -30,7 +30,9 @@ namespace Gecon
     class Color : public ColorSpace
     {
     public:
-        Color(ColorSpace colorSpace = ColorSpace()) {}
+        Color(ColorSpace colorSpace = ColorSpace()):
+            ColorSpace(colorSpace)
+        {}
 
         template< typename AnotherColorSpace >
         Color(const Color<AnotherColorSpace>& color);

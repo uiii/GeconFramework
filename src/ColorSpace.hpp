@@ -34,7 +34,7 @@ namespace Gecon
         RGB(Component r, Component g, Component b): r(r), g(g), b(b) {}
         RGB(const unsigned char* bytes): r(bytes[0]), g(bytes[1]), b(bytes[2]) {}
 
-        void fillBytes(unsigned char* bytes)
+        void fillBytes(unsigned char* bytes) const
         {
             bytes[0] = r;
             bytes[1] = g;
@@ -52,7 +52,7 @@ namespace Gecon
 
         typedef unsigned char Component;
 
-        YCbCr(): y(0), cb(0), cr(0) {}
+        YCbCr(): y(0), cb(128), cr(128) {}
         YCbCr(Component y, Component cb, Component cr): y(y), cb(cb), cr(cr) {}
         YCbCr(const unsigned char* bytes): y(bytes[0]), cb(bytes[1]), cr(bytes[2]) {}
 
@@ -87,14 +87,23 @@ namespace Gecon
     template<>
     inline RGB convert<RGB, YCbCr>(const YCbCr& colorSpace)
     {
-        unsigned char cr = colorSpace.cr - 128;
-        unsigned char cb = colorSpace.cb - 128;
+        int cr = colorSpace.cr - 128;
+        int cb = colorSpace.cb - 128;
 
-        unsigned char r = colorSpace.y + 1.4 * cr;
-        unsigned char g = colorSpace.y + -0.343 * cb + -0.711 * cr;
-        unsigned char b = colorSpace.y + 1.765 * cb;
+        int r = colorSpace.y + 1.4 * cr;
+        int g = colorSpace.y + -0.343 * cb + -0.711 * cr;
+        int b = colorSpace.y + 1.765 * cb;
 
-        return RGB{r, g, b};
+        if(r < 0) r = 0;
+        if(r > 255) r = 255;
+
+        if(g < 0) g = 0;
+        if(g > 255) g = 255;
+
+        if(b < 0) b = 0;
+        if(b > 255) b = 255;
+
+        return RGB{(unsigned char)r, (unsigned char)g, (unsigned char)b};
     }
 } // namespace Gecon
 
