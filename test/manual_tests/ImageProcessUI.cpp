@@ -19,6 +19,8 @@
 
 #include "ImageProcessUI.hpp"
 
+#include <QHBoxLayout>
+
 ImageProcessUI::ImageProcessUI(QWidget *parent) :
     QWidget(parent),
     ui_(new Ui::ImageProcessUI)
@@ -36,6 +38,9 @@ ImageProcessUI::ImageProcessUI(QWidget *parent) :
     {
         device_ = devices_.front();
     }
+
+    ui_->displayArea->setLayout(new QHBoxLayout(ui_->displayArea));
+    ui_->displayArea->setVisible(false);
 
     timer_ = new QTimer();
     timer_->setInterval(30);
@@ -56,6 +61,28 @@ ImageProcessUI::Image ImageProcessUI::getImage()
     return device_.getSnapshot();
 }
 
+void ImageProcessUI::createDisplay(std::size_t index)
+{
+    if(index + 1 > displays_.size())
+    {
+        for(std::size_t i = 0; i < index + 1 - displays_.size(); ++i)
+        {
+            ImageDisplay* newDisplay = new ImageDisplay(this);
+
+            displays_.push_back(newDisplay);
+            ui_->displayArea->layout()->addWidget(newDisplay);
+
+            newDisplay->setVisible(false);
+        }
+    }
+}
+
+ImageDisplay *ImageProcessUI::getDisplay(std::size_t index)
+{
+    createDisplay(index);
+    return displays_.at(index);
+}
+
 void ImageProcessUI::setDevice(int index)
 {
     device_ = ui_->deviceList->itemData(index).value<DevicePolicy::DeviceAdapter>();
@@ -73,12 +100,17 @@ void ImageProcessUI::stopCapture()
     device_.close();
 }
 
-void ImageProcessUI::showImage(const Image &img)
+void ImageProcessUI::processImage()
 {
-    ui_->image->setPixmap(QPixmap::fromImage(QImage((const uchar*)&(img.rawData()[0]), img.width(), img.height(), img.width() * 3, QImage::Format_RGB888)));
 }
 
-void ImageProcessUI::processImage()
+void ImageDisplay::mousePressEvent(QMouseEvent *ev)
+{
+    emit clicked(ev);
+}
+
+ImageDisplay::ImageDisplay(QWidget *parent):
+    QLabel(parent)
 {
 }
 

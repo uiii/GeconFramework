@@ -23,4 +23,6 @@ project "GeconFramework"
     files {
         "Control.hpp",
         "DeviceManager.hpp",
+        "ColorObject.hpp",
+        "ColorObjectRecognition.cpp"
     }

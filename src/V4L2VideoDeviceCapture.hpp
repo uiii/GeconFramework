@@ -33,8 +33,8 @@
 #include "V4L2DeviceDescriptor.hpp"
 #include "Image.hpp"
 
-#define SNAPSHOT_WIDTH 640
-#define SNAPSHOT_HEIGHT 480
+#define SNAPSHOT_WIDTH 640 //TODO
+#define SNAPSHOT_HEIGHT 480 //TODO
 
 #define BUFFER_COUNT 5
 

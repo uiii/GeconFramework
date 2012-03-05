@@ -17,22 +17,19 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#include "ColorObject.hpp"
 
-#include "ManualTester.hpp"
-
-#include "V4L2VideoDevicePolicyTest.hpp"
-#include "ColorObjectPolicyTest.hpp"
-
-int main(int argc, char* argv[])
+namespace Gecon
 {
-    ManualTester::argc = argc;
-    ManualTester::argv = argv;
+    template< typename ColorSpace >
+    ColorObject<ColorSpace>::ColorObject(Color color):
+        color_(color)
+    {
+    }
 
-    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest());
-    ManualTester::registerTestSuite(new ColorObjectPolicyTest());
-
-    ManualTester::runTests();
-
-    return 0;
-}
+    template< typename ColorSpace >
+    typename ColorObject<ColorSpace>::Color ColorObject<ColorSpace>::color()
+    {
+        return color_;
+    }
+} // namespace Gecon

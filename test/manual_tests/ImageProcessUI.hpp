@@ -24,6 +24,7 @@
 
 #include <QTimer>
 #include <QMetaType>
+#include <QLabel>
 
 #include "ui_ImageProcessUI.h"
 
@@ -37,6 +38,20 @@ namespace Ui {
     class ImageProcessUI;
 }
 
+class ImageDisplay : public QLabel
+{
+    Q_OBJECT
+
+public:
+    ImageDisplay(QWidget *parent);
+
+signals:
+    void clicked(QMouseEvent* ev);
+
+protected:
+    void mousePressEvent(QMouseEvent *ev);
+};
+
 class ImageProcessUI : public QWidget
 {
     Q_OBJECT
@@ -48,12 +63,18 @@ public:
     ~ImageProcessUI();
 
     Image getImage();
-    
+
+    void createDisplay(std::size_t index);
+    ImageDisplay* getDisplay(std::size_t index = 0);
+
+    template< typename ImageType >
+    void showImage(const ImageType& img, std::size_t displayIndex = 0);
+
 public slots:
     void setDevice(int index);
     void startCapture();
     void stopCapture();
-    void showImage(const Image& img);
+
     virtual void processImage();
 
 protected:
@@ -62,8 +83,23 @@ protected:
     DevicePolicy::DeviceAdapter device_;
     DevicePolicy::DeviceAdapterList devices_;
 
+    std::vector<ImageDisplay*> displays_;
+
 private:
     QTimer* timer_;
 };
+
+template< typename ImageType >
+void ImageProcessUI::showImage(const ImageType &img, std::size_t displayIndex)
+{
+    createDisplay(displayIndex);
+
+    ui_->displayArea->setVisible(true);
+
+    ImageDisplay* display = displays_.at(displayIndex);
+    display->setVisible(true);
+    display->setPixmap(QPixmap::fromImage(QImage((const uchar*)&(img.rawData()[0]), img.width(), img.height(), img.width() * 3, QImage::Format_RGB888)));
+}
+
 
 #endif // IMAGEPROCESSUI_HPP
