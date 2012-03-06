@@ -28,7 +28,6 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include "Bitset.hpp"
 #include "ColorObject.hpp"
 #include "Image.hpp"
 #include "Area.hpp"
