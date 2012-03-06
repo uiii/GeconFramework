@@ -5,7 +5,7 @@ export config
 
 .PHONY: all make clean unit-tests
 
-PREMAKE=../config/premake4/premake4
+PREMAKE:=../config/premake4/premake4-$(shell uname -m)
 
 BUILD_DIR=build
 LIB_DIR=${BUILD_DIR}
