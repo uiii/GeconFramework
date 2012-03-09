@@ -51,7 +51,6 @@ namespace Gecon
         typedef std::list<Area*> AreaList;
 
         typedef boost::dynamic_bitset<> Bitset;
-        //typedef Gecon::Bitset Bitset;
         typedef std::vector<Bitset> ColorMap;
 
         typedef Gecon::Image<RGB> OutputImage;

@@ -41,7 +41,7 @@ namespace Gecon
     template< typename ToColorSpace, typename FromColorSpace >
     inline Color<ToColorSpace> convert(const Color<FromColorSpace>& color)
     {
-        return convert<ToColorSpace>((const FromColorSpace&) color);
+        return convert<ToColorSpace>(static_cast<const FromColorSpace&>(color));
     }
 
     template< typename ColorSpace >
