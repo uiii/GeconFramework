@@ -41,6 +41,16 @@ namespace Gecon
             bytes[2] = b;
         }
 
+        bool operator==(const RGB& another)
+        {
+            return r == another.r && g == another.g && b == another.b;
+        }
+
+        bool operator!=(const RGB& another)
+        {
+            return ! (*this == another);
+        }
+
         Component r;
         Component g;
         Component b;
@@ -61,6 +71,16 @@ namespace Gecon
             bytes[0] = y;
             bytes[1] = cb;
             bytes[2] = cr;
+        }
+
+        bool operator==(const YCbCr& another)
+        {
+            return y == another.y && cb == another.cb && cr == another.cr;
+        }
+
+        bool operator!=(const YCbCr& another)
+        {
+            return ! (*this == another);
         }
 
         Component y;

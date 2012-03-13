@@ -34,7 +34,7 @@ namespace Gecon
     {
     }
 
-    void ColorObjectRecognition::prepareObjectsForRecognition(const ColorObjectRecognition::ObjectSet& definedObjects)
+    void ColorObjectRecognition::prepareObjectsForRecognition(const ColorObjectRecognition::ObjectList& definedObjects)
     {
         std::size_t objectCount = definedObjects.size();
 
@@ -45,17 +45,11 @@ namespace Gecon
         cbMap_.assign(256, Bitset(objectCount));
         crMap_.assign(256, Bitset(objectCount));
 
-        /*yMap_.assign(256, Bitset());
-        cbMap_.assign(256, Bitset());
-        crMap_.assign(256, Bitset());*/
-
         for(std::size_t i = 0; i < objects_.size(); ++i)
         {
             Color objectColor = objects_.at(i)->color();
             Bitset objectBitset(objectCount);
             objectBitset.set(i, true);
-
-            //std::cout << i << objectBitset.toString() << std::endl;
 
             int yMapBegin = objectColor.y - Y_RANGE;
             int yMapEnd = objectColor.y + Y_RANGE;
@@ -88,7 +82,7 @@ namespace Gecon
         return image_;
     }
 
-    void ColorObjectRecognition::mergeBlocks_(const AreaBlockList& lastRowBlocks, AreaBlockList& currentRowBlocks)
+    void ColorObjectRecognition::connectBlocks_(const AreaBlockList& lastRowBlocks, AreaBlockList& currentRowBlocks)
     {
         AreaBlockList::const_iterator lastBlock = lastRowBlocks.begin();
         AreaBlockList::iterator currentBlock = currentRowBlocks.begin();
@@ -104,11 +98,11 @@ namespace Gecon
             {
                 if(currentBlock->end < lastBlock->begin) // this current block doesn't overlap any last block
                 {
-                    // create new area
-                    Area* area = new Area(*currentBlock);
-                    areas_.push_back(area);
-
-                    currentBlock->area = area;
+                    if(! currentBlock->area) // this current wans't previously connected to any area
+                    {
+                        // create new area
+                        currentBlock->area = createArea_(*currentBlock);
+                    }
 
                     ++currentBlock;
                 }
@@ -145,12 +139,21 @@ namespace Gecon
         // create new areas for remaining current blocks
         while(currentBlock != currentRowBlocks.end())
         {
-            Area* area = new Area(*currentBlock);
-            areas_.push_back(area);
-
-            currentBlock->area = area;
+            if(! currentBlock->area) // this current wans't previously connected to any area
+            {
+                // create new area
+                currentBlock->area = createArea_(*currentBlock);
+            }
 
             ++currentBlock;
         }
+    }
+
+    ColorObjectRecognition::AreaPtr ColorObjectRecognition::createArea_(const ColorObjectRecognition::AreaBlock& block)
+    {
+        AreaPtr area = new Area(block);
+        areas_.push_back(area);
+
+        return area;
     }
 } // namespace Gecon

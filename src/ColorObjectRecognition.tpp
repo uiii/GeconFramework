@@ -1,9 +1,11 @@
 #include "ColorObjectRecognition.hpp"
 
+#include <map>
+
 namespace Gecon
 {
     template< typename Snapshot >
-    ColorObjectRecognition::ObjectSet ColorObjectRecognition::recognizeObjects(const Snapshot &snapshot)
+    ColorObjectRecognition::ObjectList ColorObjectRecognition::recognizeObjects(const Snapshot &snapshot)
     {
         if(image_.width() != snapshot.width() || image_.height() != snapshot.height())
         {
@@ -13,15 +15,30 @@ namespace Gecon
         AreaBlockList lastRowBlocks;
         AreaBlockList currentRowBlocks;
 
+        // create areas
         for(std::size_t row = 0; row < snapshot.height(); ++row)
         {
             createBlocks_(snapshot, row, currentRowBlocks);
-            mergeBlocks_(lastRowBlocks, currentRowBlocks);
+            connectBlocks_(lastRowBlocks, currentRowBlocks);
 
             std::swap(lastRowBlocks, currentRowBlocks);
         }
 
-        return ObjectSet();
+        // TODO remove vvv
+        for(AreaPtr area : areas_)
+        {
+            area->draw(image_);
+        }
+        // TODO remove ^^^
+
+        // remove all areas
+        while(! areas_.empty())
+        {
+            delete areas_.front();
+            areas_.pop_front();
+        }
+
+        return ObjectList();
     }
 
     template< typename Snapshot >
@@ -29,7 +46,7 @@ namespace Gecon
     {
         currentRowBlocks.clear();
 
-        Object* lastObject = 0;
+        ObjectPtr lastObject = 0;
 
         for(std::size_t column = 0; column < snapshot.width(); ++column)
         {
@@ -43,20 +60,20 @@ namespace Gecon
 
             if(pixelBitset.any())
             {
-                Object* object = objects_.at(pixelBitset.find_first());
+                ObjectPtr object = objects_.at(pixelBitset.find_first());
 
                 if(object == lastObject)
                 {
-                    currentRowBlocks.back().end = column;
+                    currentRowBlocks.back().end = column + 1;
                 }
                 else
                 {
-                    currentRowBlocks.push_back(AreaBlock{0, object, row, column, column});
+                    currentRowBlocks.push_back(AreaBlock{0, object, row, column, column + 1});
                 }
 
                 lastObject = object;
 
-                image_.setAt(column, row, object->color());
+                image_.setAt(column, row, Gecon::Color<RGB>({255,255,255}));
             }
             else
             {

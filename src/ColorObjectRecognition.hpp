@@ -20,7 +20,6 @@
 #ifndef GECON_COLOROBJECTRECOGNITION_HPP
 #define GECON_COLOROBJECTRECOGNITION_HPP
 
-#include <set>
 #include <vector>
 #include <list>
 
@@ -41,14 +40,15 @@ namespace Gecon
         typedef Gecon::Color<ColorSpace> Color;
 
         typedef ColorObject<ColorSpace> Object;
-        typedef std::vector<Object*> ObjectSet; // TODO
-        typedef std::vector<Object*> ObjectList;
+        typedef Object* ObjectPtr;
+        typedef std::vector<ObjectPtr> ObjectList;
 
         typedef Gecon::AreaBlock<Object> AreaBlock;
         typedef std::list<AreaBlock> AreaBlockList;
 
         typedef Gecon::Area<Object> Area;
-        typedef std::list<Area*> AreaList;
+        typedef Area* AreaPtr;
+        typedef std::list<AreaPtr> AreaList;
 
         typedef boost::dynamic_bitset<> Bitset;
         typedef std::vector<Bitset> ColorMap;
@@ -58,10 +58,10 @@ namespace Gecon
 
         ColorObjectRecognition();
 
-        void prepareObjectsForRecognition(const ObjectSet& definedObjects);
+        void prepareObjectsForRecognition(const ObjectList& definedObjects);
 
         template< typename Snapshot >
-        ObjectSet recognizeObjects(const Snapshot& snapshot);
+        ObjectList recognizeObjects(const Snapshot& snapshot);
 
         OutputImage image();
 
@@ -69,9 +69,11 @@ namespace Gecon
         template< typename Snapshot >
         void createBlocks_(Snapshot snapshot, std::size_t row, AreaBlockList &currentRowBlocks);
 
-        void mergeBlocks_(const AreaBlockList& lastRow, AreaBlockList& currentRow);
+        void connectBlocks_(const AreaBlockList& lastRow, AreaBlockList& currentRow);
+        AreaPtr createArea_(const AreaBlock& block);
 
         ObjectList objects_;
+
         ColorMap yMap_;
         ColorMap cbMap_;
         ColorMap crMap_;

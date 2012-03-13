@@ -33,7 +33,7 @@ class ObjectRecognitionUI : public ImageProcessUI
 {
     Q_OBJECT
 
-    typedef Gecon::ColorObjectRecognition::ObjectSet ObjectSet;
+    typedef Gecon::ColorObjectRecognition::ObjectList ObjectSet;
     typedef Gecon::ColorObjectRecognition::Object Object;
     typedef Gecon::ColorObjectRecognition::Color Color;
 

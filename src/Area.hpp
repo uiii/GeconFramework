@@ -23,6 +23,8 @@
 #include <vector>
 #include <list>
 
+#include "Image.hpp" // TODO remove
+
 namespace Gecon
 {
     template< typename Object >
@@ -42,23 +44,41 @@ namespace Gecon
     template< typename Object >
     class Area
     {
-        typedef Gecon::AreaBlock<Object> AreaBlock;
-
         template< typename T >
         friend void joinAreas(Area<T>* first, Area<T>* second);
 
     public:
-        Area(AreaBlock block);
+        typedef Gecon::AreaBlock<Object> AreaBlock;
+        typedef std::list<AreaBlock> AreaBlockList;
+
+        typedef Area<Object>* AreaPtr;
+        typedef std::list<AreaPtr> AreaList;
+
+        Area(const AreaBlock& block);
 
         void addBlock(AreaBlock block);
 
+        bool nested() const;
+        std::size_t size() const;
+
+        void draw(Image<RGB>& image); // TODO remove
+
     private:
+        void includeSubAreas_();
+
+        typedef std::vector<AreaBlock> AreaBlockHeap;
+        typedef bool (*AreaBlockComparison)(const AreaBlock& left, const AreaBlock& right);
+
+        void makeBlockHeap_(AreaBlockHeap& blockHeap, const AreaBlockComparison& comparison);
+        void popBlockHeap_(AreaBlockHeap& blockHeap, const AreaBlockComparison& comparison);
+
         Area* parentArea_;
-        std::list<Area*> subAreas_;
+        AreaList subAreas_;
 
         std::size_t unionRank_;
 
-        std::vector<AreaBlock> blocks_;
+        AreaBlockList blocks_;
+        std::size_t size_;
     };
 
     template< typename Object >
