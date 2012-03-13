@@ -1,5 +1,5 @@
 ifndef config
-  config=debug
+    config=debug
 endif
 export config
 
@@ -15,15 +15,17 @@ MANUAL_TESTS=${BUILD_DIR}/manual_tests
 
 SET_LIB_PATH=LD_LIBRARY_PATH=${LIB_DIR}
 
+GDB=gdb -ex 'r'
+
 all: build make
 
 build: premake4.lua src/premake4.lua test/premake4.lua
-	rm -rf build
-	mkdir -p build
-	cd build && ${PREMAKE} --file=../premake4.lua --to gmake
+	@rm -rf build
+	@mkdir -p build
+	@cd build && ${PREMAKE} --file=../premake4.lua --to gmake
 
 make:
-	cd build && ${MAKE} config=$(config)
+	@cd build && ${MAKE} config=$(config)
 
 unit-tests:
 	-@${SET_LIB_PATH} ${UNIT_TESTS}
@@ -31,5 +33,10 @@ unit-tests:
 manual-tests:
 	-@${SET_LIB_PATH} ${MANUAL_TESTS}
 
+manual-tests-gdb:
+	-@${SET_LIB_PATH} ${GDB} ${MANUAL_TESTS}
+
 clean:
-	rm -rf build
+	@echo "Cleaning..."
+	@rm -rf build
+	@echo "Done."
