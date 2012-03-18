@@ -22,7 +22,7 @@
 
 #include "ManualTest.hpp"
 
-#include "ColorObjectRecognition.hpp"
+#include "ColorObjectPolicy.hpp"
 
 #include "ImageProcessUI.hpp"
 #include "YCbCrColorPicker.hpp"
@@ -34,10 +34,10 @@ class ObjectRecognitionUI : public ImageProcessUI
 {
     Q_OBJECT
 
-    typedef Gecon::ColorObjectRecognition::ObjectList ObjectList;
-    typedef Gecon::ColorObjectRecognition::Object Object;
-    typedef Gecon::ColorObjectRecognition::ObjectPtr ObjectPtr;
-    typedef Gecon::ColorObjectRecognition::Color Color;
+    typedef Gecon::ColorObjectPolicy::ObjectList ObjectList;
+    typedef Gecon::ColorObjectPolicy::Object Object;
+    typedef Gecon::ColorObjectPolicy::ObjectPtr ObjectPtr;
+    typedef Gecon::ColorObjectPolicy::Color Color;
 
 public:
     ObjectRecognitionUI()
@@ -115,7 +115,7 @@ public slots:
     }
 
 private:
-    Gecon::ColorObjectRecognition cor_;
+    Gecon::ColorObjectPolicy cor_;
     YCbCrColorPicker* picker_;
 
     Image raw_;

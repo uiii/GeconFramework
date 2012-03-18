@@ -17,8 +17,8 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_COLOROBJECTRECOGNITION_HPP
-#define GECON_COLOROBJECTRECOGNITION_HPP
+#ifndef GECON_COLOROBJECTPOLICY_HPP
+#define GECON_COLOROBJECTPOLICY_HPP
 
 #include <vector>
 #include <list>
@@ -32,7 +32,7 @@
 
 namespace Gecon
 {
-    class ColorObjectRecognition
+    class ColorObjectPolicy
     {
     public:
         typedef YCbCr ColorSpace;
@@ -55,7 +55,7 @@ namespace Gecon
         typedef Gecon::Image<RGB> OutputImage;
         typedef Gecon::Color<RGB> OutputImageColor;
 
-        ColorObjectRecognition();
+        ColorObjectPolicy();
 
         void prepareObjectsForRecognition(const ObjectList& definedObjects);
 
@@ -88,6 +88,6 @@ namespace Gecon
     };
 } // namespace Gecon
 
-#include "ColorObjectRecognition.tpp"
+#include "ColorObjectPolicy.tpp"
 
-#endif // GECON_COLOROBJECTRECOGNITION_HPP
+#endif // GECON_COLOROBJECTPOLICY_HPP

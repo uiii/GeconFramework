@@ -17,7 +17,7 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ColorObjectRecognition.hpp"
+#include "ColorObjectPolicy.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -28,14 +28,14 @@
 
 namespace Gecon
 {
-    ColorObjectRecognition::ColorObjectRecognition():
+    ColorObjectPolicy::ColorObjectPolicy():
         yMap_(256),
         cbMap_(256),
         crMap_(256)
     {
     }
 
-    void ColorObjectRecognition::prepareObjectsForRecognition(const ColorObjectRecognition::ObjectList& definedObjects)
+    void ColorObjectPolicy::prepareObjectsForRecognition(const ColorObjectPolicy::ObjectList& definedObjects)
     {
         std::size_t objectCount = definedObjects.size();
 
@@ -78,12 +78,12 @@ namespace Gecon
         }
     }
 
-    ColorObjectRecognition::OutputImage ColorObjectRecognition::image()
+    ColorObjectPolicy::OutputImage ColorObjectPolicy::image()
     {
         return image_;
     }
 
-    void ColorObjectRecognition::connectBlocks_(const AreaBlockList& lastRowBlocks, AreaBlockList& currentRowBlocks)
+    void ColorObjectPolicy::connectBlocks_(const AreaBlockList& lastRowBlocks, AreaBlockList& currentRowBlocks)
     {
         AreaBlockList::const_iterator lastBlock = lastRowBlocks.begin();
         AreaBlockList::iterator currentBlock = currentRowBlocks.begin();
@@ -150,7 +150,7 @@ namespace Gecon
         }
     }
 
-    ColorObjectRecognition::AreaPtr ColorObjectRecognition::createArea_(const ColorObjectRecognition::AreaBlock& block)
+    ColorObjectPolicy::AreaPtr ColorObjectPolicy::createArea_(const ColorObjectPolicy::AreaBlock& block)
     {
         AreaPtr area = new Area(block);
         areas_.push_back(area);
@@ -158,7 +158,7 @@ namespace Gecon
         return area;
     }
 
-    void ColorObjectRecognition::selectVisibleObjects_(ObjectList& visibleObjects)
+    void ColorObjectPolicy::selectVisibleObjects_(ObjectList& visibleObjects)
     {
         // choose biggest areas for objects
         std::map<ObjectPtr, AreaPtr> objectAreaMap;

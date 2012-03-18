@@ -1,11 +1,11 @@
-#include "ColorObjectRecognition.hpp"
+#include "ColorObjectPolicy.hpp"
 
 #include <map>
 
 namespace Gecon
 {
     template< typename Snapshot >
-    ColorObjectRecognition::ObjectList ColorObjectRecognition::recognizeObjects(const Snapshot &snapshot)
+    ColorObjectPolicy::ObjectList ColorObjectPolicy::recognizeObjects(const Snapshot &snapshot)
     {
         if(image_.width() != snapshot.width() || image_.height() != snapshot.height())
         {
@@ -27,13 +27,6 @@ namespace Gecon
         ObjectList visibleObjects;
         selectVisibleObjects_(visibleObjects);
 
-        // TODO remove vvv
-        /*for(AreaPtr area : areas_)
-        {
-            area->draw(image_);
-        }*/
-        // TODO remove ^^^
-
         // remove all areas
         while(! areas_.empty())
         {
@@ -45,7 +38,7 @@ namespace Gecon
     }
 
     template< typename Snapshot >
-    void ColorObjectRecognition::createBlocks_(Snapshot snapshot, std::size_t row, AreaBlockList &currentRowBlocks)
+    void ColorObjectPolicy::createBlocks_(Snapshot snapshot, std::size_t row, AreaBlockList &currentRowBlocks)
     {
         currentRowBlocks.clear();
 
