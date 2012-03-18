@@ -15,7 +15,9 @@ MANUAL_TESTS=${BUILD_DIR}/manual_tests
 
 SET_LIB_PATH=LD_LIBRARY_PATH=${LIB_DIR}
 
-GDB=gdb -ex 'r'
+ifeq ($(config),debug)
+    GDB=gdb -ex 'r'
+endif
 
 all: build make
 
@@ -31,9 +33,6 @@ unit-tests:
 	-@${SET_LIB_PATH} ${UNIT_TESTS}
 
 manual-tests:
-	-@${SET_LIB_PATH} ${MANUAL_TESTS}
-
-manual-tests-gdb:
 	-@${SET_LIB_PATH} ${GDB} ${MANUAL_TESTS}
 
 clean:
