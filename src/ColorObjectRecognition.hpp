@@ -29,7 +29,6 @@
 
 #include "ColorObject.hpp"
 #include "Image.hpp"
-#include "Area.hpp"
 
 namespace Gecon
 {
@@ -43,12 +42,12 @@ namespace Gecon
         typedef Object* ObjectPtr;
         typedef std::vector<ObjectPtr> ObjectList;
 
-        typedef Gecon::AreaBlock<Object> AreaBlock;
-        typedef std::list<AreaBlock> AreaBlockList;
-
-        typedef Gecon::Area<Object> Area;
+        typedef Gecon::ColorArea<ColorSpace> Area;
         typedef Area* AreaPtr;
         typedef std::list<AreaPtr> AreaList;
+
+        typedef Area::Block AreaBlock;
+        typedef Area::BlockList AreaBlockList;
 
         typedef boost::dynamic_bitset<> Bitset;
         typedef std::vector<Bitset> ColorMap;
@@ -71,6 +70,11 @@ namespace Gecon
 
         void connectBlocks_(const AreaBlockList& lastRow, AreaBlockList& currentRow);
         AreaPtr createArea_(const AreaBlock& block);
+
+        void selectVisibleObjects_(ObjectList &visibleObjects);
+
+        typedef std::list<Point> PointList;
+        typedef PointList ConvexHull;
 
         ObjectList objects_;
 

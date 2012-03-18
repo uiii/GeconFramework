@@ -21,9 +21,32 @@
 #define GECON_COLOROBJECT_HPP
 
 #include "Color.hpp"
+#include "ColorArea.hpp"
+
+#include <list>
 
 namespace Gecon
 {
+    struct Point
+    {
+        double x;
+        double y;
+    };
+
+    struct BoundingBox
+    {
+        //BoundingBox(): position({0, 0}), width(0), height(0), angle(0) {}
+
+        Point position;
+
+        double width;
+        double height;
+
+        double angle;
+    };
+
+    typedef std::list<Point> ConvexHull;
+
     template< typename ColorSpace >
     class ColorObject
     {
@@ -32,10 +55,21 @@ namespace Gecon
 
         ColorObject(Color color = Color());
 
-        Color color();
+        Color color() const;
+
+        void update(ColorArea<ColorSpace> *area);
+
+        const BoundingBox& boundingBox() const;
+        const ConvexHull& convexHull() const;
 
     private:
+        void updateConvexHull_(ColorArea<ColorSpace> *area);
+        void updateMinimalBoundingBox_(const ConvexHull& convexHull);
+
         Color color_;
+
+        ConvexHull convexHull_;
+        BoundingBox boundingBox_;
     };
 } // namespace Gecon
 

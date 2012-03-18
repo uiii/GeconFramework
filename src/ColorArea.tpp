@@ -1,11 +1,12 @@
-#include "Area.hpp"
+#include "ColorArea.hpp"
 
 #include <algorithm>
 
 namespace Gecon
 {
-    template< typename Object >
-    Area<Object>::Area(const AreaBlock &block):
+    template< typename ColorSpace >
+    ColorArea<ColorSpace>::ColorArea(const Block &block):
+        object_(0),
         parentArea_(0),
         unionRank_(0),
         size_(0)
@@ -13,10 +14,18 @@ namespace Gecon
         addBlock(block);
     }
 
-    template< typename Object >
-    void Area<Object>::addBlock(AreaBlock block)
+    template< typename ColorSpace >
+    typename ColorArea<ColorSpace>::ObjectPtr ColorArea<ColorSpace>::object() const
+    {
+        return object_;
+    }
+
+    template< typename ColorSpace >
+    void ColorArea<ColorSpace>::addBlock(Block block)
     {
         block.area = this;
+
+        object_ = block.object;
 
         if(blocks_.empty() || blocks_.back().row != block.row)
         {
@@ -30,60 +39,42 @@ namespace Gecon
         }
     }
 
-    template< typename Object >
-    bool Area<Object>::nested() const
+    template< typename ColorSpace >
+    bool ColorArea<ColorSpace>::nested() const
     {
         return parentArea_ != 0;
     }
 
-    template< typename Object >
-    std::size_t Area<Object>::size() const
+    template< typename ColorSpace >
+    std::size_t ColorArea<ColorSpace>::size()
     {
         includeSubAreas_();
 
         return size_;
     }
 
-    template< typename Object >
-    void Area<Object>::draw(Image<RGB>& image)
+    template< typename ColorSpace >
+    const typename ColorArea<ColorSpace>::BlockList& ColorArea<ColorSpace>::blocks()
     {
-        if(nested())
-        {
-            return;
-        }
-
         includeSubAreas_();
 
-        for(AreaBlock& block : blocks_)
-        {
-            for(std::size_t i = block.begin; i < block.end; ++i)
-            {
-                if(image.at(i, block.row) != Color<RGB>())
-                {
-                    image.setAt(i, block.row, Color<RGB>({255,255,0}));
-                }
-                else
-                {
-                    image.setAt(i, block.row, Color<RGB>({0,255,255}));
-                }
-            }
-        }
+        return blocks_;
     }
 
-    template< typename Object >
-    void Area<Object>::includeSubAreas_()
+    template< typename ColorSpace >
+    void ColorArea<ColorSpace>::includeSubAreas_()
     {
-        auto rowComparison = [](const AreaBlock& left, const AreaBlock& right) -> bool { return left.row > right.row; };
+        auto rowComparison = [](const Block& left, const Block& right) -> bool { return left.row > right.row; };
 
         AreaBlockHeap blockHeap;
         makeBlockHeap_(blockHeap, rowComparison);
 
-        AreaBlockList newBlocks;
+        BlockList newBlocks;
         std::size_t newSize = 0;
 
         while(! blockHeap.empty())
         {
-            AreaBlock newBlock = blockHeap.front(); // currentBlock with minimal row in the heap
+            Block newBlock = blockHeap.front(); // currentBlock with minimal row in the heap
 
             if(newBlocks.empty() || newBlocks.back().row < newBlock.row)
             {
@@ -94,7 +85,7 @@ namespace Gecon
             }
             else // blocks' rows are equal
             {
-                AreaBlock& lastAddedBlock = newBlocks.back();
+                Block& lastAddedBlock = newBlocks.back();
 
                 std::size_t newBegin = std::min(lastAddedBlock.begin, newBlock.begin);
                 std::size_t newEnd = std::max(lastAddedBlock.end, newBlock.end);
@@ -113,8 +104,8 @@ namespace Gecon
         size_ = newSize;
     }
 
-    template< typename Object >
-    void Area<Object>::makeBlockHeap_(Area<Object>::AreaBlockHeap &blockHeap, const Area<Object>::AreaBlockComparison& comparison)
+    template< typename ColorSpace >
+    void ColorArea<ColorSpace>::makeBlockHeap_(ColorArea<ColorSpace>::AreaBlockHeap &blockHeap, const ColorArea<ColorSpace>::AreaBlockComparison& comparison)
     {
         blockHeap.reserve(subAreas_.size() + 1); // allocate place for every subarea and one for this area
 
@@ -138,13 +129,13 @@ namespace Gecon
         std::make_heap(blockHeap.begin(), blockHeap.end(), comparison);
     }
 
-    template< typename Object >
-    void Area<Object>::popBlockHeap_(Area<Object>::AreaBlockHeap &blockHeap, const Area<Object>::AreaBlockComparison& comparison)
+    template< typename ColorSpace >
+    void ColorArea<ColorSpace>::popBlockHeap_(ColorArea<ColorSpace>::AreaBlockHeap &blockHeap, const ColorArea<ColorSpace>::AreaBlockComparison& comparison)
     {
         std::pop_heap(blockHeap.begin(), blockHeap.end(), comparison);
 
         // add subarea's next block to heap if any
-        AreaBlockList& areaBlocks = blockHeap.back().area->blocks_;
+        BlockList& areaBlocks = blockHeap.back().area->blocks_;
         if(! areaBlocks.empty())
         {
             blockHeap.back() = areaBlocks.front();
@@ -158,13 +149,13 @@ namespace Gecon
         }
     }
 
-    template< typename Object >
-    void joinAreas(Area<Object>* first, Area<Object>* second)
+    template< typename ColorSpace >
+    void joinAreas(ColorArea<ColorSpace>* first, ColorArea<ColorSpace>* second)
     {
-        typename Area<Object>::AreaList compressList;
+        typename ColorArea<ColorSpace>::AreaList compressList;
 
         // find first's root area
-        Area<Object>* firstRoot = first;
+        ColorArea<ColorSpace>* firstRoot = first;
         while(firstRoot->parentArea_)
         {
             compressList.push_back(firstRoot);
@@ -175,7 +166,7 @@ namespace Gecon
         // compress first's root successors
         while(! compressList.empty()) // TODO
         {
-            Area<Object>* area = compressList.back();
+            ColorArea<ColorSpace>* area = compressList.back();
             compressList.pop_back();
 
             if(area->parentArea_ != firstRoot) // last area in the list is already compressed
@@ -186,7 +177,7 @@ namespace Gecon
         }
 
         // find second's root area
-        Area<Object>* secondRoot = second;
+        ColorArea<ColorSpace>* secondRoot = second;
         while(secondRoot->parentArea_)
         {
             compressList.push_back(secondRoot);
@@ -197,7 +188,7 @@ namespace Gecon
         // compress second's root successors
         while(! compressList.empty()) // TODO
         {
-            Area<Object>* area = compressList.back();
+            ColorArea<ColorSpace>* area = compressList.back();
             compressList.pop_back();
 
             if(area->parentArea_ != secondRoot) // last area in the list is already compressed

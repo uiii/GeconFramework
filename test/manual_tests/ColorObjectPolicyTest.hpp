@@ -28,13 +28,15 @@
 #include "YCbCrColorPicker.hpp"
 
 #include <QMouseEvent>
+#include <QPainter>
 
 class ObjectRecognitionUI : public ImageProcessUI
 {
     Q_OBJECT
 
-    typedef Gecon::ColorObjectRecognition::ObjectList ObjectSet;
+    typedef Gecon::ColorObjectRecognition::ObjectList ObjectList;
     typedef Gecon::ColorObjectRecognition::Object Object;
+    typedef Gecon::ColorObjectRecognition::ObjectPtr ObjectPtr;
     typedef Gecon::ColorObjectRecognition::Color Color;
 
 public:
@@ -50,7 +52,7 @@ public:
 
     virtual void setColor(Color color)
     {
-        ObjectSet objects;
+        ObjectList objects;
         objects.push_back(new Object(color));
         cor_.prepareObjectsForRecognition(objects);
 
@@ -60,25 +62,65 @@ public:
 public slots:
     virtual void imageClicked(QMouseEvent* e)
     {
-        Color color = img_.at(e->pos().x(), e->pos().y());
+        Color color = raw_.at(e->pos().x(), e->pos().y());
         setColor(color);
     }
 
     virtual void processImage()
     {
-        img_ = getImage();
+        raw_ = getImage();
 
-        cor_.recognizeObjects(img_);
+        ObjectList objects = cor_.recognizeObjects(raw_);
 
-        showImage(img_, 0);
-        showImage(cor_.image(), 1);
+        original_ = toQImage(raw_);
+        segmented_ = toQImage(cor_.image());
+
+        QPainter painter(&segmented_);
+
+        for(ObjectPtr object : objects)
+        {
+            const Gecon::BoundingBox& boundingBox = object->boundingBox();
+
+            const Gecon::ConvexHull& convexHull = object->convexHull();
+
+            QPolygon convexHullPolygon;
+            for(const Gecon::Point& point : convexHull)
+            {
+                convexHullPolygon << QPoint(point.x, point.y);
+            }
+
+            painter.save();
+            painter.setPen(Qt::green);
+            painter.drawPolygon(convexHullPolygon);
+            painter.restore();
+
+            painter.save();
+            painter.setPen(Qt::red);
+
+            std::cout << "pos: " << boundingBox.position.x << " " << boundingBox.position.y << std::endl;
+            std::cout << "size: " << boundingBox.width << " " << boundingBox.height << std::endl;
+            std::cout << "angle: " << boundingBox.angle << std::endl;
+
+            painter.translate(boundingBox.position.x, boundingBox.position.y);
+            painter.rotate(-(boundingBox.angle));
+            painter.translate(-boundingBox.width / 2.0, -boundingBox.height / 2.0);
+
+            painter.drawRect(0, 0, boundingBox.width, boundingBox.height);
+
+            painter.restore();
+        }
+
+        showImage(original_, 0);
+        showImage(segmented_, 1);
     }
 
 private:
     Gecon::ColorObjectRecognition cor_;
     YCbCrColorPicker* picker_;
 
-    Image img_;
+    Image raw_;
+    QImage original_;
+    QImage segmented_;
 };
 
 class ColorObjectPolicyTest : public ManualTestSuite

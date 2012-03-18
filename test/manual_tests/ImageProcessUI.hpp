@@ -68,7 +68,9 @@ public:
     ImageDisplay* getDisplay(std::size_t index = 0);
 
     template< typename ImageType >
-    void showImage(const ImageType& img, std::size_t displayIndex = 0);
+    QImage toQImage(const ImageType& img);
+
+    void showImage(const QImage& img, std::size_t displayIndex = 0);
 
 public slots:
     void setDevice(int index);
@@ -90,15 +92,9 @@ private:
 };
 
 template< typename ImageType >
-void ImageProcessUI::showImage(const ImageType &img, std::size_t displayIndex)
+QImage ImageProcessUI::toQImage(const ImageType& img)
 {
-    createDisplay(displayIndex);
-
-    ui_->displayArea->setVisible(true);
-
-    ImageDisplay* display = displays_.at(displayIndex);
-    display->setVisible(true);
-    display->setPixmap(QPixmap::fromImage(QImage((const uchar*)&(img.rawData()[0]), img.width(), img.height(), img.width() * 3, QImage::Format_RGB888)));
+    return QImage((const uchar*)&(img.rawData()[0]), img.width(), img.height(), img.width() * 3, QImage::Format_RGB888);
 }
 
 

@@ -20,6 +20,7 @@
 #include "ColorObjectRecognition.hpp"
 
 #include <algorithm>
+#include <cmath>
 
 #define Y_RANGE 50
 #define CB_RANGE 20
@@ -155,5 +156,45 @@ namespace Gecon
         areas_.push_back(area);
 
         return area;
+    }
+
+    void ColorObjectRecognition::selectVisibleObjects_(ObjectList& visibleObjects)
+    {
+        // choose biggest areas for objects
+        std::map<ObjectPtr, AreaPtr> objectAreaMap;
+        for(ObjectPtr object : objects_)
+        {
+            objectAreaMap[object] = 0;
+        }
+
+        for(AreaPtr area : areas_)
+        {
+            if(! area->nested())
+            {
+                ObjectPtr object = area->object();
+                AreaPtr objectCurrentArea = objectAreaMap[object];
+
+                if(objectCurrentArea == 0 || objectCurrentArea->size() < area->size())
+                {
+                    objectAreaMap[object] = area;
+                }
+            }
+        }
+
+        auto objectAreaPair = objectAreaMap.begin();
+        while(objectAreaPair != objectAreaMap.end())
+        {
+            ObjectPtr object = objectAreaPair->first;
+            AreaPtr area = objectAreaPair->second;
+
+            if(area != 0 && area->size() > 20) // TODO magic
+            {
+                object->update(area);
+
+                visibleObjects.push_back(object);
+            }
+
+            ++objectAreaPair;
+        }
     }
 } // namespace Gecon

@@ -24,11 +24,14 @@ namespace Gecon
             std::swap(lastRowBlocks, currentRowBlocks);
         }
 
+        ObjectList visibleObjects;
+        selectVisibleObjects_(visibleObjects);
+
         // TODO remove vvv
-        for(AreaPtr area : areas_)
+        /*for(AreaPtr area : areas_)
         {
             area->draw(image_);
-        }
+        }*/
         // TODO remove ^^^
 
         // remove all areas
@@ -38,7 +41,7 @@ namespace Gecon
             areas_.pop_front();
         }
 
-        return ObjectList();
+        return visibleObjects;
     }
 
     template< typename Snapshot >

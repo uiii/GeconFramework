@@ -104,6 +104,17 @@ void ImageProcessUI::processImage()
 {
 }
 
+void ImageProcessUI::showImage(const QImage& img, std::size_t displayIndex)
+{
+    createDisplay(displayIndex);
+
+    ui_->displayArea->setVisible(true);
+
+    ImageDisplay* display = displays_.at(displayIndex);
+    display->setVisible(true);
+    display->setPixmap(QPixmap::fromImage(img));
+}
+
 void ImageDisplay::mousePressEvent(QMouseEvent *ev)
 {
     emit clicked(ev);

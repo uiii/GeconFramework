@@ -32,9 +32,7 @@ class DeviceCaptureUI : public ImageProcessUI
 public slots:
     virtual void processImage()
     {
-        Image img = getImage();
-
-        showImage(img);
+        showImage(toQImage(getImage()));
     }
 };
 
