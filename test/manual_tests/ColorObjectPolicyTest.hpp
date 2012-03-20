@@ -79,12 +79,12 @@ public slots:
 
         for(ObjectPtr object : objects)
         {
-            const Gecon::BoundingBox& boundingBox = object->boundingBox();
+            const Object::BoundingBox& boundingBox = object->boundingBox();
 
-            const Gecon::ConvexHull& convexHull = object->convexHull();
+            const Object::ConvexHull& convexHull = object->convexHull();
 
             QPolygon convexHullPolygon;
-            for(const Gecon::Point& point : convexHull)
+            for(const Object::Point& point : convexHull)
             {
                 convexHullPolygon << QPoint(point.x, point.y);
             }

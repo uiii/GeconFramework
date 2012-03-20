@@ -27,20 +27,6 @@
 
 namespace Gecon
 {
-    /*template< typename Object >
-    class ColorArea; // forward declaration
-
-    template< typename Object >
-    struct ColorAreaBlock
-    {
-        ColorArea<Object>* area;
-        Object* object;
-
-        std::size_t row;
-        std::size_t begin;
-        std::size_t end;
-    };*/
-
     template< typename ColorSpace >
     class ColorObject; // forward declaration
 

@@ -27,31 +27,31 @@
 
 namespace Gecon
 {
-    struct Point
-    {
-        double x;
-        double y;
-    };
-
-    struct BoundingBox
-    {
-        //BoundingBox(): position({0, 0}), width(0), height(0), angle(0) {}
-
-        Point position;
-
-        double width;
-        double height;
-
-        double angle;
-    };
-
-    typedef std::list<Point> ConvexHull;
-
     template< typename ColorSpace >
     class ColorObject
     {
     public:
         typedef Gecon::Color<ColorSpace> Color;
+
+        struct Point
+        {
+            double x;
+            double y;
+        };
+
+        struct BoundingBox
+        {
+            BoundingBox(): position({0, 0}), width(0), height(0), angle(0) {}
+
+            Point position;
+
+            double width;
+            double height;
+
+            double angle;
+        };
+
+        typedef std::list<Point> ConvexHull;
 
         ColorObject(Color color = Color());
 

@@ -73,9 +73,6 @@ namespace Gecon
 
         void selectVisibleObjects_(ObjectList &visibleObjects);
 
-        typedef std::list<Point> PointList;
-        typedef PointList ConvexHull;
-
         ObjectList objects_;
 
         ColorMap yMap_;

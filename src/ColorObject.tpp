@@ -43,13 +43,13 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
-    const BoundingBox& ColorObject<ColorSpace>::boundingBox() const
+    const typename ColorObject<ColorSpace>::BoundingBox& ColorObject<ColorSpace>::boundingBox() const
     {
         return boundingBox_;
     }
 
     template< typename ColorSpace >
-    const ConvexHull& ColorObject<ColorSpace>::convexHull() const
+    const typename ColorObject<ColorSpace>::ConvexHull& ColorObject<ColorSpace>::convexHull() const
     {
         return convexHull_;
     }
@@ -154,7 +154,7 @@ namespace Gecon
     void ColorObject<ColorSpace>::updateMinimalBoundingBox_(const ConvexHull& convexHull)
     {
         typedef Point Vector;
-        typedef ConvexHull::const_iterator PointIterator;
+        typedef typename ConvexHull::const_iterator PointIterator;
 
         // find significant point iterators
         PointIterator top = convexHull.begin();
