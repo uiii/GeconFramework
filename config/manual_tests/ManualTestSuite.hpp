@@ -3,9 +3,7 @@
 
 #include <string>
 #include <map>
-
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 
 class ManualTestSuite
 {
@@ -19,7 +17,7 @@ public:
     virtual void run();
 
 protected:
-    typedef boost::function<void()> GenericTestPtr;
+    typedef std::function<void()> GenericTestPtr;
 
     virtual void addTest(const std::string& testName, GenericTestPtr test);
 

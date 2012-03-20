@@ -42,8 +42,8 @@ public:
     V4L2VideoDevicePolicyTest():
         ManualTestSuite("V4L2 Device policy")
     {
-        addTest("Device List", boost::bind(&V4L2VideoDevicePolicyTest::deviceListTest, this));
-        addTest("Device Capture", boost::bind(&V4L2VideoDevicePolicyTest::deviceCaptureTest, this));
+        addTest("Device List", std::bind(&V4L2VideoDevicePolicyTest::deviceListTest, this));
+        addTest("Device Capture", std::bind(&V4L2VideoDevicePolicyTest::deviceCaptureTest, this));
     }
 
     void deviceListTest()

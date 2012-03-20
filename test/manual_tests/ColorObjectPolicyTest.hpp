@@ -129,7 +129,7 @@ public:
     ColorObjectPolicyTest():
         ManualTestSuite("Color Object Policy")
     {
-        addTest("Color Object Recognition", boost::bind(&ColorObjectPolicyTest::colorObjectRecognition, this));
+        addTest("Color Object Recognition", std::bind(&ColorObjectPolicyTest::colorObjectRecognition, this));
     }
 
     void colorObjectRecognition()

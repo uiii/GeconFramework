@@ -1,6 +1,7 @@
 #include "ManualTester.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 int ManualTester::argc = 0;
 char** ManualTester::argv = NULL;
