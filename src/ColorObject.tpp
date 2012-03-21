@@ -337,7 +337,7 @@ namespace Gecon
             return { firstPoint->x + multiple * first.line.x, firstPoint->y + multiple * first.line.y };
         };
 
-        auto getLineAngle = [&getAngleCosine](const CaliperLine& caliperLine) -> double
+        auto getLineAngle = [](const CaliperLine& caliperLine) -> double
         {
             double x = caliperLine.line.x;
             if(caliperLine.line.y == 0)
