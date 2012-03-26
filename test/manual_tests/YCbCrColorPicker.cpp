@@ -24,12 +24,14 @@
 #include <QHBoxLayout>
 #include <QPainter>
 
+#include <QMouseEvent>
+
 #include <iostream>
 
 LuminancePicker::LuminancePicker(QWidget *parent):
     QLabel(parent)
 {
-    setFixedSize(256,256);
+    setFixedSize(20, 256);
     updateColor(YCbCrColor());
 }
 
@@ -40,6 +42,56 @@ void LuminancePicker::updateColor(YCbCrColor color)
 }
 
 void LuminancePicker::paintEvent(QPaintEvent *)
+{
+    QImage img(20, 256, QImage::Format_RGB32);
+    for(std::size_t y = 0; y < 256; ++y)
+    {
+        RGBColor rgb(YCbCrColor({(uchar)(255 - y),color_.cb,color_.cr}));
+        for(std::size_t i = 0; i < 20; ++i)
+        {
+            ((uint*)img.scanLine(y))[i] = QColor(rgb.r, rgb.g, rgb.b).rgb();
+        }
+    }
+
+    QPainter painter(this);
+
+    QRect imageRect(0,0,256,256);
+    painter.drawPixmap(imageRect, QPixmap::fromImage(img));
+    painter.setPen(Qt::red);
+
+    QRect rect(0, (255 - color_.y) - 50, 19, 100);
+    painter.drawRect(rect.intersected(imageRect));
+}
+
+void LuminancePicker::mousePressEvent(QMouseEvent *ev)
+{
+    updateColor(YCbCrColor({(uchar)(255 - ev->pos().y()), color_.cb, color_.cr}));
+    emit colorChanged(color_);
+}
+
+void LuminancePicker::mouseMoveEvent(QMouseEvent *ev)
+{
+    if(ev->buttons() & Qt::LeftButton)
+    {
+        updateColor(YCbCrColor({(uchar)(255 - ev->pos().y()), color_.cb, color_.cr}));
+        emit colorChanged(color_);
+    }
+}
+
+ChrominancePicker::ChrominancePicker(QWidget *parent):
+    QLabel(parent)
+{
+    setFixedSize(256,256);
+    updateColor(YCbCrColor());
+}
+
+void ChrominancePicker::updateColor(YCbCrColor color)
+{
+    color_ = color;
+    repaint();
+}
+
+void ChrominancePicker::paintEvent(QPaintEvent *)
 {
     QImage img(256, 256, QImage::Format_RGB32);
     for(std::size_t cr = 0; cr < 256; ++cr)
@@ -61,43 +113,25 @@ void LuminancePicker::paintEvent(QPaintEvent *)
     painter.drawRect(rect.intersected(imageRect));
 }
 
-ChrominancePicker::ChrominancePicker(QWidget *parent):
-    QLabel(parent)
+void ChrominancePicker::mousePressEvent(QMouseEvent *ev)
 {
-    setFixedSize(20, 256);
-    updateColor(YCbCrColor());
+    updateColor(YCbCrColor({color_.y, (uchar)ev->pos().x(), (uchar)ev->pos().y()}));
+    emit colorChanged(color_);
 }
 
-void ChrominancePicker::updateColor(YCbCrColor color)
+void ChrominancePicker::mouseMoveEvent(QMouseEvent *ev)
 {
-    color_ = color;
-    repaint();
-}
-
-void ChrominancePicker::paintEvent(QPaintEvent *)
-{
-    QImage img(20, 256, QImage::Format_RGB32);
-    for(std::size_t y = 0; y < 256; ++y)
+    if(ev->buttons() & Qt::LeftButton)
     {
-        RGBColor rgb(YCbCrColor({(uchar)(255 - y),color_.cb,color_.cr}));
-        for(std::size_t i = 0; i < 20; ++i)
-        {
-            ((uint*)img.scanLine(y))[i] = QColor(rgb.r, rgb.g, rgb.b).rgb();
-        }
+        updateColor(YCbCrColor({color_.y, (uchar)ev->pos().x(), (uchar)ev->pos().y()}));
+        emit colorChanged(color_);
     }
-
-    QPainter painter(this);
-
-    QRect imageRect(0,0,256,256);
-    painter.drawPixmap(imageRect, QPixmap::fromImage(img));
-    painter.setPen(Qt::red);
-
-    QRect rect(0, color_.y - 50, 19, 100);
-    painter.drawRect(rect.intersected(imageRect));
 }
 
 YCbCrColorPicker::YCbCrColorPicker(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    luminance_(0),
+    chrominance_(0)
 {
     chrominance_ = new ChrominancePicker(this);
     luminance_ = new LuminancePicker(this);
@@ -105,8 +139,8 @@ YCbCrColorPicker::YCbCrColorPicker(QWidget *parent) :
     QWidget* colorPanel = new QWidget(this);
 
     QHBoxLayout* hbox = new QHBoxLayout;
-    hbox->addWidget(luminance_);
     hbox->addWidget(chrominance_);
+    hbox->addWidget(luminance_);
 
     colorPanel->setLayout(hbox);
 
@@ -114,10 +148,15 @@ YCbCrColorPicker::YCbCrColorPicker(QWidget *parent) :
     vbox->addWidget(colorPanel);
 
     setLayout(vbox);
+
+    connect(luminance_, SIGNAL(colorChanged(YCbCrColor)), this, SLOT(updateColor(YCbCrColor)));
+    connect(chrominance_, SIGNAL(colorChanged(YCbCrColor)), this, SLOT(updateColor(YCbCrColor)));
 }
 
 void YCbCrColorPicker::updateColor(YCbCrColor color)
 {
     luminance_->updateColor(color);
     chrominance_->updateColor(color);
+
+    emit colorChanged(color);
 }

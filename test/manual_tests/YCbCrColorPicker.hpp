@@ -37,8 +37,13 @@ public:
 
     void updateColor(YCbCrColor color);
 
+signals:
+    void colorChanged(YCbCrColor color);
+
 protected:
     void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent *ev);
+    void mouseMoveEvent(QMouseEvent *ev);
 
 private:
     YCbCrColor color_;
@@ -53,8 +58,13 @@ public:
 
     void updateColor(YCbCrColor color);
 
+signals:
+    void colorChanged(YCbCrColor color);
+
 protected:
     void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent *ev);
+    void mouseMoveEvent(QMouseEvent *ev);
 
 private:
     YCbCrColor color_;
@@ -68,7 +78,8 @@ public:
     explicit YCbCrColorPicker(QWidget *parent = 0);
     
 signals:
-    
+    void colorChanged(YCbCrColor color);
+
 public slots:
     void updateColor(YCbCrColor color);
 

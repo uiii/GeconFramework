@@ -35,7 +35,7 @@ namespace Gecon
     {
     }
 
-    void ColorObjectPolicy::prepareObjectsForRecognition(const ColorObjectPolicy::ObjectList& definedObjects)
+    void ColorObjectPolicy::prepareObjects(const ColorObjectPolicy::ObjectSet& definedObjects)
     {
         std::size_t objectCount = definedObjects.size();
 
@@ -158,7 +158,7 @@ namespace Gecon
         return area;
     }
 
-    void ColorObjectPolicy::selectVisibleObjects_(ObjectList& visibleObjects)
+    void ColorObjectPolicy::selectVisibleObjects_(ObjectSet& visibleObjects)
     {
         // choose biggest areas for objects
         std::map<ObjectPtr, AreaPtr> objectAreaMap;
@@ -191,7 +191,7 @@ namespace Gecon
             {
                 object->update(area);
 
-                visibleObjects.push_back(object);
+                visibleObjects.insert(object);
             }
 
             ++objectAreaPair;

@@ -5,7 +5,7 @@
 namespace Gecon
 {
     template< typename Snapshot >
-    ColorObjectPolicy::ObjectList ColorObjectPolicy::recognizeObjects(const Snapshot &snapshot)
+    ColorObjectPolicy::ObjectSet ColorObjectPolicy::recognizeObjects(const Snapshot &snapshot)
     {
         if(image_.width() != snapshot.width() || image_.height() != snapshot.height())
         {
@@ -24,7 +24,7 @@ namespace Gecon
             std::swap(lastRowBlocks, currentRowBlocks);
         }
 
-        ObjectList visibleObjects;
+        ObjectSet visibleObjects;
         selectVisibleObjects_(visibleObjects);
 
         // remove all areas

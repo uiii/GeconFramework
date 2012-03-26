@@ -34,7 +34,7 @@ class ObjectRecognitionUI : public ImageProcessUI
 {
     Q_OBJECT
 
-    typedef Gecon::ColorObjectPolicy::ObjectList ObjectList;
+    typedef Gecon::ColorObjectPolicy::ObjectSet ObjectList;
     typedef Gecon::ColorObjectPolicy::Object Object;
     typedef Gecon::ColorObjectPolicy::ObjectPtr ObjectPtr;
     typedef Gecon::ColorObjectPolicy::Color Color;
@@ -46,24 +46,28 @@ public:
         layout()->addWidget(picker_);
 
         connect(getDisplay(0), SIGNAL(clicked(QMouseEvent*)), this, SLOT(imageClicked(QMouseEvent*)));
+        connect(picker_, SIGNAL(colorChanged(YCbCrColor)), this, SLOT(setColor(YCbCrColor)));
     }
 
-    virtual ~ObjectRecognitionUI() {}
-
-    virtual void setColor(Color color)
+    virtual ~ObjectRecognitionUI()
     {
-        ObjectList objects;
-        objects.push_back(new Object(color));
-        cor_.prepareObjectsForRecognition(objects);
-
-        picker_->updateColor(color);
+        clearObjects_();
     }
 
 public slots:
+    virtual void setColor(YCbCrColor color)
+    {
+        clearObjects_();
+
+        objects_.insert(new Object(color));
+        cor_.prepareObjects(objects_);
+    }
+
     virtual void imageClicked(QMouseEvent* e)
     {
         Color color = raw_.at(e->pos().x(), e->pos().y());
-        setColor(color);
+
+        picker_->updateColor(color);
     }
 
     virtual void processImage()
@@ -115,12 +119,24 @@ public slots:
     }
 
 private:
+    void clearObjects_()
+    {
+        for(ObjectPtr object : objects_)
+        {
+            delete object;
+        }
+
+        objects_.clear();
+    }
+
     Gecon::ColorObjectPolicy cor_;
     YCbCrColorPicker* picker_;
 
     Image raw_;
     QImage original_;
     QImage segmented_;
+
+    ObjectList objects_;
 };
 
 class ColorObjectPolicyTest : public ManualTestSuite

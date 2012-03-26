@@ -20,8 +20,10 @@
 #ifndef GECON_COLOROBJECTPOLICY_HPP
 #define GECON_COLOROBJECTPOLICY_HPP
 
+#include <memory>
 #include <vector>
 #include <list>
+#include <set>
 
 #include <cstdint>
 
@@ -40,7 +42,8 @@ namespace Gecon
 
         typedef ColorObject<ColorSpace> Object;
         typedef Object* ObjectPtr;
-        typedef std::vector<ObjectPtr> ObjectList;
+        typedef std::set<ObjectPtr> ObjectSet;
+        typedef std::vector<ObjectPtr> ObjectVector;
 
         typedef Gecon::ColorArea<ColorSpace> Area;
         typedef Area* AreaPtr;
@@ -57,10 +60,10 @@ namespace Gecon
 
         ColorObjectPolicy();
 
-        void prepareObjectsForRecognition(const ObjectList& definedObjects);
+        void prepareObjects(const ObjectSet& definedObjects);
 
         template< typename Snapshot >
-        ObjectList recognizeObjects(const Snapshot& snapshot);
+        ObjectSet recognizeObjects(const Snapshot& snapshot);
 
         OutputImage image();
 
@@ -71,9 +74,9 @@ namespace Gecon
         void connectBlocks_(const AreaBlockList& lastRow, AreaBlockList& currentRow);
         AreaPtr createArea_(const AreaBlock& block);
 
-        void selectVisibleObjects_(ObjectList &visibleObjects);
+        void selectVisibleObjects_(ObjectSet &visibleObjects);
 
-        ObjectList objects_;
+        ObjectVector objects_;
 
         ColorMap yMap_;
         ColorMap cbMap_;
