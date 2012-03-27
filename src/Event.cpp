@@ -17,28 +17,24 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "GestureRelationCondition.hpp"
+#include "Event.hpp"
 
 namespace Gecon
 {
-    template< typename Object >
-    GestureRelationCondition<Object>::GestureRelationCondition(Object *left, Object *right, Property leftProperty, Property rightProperty, Condition condition):
-        left_(left),
-        right_(right),
-        leftProperty_(leftProperty),
-        rightProperty_(rightProperty),
-        condition_(condition)
+    Event::Event()
     {
     }
 
-    template< typename Object >
-    GestureCondition<Object>::ObjectList GestureRelationCondition<Object>::objects() const
+    void Event::raise() const
     {
-        return { left_, right_ };
+        for(ActionPtr action : actions_)
+        {
+            action();
+        }
     }
 
-    bool GestureRelationCondition::check() const
+    void Event::connect(Event::ActionPtr action)
     {
-        return condition_(*left_, *right_);
+        actions_.push_back(action);
     }
 } // namespace Gecon

@@ -1,8 +1,8 @@
-#include "GestureMotionCondition.hpp"
+#include "ObjectMotionCondition.hpp"
 
 namespace Gecon
 {
-    GestureMotionCondition::GestureMotionCondition(Gecon::Object *object, const Motion& motion):
+    ObjectMotionCondition::ObjectMotionCondition(Gecon::Object *object, const Motion& motion):
         object_(object),
         motion_(motion),
         lastRecordedMotionTime_(0),
@@ -10,12 +10,12 @@ namespace Gecon
     {
     }
 
-    GestureCondition::ObjectList GestureMotionCondition::objects() const
+    Gesture::ObjectSet ObjectMotionCondition::objects() const
     {
         //return { object_ }; TODO
     }
 
-    bool GestureMotionCondition::check() const
+    bool ObjectMotionCondition::check() const
     {
         bool motionDone = false;
 
@@ -39,7 +39,7 @@ namespace Gecon
         return motionDone;
     }
 
-    void GestureMotionCondition::normalize_(GestureMotionCondition::Motion& motion)
+    void ObjectMotionCondition::normalize_(ObjectMotionCondition::Motion& motion)
     {
         if(motion.empty())
         {
@@ -92,7 +92,7 @@ namespace Gecon
         }
     }
 
-    void GestureMotionCondition::motionToMoves(const GestureMotionCondition::Motion& motion, GestureMotionCondition::MoveSequence& moves)
+    void ObjectMotionCondition::motionToMoves_(const ObjectMotionCondition::Motion& motion, ObjectMotionCondition::MoveSequence& moves)
     {
         moves.clear();
 
@@ -183,7 +183,7 @@ namespace Gecon
         }
     }
 
-    std::size_t GestureMotionCondition::distance_(const GestureMotionCondition::Motion& left, const GestureMotionCondition::Motion& right)
+    std::size_t ObjectMotionCondition::distance_(const ObjectMotionCondition::Motion& left, const ObjectMotionCondition::Motion& right)
     {
         std::size_t width = left.size();
         std::size_t height = right.size();
@@ -227,5 +227,11 @@ namespace Gecon
         }
 
         return table[width - 1][height - 1];
+    }
+
+    template< typename Object >
+    typename ObjectMotionCondition<Object>::Ptr makeGestureMotionCondition(Object* object, const Motion& motion)
+    {
+        return std::make_shared<ObjectMotionCondition<Object>>(object, motion);
     }
 } // namespace Gecon

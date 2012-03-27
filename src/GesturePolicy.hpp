@@ -17,38 +17,38 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_GESTURERELATIONCONDITION_HPP
-#define GECON_GESTURERELATIONCONDITION_HPP
+#ifndef GECON_GESTUREPOLICY_HPP
+#define GECON_GESTUREPOLICY_HPP
 
-#include "GestureCondition.hpp"
+#include <set>
+#include <map>
 
-#include <functional>
+#include "ObjectGesture.hpp"
 
 namespace Gecon
 {
-    template< typename Object, typename PropertyType >
-    class GestureRelationCondition : public GestureCondition<Object>
+    template< typename Object >
+    class GesturePolicy
     {
     public:
-        typedef std::function<PropertyType(const Object&)> Property;
-        typedef std::function<bool(const PropertyType&, const PropertyType&)> Condition;
+        typedef Object* ObjectPtr;
+        typedef ObjectGesture<Object> Gesture;
+        typedef Gesture* GesturePtr;
 
-        GestureRelationCondition(Object* left, Object* right, Property leftProperty, Property rightProperty, Condition condition);
+        typedef std::set<ObjectPtr> ObjectSet;
+        typedef std::set<GesturePtr> GestureSet;
 
-        ObjectList objects() const;
+        GesturePolicy();
 
-        bool check() const;
+        void prepareGestures(const GestureSet& gestures);
+        void checkGestures(const ObjectSet& objects);
 
     private:
-        Object* left_;
-        Object* right_;
-
-        Property leftProperty_;
-        Property rightProperty_;
-        Condition condition_;
+        std::map<ObjectPtr, GestureSet> objectGestures_;
+        GestureSet gesturesToCheck_;
     };
 } // namespace Gecon
 
-#include "GestureRelationCondition.tpp"
+#include "GesturePolicy.tpp"
 
-#endif // GECON_GESTURERELATIONCONDITION_HPP
+#endif // GECON_GESTUREPOLICY_HPP

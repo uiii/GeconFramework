@@ -17,10 +17,11 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_GESTUREMOTIONCONDITION_HPP
-#define GECON_GESTUREMOTIONCONDITION_HPP
+#ifndef GECON_OBJECTMOTIONCONDITION_HPP
+#define GECON_OBJECTMOTIONCONDITION_HPP
 
-#include "GestureCondition.hpp"
+#include "ObjectGesture.hpp"
+#include "Event.hpp"
 
 #include <list>
 #include <chrono>
@@ -31,7 +32,7 @@ namespace Gecon
     // - preda se jako odkaz v konstruktoru
 
     template< typename Object >
-    class GestureMotionCondition : public GestureCondition<Object>
+    class ObjectMotionCondition : public ObjectGesture<Object>
     {
     public:
         struct Point
@@ -44,9 +45,9 @@ namespace Gecon
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
 
-        GestureMotionCondition(Object* object, const Motion& motion);
+        ObjectMotionCondition(Object* object, const Motion& motion);
 
-        ObjectList objects() const;
+        ObjectSet objects() const;
 
         bool check() const;
 
@@ -55,7 +56,7 @@ namespace Gecon
         typedef std::chrono::system_clock::duration Duration;
 
         void normalize_(Motion& motion);
-        void motionToMoves(const Motion& motion, MoveSequence& moves);
+        void motionToMoves_(const Motion& motion, MoveSequence& moves);
         std::size_t distance_(const Motion& left, const Motion& right);
 
         Object* object_;
@@ -66,9 +67,17 @@ namespace Gecon
         Time lastRecordedMotionTime_;
 
         Duration timeout_;
+
+        Event motionDoneEvent_;
+
+    public:
+        typedef std::shared_ptr<ObjectMotionCondition<Object> > Ptr;
     };
+
+    template< typename Object >
+    typename ObjectMotionCondition<Object>::Ptr makeGestureMotionCondition(Object* object, const Motion& motion);
 } // namespace Gecon
 
-#include "GestureMotionCondition.tpp"
+#include "ObjectMotionCondition.tpp"
 
-#endif // GECON_GESTUREMOTIONCONDITION_HPP
+#endif // GECON_OBJECTMOTIONCONDITION_HPP

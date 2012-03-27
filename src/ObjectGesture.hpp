@@ -17,23 +17,25 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_GESTURECONDITION_HPP
-#define GECON_GESTURECONDITION_HPP
+#ifndef GECON_OBJECTGESTURE_HPP
+#define GECON_OBJECTGESTURE_HPP
+
+#include <set>
 
 namespace Gecon
 {
     template< typename Object >
-    class GestureCondition
+    class ObjectGesture
     {
     public:
-        typedef std::vector<Object*> ObjectList;
+        typedef std::set<Object*> ObjectSet;
 
-        virtual ~GestureCondition() {}
+        virtual ~ObjectGesture() {}
 
-        virtual ObjectList objects() const = 0;
+        virtual ObjectSet objects() const = 0;
 
         virtual bool check() const = 0;
     };
 } // namespace Gecon
 
-#endif // GECON_GESTURECONDITION_HPP
+#endif // GECON_OBJECTGESTURE_HPP

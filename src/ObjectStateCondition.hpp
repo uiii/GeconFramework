@@ -17,25 +17,26 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_GESTURESTATECONDITION_HPP
-#define GECON_GESTURESTATECONDITION_HPP
+#ifndef GECON_OBJECTSTATECONDITION_HPP
+#define GECON_OBJECTSTATECONDITION_HPP
 
-#include "GestureCondition.hpp"
+#include "ObjectGesture.hpp"
+#include "Event.hpp"
 
 #include <functional>
 
 namespace Gecon
 {
     template< typename Object, typename PropertyType >
-    class GestureStateCondition : public GestureCondition<Object>
+    class ObjectStateCondition : public ObjectGesture<Object>
     {
     public:
-        typedef std::function<PropertyType(const Object&)> Property;
+        typedef PropertyType (Object::*Property)();
         typedef std::function<bool(const PropertyType&)> Condition;
 
-        GestureStateCondition(Object* object, Property property, Condition condition);
+        ObjectStateCondition(Object* object, Property property, Condition condition);
 
-        ObjectList objects() const;
+        ObjectSet objects() const;
 
         bool check() const;
 
@@ -43,9 +44,22 @@ namespace Gecon
         Object* object_;
         Property property_;
         Condition condition_;
+
+        Event stateEnter_;
+        Event stateLeave_;
+
+    public:
+        typedef std::shared_ptr<ObjectStateCondition> Ptr;
     };
+
+    template< typename Object, typename PropertyType >
+    typename ObjectStateCondition<Object, PropertyType>::Ptr makeGestureStateCondition(
+            Object* object,
+            typename ObjectStateCondition<Object, PropertyType>::Property property,
+            typename ObjectStateCondition<Object, PropertyType>::Condition condition
+    );
 } // namespace Gecon
 
-#include "GestureStateCondition.tpp"
+#include "ObjectStateCondition.tpp"
 
-#endif // GECON_GESTURESTATECONDITION_HPP
+#endif // GECON_OBJECTSTATECONDITION_HPP

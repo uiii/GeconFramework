@@ -17,12 +17,13 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COLOROBJECTPOLICYTEST_HPP
-#define COLOROBJECTPOLICYTEST_HPP
+#ifndef GESTUREPOLICYTEST_HPP
+#define GESTUREPOLICYTEST_HPP
 
 #include "ManualTest.hpp"
 
 #include "ColorObjectPolicy.hpp"
+#include "GesturePolicy.hpp"
 
 #include "ImageProcessUI.hpp"
 #include "YCbCrColorPicker.hpp"
@@ -30,7 +31,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-class ObjectRecognitionUI : public ImageProcessUI
+class GestureRecognitionUI : public ImageProcessUI
 {
     Q_OBJECT
 
@@ -40,16 +41,12 @@ class ObjectRecognitionUI : public ImageProcessUI
     typedef Gecon::ColorObjectPolicy::Color Color;
 
 public:
-    ObjectRecognitionUI()
+    GestureRecognitionUI()
     {
-        picker_ = new YCbCrColorPicker(this);
-        layout()->addWidget(picker_);
-
         connect(getDisplay(0), SIGNAL(clicked(QMouseEvent*)), this, SLOT(imageClicked(QMouseEvent*)));
-        connect(picker_, SIGNAL(colorChanged(YCbCrColor)), this, SLOT(setColor(YCbCrColor)));
     }
 
-    virtual ~ObjectRecognitionUI()
+    virtual ~GestureRecognitionUI()
     {
         clearObjects_();
     }
@@ -67,7 +64,7 @@ public slots:
     {
         Color color = raw_.at(e->pos().x(), e->pos().y());
 
-        picker_->updateColor(color);
+        setColor(color);
     }
 
     virtual void processImage()
@@ -130,7 +127,6 @@ private:
     }
 
     Gecon::ColorObjectPolicy cor_;
-    YCbCrColorPicker* picker_;
 
     Image raw_;
     QImage original_;
@@ -139,24 +135,24 @@ private:
     ObjectList objects_;
 };
 
-class ObjectPolicyTest : public ManualTestSuite
+class GesturePolicyTest : public ManualTestSuite
 {
 public:
-    ObjectPolicyTest():
-        ManualTestSuite("Color Object Policy")
+    GesturePolicyTest():
+        ManualTestSuite("Gesture Policy")
     {
-        addTest("Color Object Recognition", std::bind(&ObjectPolicyTest::colorObjectRecognition, this));
+        addTest("Gesture Recognition", std::bind(&GesturePolicyTest::colorObjectRecognition, this));
     }
 
     void colorObjectRecognition()
     {
         QApplication app(ManualTester::argc, ManualTester::argv);
 
-        ObjectRecognitionUI ui;
+        GestureRecognitionUI ui;
         ui.show();
 
         app.exec();
     }
 };
 
-#endif // COLOROBJECTPOLICYTEST_HPP
+#endif // GESTUREPOLICYTEST_HPP

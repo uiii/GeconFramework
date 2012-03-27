@@ -23,14 +23,16 @@
 
 #include "V4L2VideoDevicePolicyTest.hpp"
 #include "ColorObjectPolicyTest.hpp"
+#include "GesturePolicyTest.hpp"
 
 int main(int argc, char* argv[])
 {
     ManualTester::argc = argc;
     ManualTester::argv = argv;
 
-    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest());
-    ManualTester::registerTestSuite(new ColorObjectPolicyTest());
+    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest);
+    ManualTester::registerTestSuite(new ObjectPolicyTest);
+    ManualTester::registerTestSuite(new GesturePolicyTest);
 
     ManualTester::runTests();
 

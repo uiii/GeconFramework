@@ -17,27 +17,30 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "GestureStateCondition.hpp"
+#ifndef GECON_EVENT_HPP
+#define GECON_EVENT_HPP
+
+#include <functional>
+#include <list>
 
 namespace Gecon
 {
-    template< typename Object >
-    GestureStateCondition<Object>::GestureStateCondition(Gecon::Object *object, Property property, Condition condition):
-        object_(object),
-        property_(property),
-        condition_(condition)
+    class Event
     {
-    }
+    public:
+        typedef std::fuction<void()> Action;
+        typedef Action* ActionPtr;
+        typedef std::list<ActionPtr> ActionList;
 
-    template< typename Object >
-    GestureCondition<Object>::ObjectList GestureStateCondition<Object>::objects() const
-    {
-        return { object_ };
-    }
+        Event();
 
-    template< typename Object >
-    void GestureStateCondition<Object>::check() const
-    {
-        return condition_(property_(*object_));
-    }
+        void raise() const;
+
+        void connect(ActionPtr action);
+
+    private:
+        ActionList actions_;
+    };
 } // namespace Gecon
+
+#endif // GECON_EVENT_HPP
