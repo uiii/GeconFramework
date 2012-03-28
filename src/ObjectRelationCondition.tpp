@@ -43,6 +43,11 @@ namespace Gecon
         return { left_, right_ };
     }
 
+    const std::string& ObjectRelationCondition::description() const
+    {
+        return description_;
+    }
+
     template< typename Object, typename PropertyType >
     bool ObjectRelationCondition<Object, PropertyType>::check() const
     {

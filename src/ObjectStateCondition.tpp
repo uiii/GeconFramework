@@ -25,9 +25,11 @@ namespace Gecon
     ObjectStateCondition<Object, PropertyType>::ObjectStateCondition(
             Object* object,
             typename ObjectStateCondition<Object, PropertyType>::Property property,
-            typename ObjectStateCondition<Object, PropertyType>::Condition condition
+            typename ObjectStateCondition<Object, PropertyType>::Condition condition,
+            const std::string& description
     ):
         object_(object),
+        description_(description),
         property_(property),
         condition_(condition)
     {
@@ -37,6 +39,11 @@ namespace Gecon
     Gesture<Object, PropertyType>::ObjectSet ObjectStateCondition<Object>::objects() const
     {
         return { object_ };
+    }
+
+    const std::string ObjectStateCondition::description() const
+    {
+        return description_;
     }
 
     template< typename Object, typename PropertyType >

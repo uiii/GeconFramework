@@ -2,8 +2,9 @@
 
 namespace Gecon
 {
-    ObjectMotionCondition::ObjectMotionCondition(Gecon::Object *object, const Motion& motion):
+    ObjectMotionCondition::ObjectMotionCondition(Gecon::Object *object, const Motion& motion, const std::string& description):
         object_(object),
+        description_(description),
         motion_(motion),
         lastRecordedMotionTime_(0),
         timeout_(std::chrono::milliseconds(1000))
@@ -13,6 +14,11 @@ namespace Gecon
     Gesture::ObjectSet ObjectMotionCondition::objects() const
     {
         //return { object_ }; TODO
+    }
+
+    const std::string& ObjectMotionCondition::description() const
+    {
+        return description_;
     }
 
     bool ObjectMotionCondition::check() const

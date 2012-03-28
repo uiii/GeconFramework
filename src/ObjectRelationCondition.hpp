@@ -34,9 +34,17 @@ namespace Gecon
         typedef std::function<PropertyType(const Object&)> Property;
         typedef std::function<bool(const PropertyType&, const PropertyType&)> Condition;
 
-        ObjectRelationCondition(Object* left, Object* right, Property leftProperty, Property rightProperty, Condition condition);
+        ObjectRelationCondition(
+                Object* left,
+                Object* right,
+                Property leftProperty,
+                Property rightProperty,
+                Condition condition,
+                const std::string& description = ""
+        );
 
         ObjectSet objects() const;
+        const std::string& description() const;
 
         bool check() const;
 
@@ -47,6 +55,8 @@ namespace Gecon
         Property leftProperty_;
         Property rightProperty_;
         Condition condition_;
+
+        std::string description_;
 
         Event relationEnterEvent;
         Event relationLeaveEvent;

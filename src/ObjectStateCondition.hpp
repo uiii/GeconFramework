@@ -34,9 +34,10 @@ namespace Gecon
         typedef PropertyType (Object::*Property)();
         typedef std::function<bool(const PropertyType&)> Condition;
 
-        ObjectStateCondition(Object* object, Property property, Condition condition);
+        ObjectStateCondition(Object* object, Property property, Condition condition, const std::string& description = "");
 
         ObjectSet objects() const;
+        const std::string description() const;
 
         bool check() const;
 

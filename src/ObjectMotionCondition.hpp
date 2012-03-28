@@ -45,9 +45,10 @@ namespace Gecon
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
 
-        ObjectMotionCondition(Object* object, const Motion& motion);
+        ObjectMotionCondition(Object* object, const Motion& motion, const std::string& description = "");
 
         ObjectSet objects() const;
+        const std::string& description() const;
 
         bool check() const;
 
@@ -60,6 +61,9 @@ namespace Gecon
         std::size_t distance_(const Motion& left, const Motion& right);
 
         Object* object_;
+
+        std::string description_;
+
         Motion motion_;
         MoveSequence moves_;
 

@@ -21,6 +21,7 @@
 #define GECON_OBJECTGESTURE_HPP
 
 #include <set>
+#include <string>
 
 namespace Gecon
 {
@@ -33,6 +34,7 @@ namespace Gecon
         virtual ~ObjectGesture() {}
 
         virtual ObjectSet objects() const = 0;
+        virtual const std::string& description() const = 0;
 
         virtual bool check() const = 0;
     };
