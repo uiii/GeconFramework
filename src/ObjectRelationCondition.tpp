@@ -33,7 +33,9 @@ namespace Gecon
         right_(right),
         leftProperty_(leftProperty),
         rightProperty_(rightProperty),
-        condition_(condition)
+        condition_(condition),
+        relationEnterEvent_(left, right),
+        relationLeaveEvent_(left, right)
     {
     }
 
@@ -43,9 +45,22 @@ namespace Gecon
         return { left_, right_ };
     }
 
-    const std::string& ObjectRelationCondition::description() const
+    template< typename Object, typename PropertyType >
+    const std::string& ObjectRelationCondition<Object, PropertyType>::description() const
     {
         return description_;
+    }
+
+    template< typename Object, typename PropertyType >
+    const ObjectRelationCondition<Object, PropertyType>::Event& ObjectRelationCondition<Object, PropertyType>::relationEnterEvent() const
+    {
+        return relationEnterEvent_;
+    }
+
+    template< typename Object, typename PropertyType >
+    const ObjectRelationCondition<Object, PropertyType>::Event& ObjectRelationCondition<Object, PropertyType>::relationLeaveEvent() const
+    {
+        return relationLeaveEvent_;
     }
 
     template< typename Object, typename PropertyType >

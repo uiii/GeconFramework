@@ -2,26 +2,37 @@
 
 namespace Gecon
 {
-    ObjectMotionCondition::ObjectMotionCondition(Gecon::Object *object, const Motion& motion, const std::string& description):
+    template< typename Object >
+    ObjectMotionCondition<Object>::ObjectMotionCondition(Gecon::Object *object, const Motion& motion, const std::string& description):
         object_(object),
         description_(description),
         motion_(motion),
         lastRecordedMotionTime_(0),
-        timeout_(std::chrono::milliseconds(1000))
+        timeout_(std::chrono::milliseconds(1000)),
+        motionDoneEvent_(object)
     {
     }
 
-    Gesture::ObjectSet ObjectMotionCondition::objects() const
+    template< typename Object >
+    Gesture::ObjectSet ObjectMotionCondition<Object>::objects() const
     {
         //return { object_ }; TODO
     }
 
-    const std::string& ObjectMotionCondition::description() const
+    template< typename Object >
+    const std::string& ObjectMotionCondition<Object>::description() const
     {
         return description_;
     }
 
-    bool ObjectMotionCondition::check() const
+    template< typename Object >
+    const Event& ObjectMotionCondition<Object>::motionDoneEvent() const
+    {
+        return motionDoneEvent_;
+    }
+
+    template< typename Object >
+    bool ObjectMotionCondition<Object>::check() const
     {
         bool motionDone = false;
 
@@ -45,7 +56,8 @@ namespace Gecon
         return motionDone;
     }
 
-    void ObjectMotionCondition::normalize_(ObjectMotionCondition::Motion& motion)
+    template< typename Object >
+    void ObjectMotionCondition<Object>::normalize_(ObjectMotionCondition<Object>::Motion& motion)
     {
         if(motion.empty())
         {
@@ -98,7 +110,8 @@ namespace Gecon
         }
     }
 
-    void ObjectMotionCondition::motionToMoves_(const ObjectMotionCondition::Motion& motion, ObjectMotionCondition::MoveSequence& moves)
+    template< typename Object >
+    void ObjectMotionCondition<Object>::motionToMoves_(const ObjectMotionCondition<Object>::Motion& motion, ObjectMotionCondition<Object>::MoveSequence& moves)
     {
         moves.clear();
 
@@ -189,7 +202,8 @@ namespace Gecon
         }
     }
 
-    std::size_t ObjectMotionCondition::distance_(const ObjectMotionCondition::Motion& left, const ObjectMotionCondition::Motion& right)
+    template< typename Object >
+    std::size_t ObjectMotionCondition<Object>::distance_(const ObjectMotionCondition<Object>::Motion& left, const ObjectMotionCondition<Object>::Motion& right)
     {
         std::size_t width = left.size();
         std::size_t height = right.size();

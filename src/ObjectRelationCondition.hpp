@@ -21,7 +21,7 @@
 #define GECON_OBJECTRELATIONCONDITION_HPP
 
 #include "ObjectGesture.hpp"
-#include "Event.hpp"
+#include "ObjectGestureEvent.hpp"
 
 #include <functional>
 
@@ -33,6 +33,8 @@ namespace Gecon
     public:
         typedef std::function<PropertyType(const Object&)> Property;
         typedef std::function<bool(const PropertyType&, const PropertyType&)> Condition;
+
+        typedef ObjectGestureEvent<ObjectRelationCondition<Object, PropertyType> > Event;
 
         ObjectRelationCondition(
                 Object* left,
@@ -46,6 +48,9 @@ namespace Gecon
         ObjectSet objects() const;
         const std::string& description() const;
 
+        const Event& relationEnterEvent() const;
+        const Event& relationLeaveEvent() const;
+
         bool check() const;
 
     private:
@@ -58,8 +63,8 @@ namespace Gecon
 
         std::string description_;
 
-        Event relationEnterEvent;
-        Event relationLeaveEvent;
+        Event relationEnterEvent_;
+        Event relationLeaveEvent_;
 
     public:
         typedef std::shared_ptr<ObjectRelationCondition<Object> > Ptr;

@@ -21,7 +21,7 @@
 #define GECON_OBJECTMOTIONCONDITION_HPP
 
 #include "ObjectGesture.hpp"
-#include "Event.hpp"
+#include "ObjectGestureEvent.hpp"
 
 #include <list>
 #include <chrono>
@@ -45,10 +45,14 @@ namespace Gecon
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
 
+        typedef ObjectGestureEvent<ObjectMotionCondition<Object> > Event;
+
         ObjectMotionCondition(Object* object, const Motion& motion, const std::string& description = "");
 
         ObjectSet objects() const;
         const std::string& description() const;
+
+        const Event& motionDoneEvent() const;
 
         bool check() const;
 

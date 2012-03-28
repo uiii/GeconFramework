@@ -31,19 +31,34 @@ namespace Gecon
         object_(object),
         description_(description),
         property_(property),
-        condition_(condition)
+        condition_(condition),
+        stateEnterEvent_(object),
+        stateLeaveEvent_(object)
     {
     }
 
     template< typename Object, typename PropertyType >
-    Gesture<Object, PropertyType>::ObjectSet ObjectStateCondition<Object>::objects() const
+    ObjectGesture<Object, PropertyType>::ObjectSet ObjectStateCondition<Object, PropertyType>::objects() const
     {
         return { object_ };
     }
 
-    const std::string ObjectStateCondition::description() const
+    template< typename Object, typename PropertyType >
+    const std::string& ObjectStateCondition<Object, PropertyType>::description() const
     {
         return description_;
+    }
+
+    template< typename Object, typename PropertyType >
+    const ObjectStateCondition<Object, PropertyType>::Event& ObjectStateCondition<Object, PropertyType>::stateEnterEvent() const
+    {
+        return stateEnterEvent_;
+    }
+
+    template< typename Object, typename PropertyType >
+    const ObjectStateCondition<Object, PropertyType>::Event& ObjectStateCondition<Object, PropertyType>::stateLeaveEvent() const
+    {
+        return stateLeaveEvent_
     }
 
     template< typename Object, typename PropertyType >

@@ -21,7 +21,7 @@
 #define GECON_OBJECTSTATECONDITION_HPP
 
 #include "ObjectGesture.hpp"
-#include "Event.hpp"
+#include "ObjectGestureEvent.hpp"
 
 #include <functional>
 
@@ -34,10 +34,15 @@ namespace Gecon
         typedef PropertyType (Object::*Property)();
         typedef std::function<bool(const PropertyType&)> Condition;
 
+        typedef ObjectGestureEvent<ObjectStateCondition<Object, PropertyType> > Event;
+
         ObjectStateCondition(Object* object, Property property, Condition condition, const std::string& description = "");
 
         ObjectSet objects() const;
-        const std::string description() const;
+        const std::string& description() const;
+
+        const Event& stateEnterEvent() const;
+        const Event& stateLeaveEvent() const;
 
         bool check() const;
 
@@ -46,8 +51,8 @@ namespace Gecon
         Property property_;
         Condition condition_;
 
-        Event stateEnter_;
-        Event stateLeave_;
+        Event stateEnterEvent_;
+        Event stateLeaveEvent_;
 
     public:
         typedef std::shared_ptr<ObjectStateCondition> Ptr;

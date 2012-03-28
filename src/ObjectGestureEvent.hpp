@@ -17,24 +17,36 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Event.hpp"
+#ifndef GECON_OBJECTGESTUREEVENT_HPP
+#define GECON_OBJECTGESTUREEVENT_HPP
+
+#include <functional>
+#include <list>
 
 namespace Gecon
 {
-    Event::Event()
+    template< typename ObjectGesture >
+    class ObjectGestureEvent
     {
-    }
+    public:
+        typedef std::fuction<void(ObjectGestureEvent<ObjectGesture>*)> Action;
+        typedef Action* ActionPtr;
+        typedef std::list<ActionPtr> ActionList;
 
-    void Event::raise() const
-    {
-        for(ActionPtr action : actions_)
-        {
-            action();
-        }
-    }
+        ObjectGestureEvent(ObjectGesture* object);
 
-    void Event::connect(Event::ActionPtr action)
-    {
-        actions_.push_back(action);
-    }
+        const ObjectGesture* gesture() const;
+
+        void raise() const;
+
+        void connect(ActionPtr action) const;
+
+    private:
+        ObjectGesture* gesture_;
+        mutable ActionList actions_;
+    };
 } // namespace Gecon
+
+#include "ObjectGestureEvent.tpp"
+
+#endif // GECON_OBJECTGESTUREEVENT_HPP
