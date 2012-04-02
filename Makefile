@@ -52,7 +52,7 @@ run-unit-tests:
 run-manual-tests:
 	-@${GDB} ${MANUAL_TESTS}
 
-install:
+install: build
 	@${MAKE} -f ${CONFIG_DIR}/install/install.mk --no-print-directory
 
 uninstall:
