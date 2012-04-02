@@ -2,6 +2,8 @@ project "GeconFramework"
     kind "SharedLib"
     language "C++"
 
+    targetdir "../lib"
+
     links {
         "boost_filesystem",
         "boost_thread"
@@ -19,10 +21,8 @@ project "GeconFramework"
         }
 
     includedirs { "./" }
+    includedirs { "../include/Gecon" }
 
     files {
-        "Control.hpp",
-        "DeviceManager.hpp",
-        "ColorObject.hpp",
         "ColorObjectPolicy.cpp"
     }

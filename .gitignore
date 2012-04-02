@@ -3,7 +3,9 @@
 build
 *_
 GeconFramework.*
-tools
 tmp
 *.autosave
 res
+bin
+lib
+inst

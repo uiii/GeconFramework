@@ -1,41 +1,69 @@
 ifndef config
     config=debug
 endif
-export config
 
-.PHONY: all make clean unit-tests
+# VARIABLES
+export BASE_DIR=$(shell dirname $(shell readlink -f $(lastword $(MAKEFILE_LIST))))
 
-PREMAKE:=../config/premake4/premake4-$(shell uname -m)
+export CONFIG_DIR=${BASE_DIR}/config
+export BUILD_DIR=${BASE_DIR}/build
+export BIN_DIR=${BASE_DIR}/bin
+export INCLUDE_DIR=${BASE_DIR}/include
+export LIB_DIR=${BASE_DIR}/lib
+export TOOLS_DIR=${BASE_DIR}/tools
 
-BUILD_DIR=build
-LIB_DIR=${BUILD_DIR}
+PREMAKE:=${TOOLS_DIR}/premake4-$(shell uname -m)
 
-UNIT_TESTS=${BUILD_DIR}/unit_tests
-MANUAL_TESTS=${BUILD_DIR}/manual_tests
+UNIT_TESTS=${BIN_DIR}/unit_tests
+MANUAL_TESTS=${BIN_DIR}/manual_tests
 
-SET_LIB_PATH=LD_LIBRARY_PATH=${LIB_DIR}
+export LD_LIBRARY_PATH=${LIB_DIR}
 
 ifeq ($(config),debug)
     GDB=gdb -ex 'r'
 endif
 
-all: build make
+ifndef install_prefix
+    INSTALL_PREFIX=/usr/local
+else
+    INSTALL_PREFIX=$(shell readlink -f $(install_prefix))
+endif
+export INSTALL_PREFIX
 
-build: premake4.lua src/premake4.lua test/premake4.lua
-	@rm -rf build
-	@mkdir -p build
-	@cd build && ${PREMAKE} --file=../premake4.lua --to gmake
+# TARGETS
 
-make:
-	@cd build && ${MAKE} config=$(config)
+.PHONY: all configure build clean unit-tests
 
-unit-tests:
-	-@${SET_LIB_PATH} ${UNIT_TESTS}
+all: configure build
 
-manual-tests:
-	-@${SET_LIB_PATH} ${GDB} ${MANUAL_TESTS}
+configure: ${BUILD_DIR}/Makefile
+
+${BUILD_DIR}/Makefile: premake4.lua src/premake4.lua test/premake4.lua
+	@rm -rf ${BUILD_DIR}
+	@mkdir -p ${BUILD_DIR}
+	@cd ${BUILD_DIR} && ${PREMAKE} --file=${BASE_DIR}/premake4.lua --to gmake
+
+build: configure
+	@cd ${BUILD_DIR} && ${MAKE} config=$(config) --no-print-directory
+
+run-unit-tests:
+	-@${UNIT_TESTS}
+
+run-manual-tests:
+	-@${GDB} ${MANUAL_TESTS}
+
+install:
+	@${MAKE} -f ${CONFIG_DIR}/install/install.mk --no-print-directory
+
+uninstall:
+	@${MAKE} -f ${CONFIG_DIR}/install/uninstall.mk --no-print-directory
 
 clean:
 	@echo "Cleaning..."
+	@if [ -d ${BUILD_DIR} ]; \
+		then cd ${BUILD_DIR} && ${MAKE} clean --no-print-directory; \
+	fi
+	@rm -rf bin
+	@rm -rf lib
 	@rm -rf build
 	@echo "Done."

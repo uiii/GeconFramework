@@ -2,10 +2,12 @@ project "UnitTesting"
     kind "ConsoleApp"
     language "C++"
 
+    targetdir "../bin"
     targetname "unit_tests"
 
+    includedirs { "../include/Gecon" }
     includedirs { "../src" }
-    includedirs { "../lib/tut-2009-08-30" }
+    includedirs { "../third-party/tut-2009-08-30" }
     includedirs { "../config/tut/" }
 
     files { "../config/tut/*.cpp" }
@@ -25,12 +27,14 @@ project "ManualTesting"
         "boost_thread"
     }
 
+    targetdir "../bin"
     targetname "manual_tests"
 
+    includedirs { "../include/Gecon" }
     includedirs { "../src" }
-    includedirs { "../config/manual_tests" }
+    includedirs { "../third-party/ManualTest/include" }
 
-    files { "../config/manual_tests/*.cpp" }
+    files { "../third-party/ManualTest/src/*.cpp" }
 
     files { "manual_tests/*.hpp" }
     files { "manual_tests/*.cpp" }

@@ -1,7 +1,7 @@
 /**
- * This file is part of the Gecon Framework project (https://github.com/uiii/Gecon-Framework).
+ * This file is part of the Gecon Framework project (https://github.com/uiii/GeconFramework).
  *
- * Copyright (C) 2011 by Richard Jedlička <uiii.dev@gmail.com>
+ * Copyright (C) 2012 by Richard Jedlička <uiii.dev@gmail.com>
  *
  * Gecon Framework is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,27 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#ifndef GECON_OBJECTGESTURE_HPP
+#define GECON_OBJECTGESTURE_HPP
 
-#include "ManualTest.hpp"
+#include <set>
+#include <string>
 
-#include "V4L2VideoDevicePolicyTest.hpp"
-#include "ColorObjectPolicyTest.hpp"
-#include "GesturePolicyTest.hpp"
-
-int main(int argc, char* argv[])
+namespace Gecon
 {
-    ManualTester::argc = argc;
-    ManualTester::argv = argv;
+    template< typename Object >
+    class ObjectGesture
+    {
+    public:
+        typedef std::set<Object*> ObjectSet;
 
-    ManualTester::registerTestSuite(new V4L2VideoDevicePolicyTest);
-    ManualTester::registerTestSuite(new ObjectPolicyTest);
-    ManualTester::registerTestSuite(new GesturePolicyTest);
+        virtual ~ObjectGesture() {}
 
-    ManualTester::runTests();
+        virtual ObjectSet objects() const = 0;
+        virtual const std::string& description() const = 0;
 
-    return 0;
-}
+        virtual bool check() const = 0;
+    };
+} // namespace Gecon
+
+#endif // GECON_OBJECTGESTURE_HPP

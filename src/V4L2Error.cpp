@@ -1,7 +1,7 @@
 /**
- * This file is part of the Gecon Framework project (https://github.com/uiii/Gecon-Framework).
+ * This file is part of the Gecon Framework project (https://github.com/uiii/GeconFramework).
  *
- * Copyright (C) 2011 by Richard Jedlička <uiii.dev@gmail.com>
+ * Copyright (C) 2012 by Richard Jedlička <uiii.dev@gmail.com>
  *
  * Gecon Framework is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
