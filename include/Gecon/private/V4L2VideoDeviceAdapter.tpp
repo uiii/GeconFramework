@@ -29,16 +29,16 @@ namespace Gecon
     }
 
     template< typename Snapshot >
-    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter(const fs::path& file):
+    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter<Snapshot>& another):
         isOpened_(false),
-        capture_(std::make_shared<V4L2VideoDeviceCapture>(file))
+        capture_(another.capture_)
     {
     }
 
     template< typename Snapshot >
-    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter<Snapshot>& another):
+    V4L2VideoDeviceAdapter<Snapshot>::V4L2VideoDeviceAdapter(const fs::path& file):
         isOpened_(false),
-        capture_(another.capture_)
+        capture_(std::make_shared<V4L2VideoDeviceCapture>(file))
     {
     }
 
@@ -131,5 +131,17 @@ namespace Gecon
             isOpened_ = false;
             throw;
         }
+    }
+
+    template< typename Snapshot >
+    bool V4L2VideoDeviceAdapter<Snapshot>::operator ==(const V4L2VideoDeviceAdapter<Snapshot>& another) const
+    {
+        return capture_ == another.capture_;
+    }
+
+    template< typename Snapshot >
+    bool V4L2VideoDeviceAdapter<Snapshot>::operator !=(const V4L2VideoDeviceAdapter<Snapshot>& another) const
+    {
+        return ! *this == another;
     }
 } // namespace Gecon

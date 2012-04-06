@@ -35,8 +35,10 @@ namespace Gecon
     {
     public:
         V4L2VideoDeviceAdapter();
-        V4L2VideoDeviceAdapter(const fs::path& file);
         V4L2VideoDeviceAdapter(const V4L2VideoDeviceAdapter& another);
+
+        V4L2VideoDeviceAdapter(const fs::path& file);
+
         ~V4L2VideoDeviceAdapter();
 
         std::string name() const;
@@ -47,6 +49,9 @@ namespace Gecon
         void close();
 
         Snapshot getSnapshot();
+
+        bool operator==(const V4L2VideoDeviceAdapter& another) const;
+        bool operator!=(const V4L2VideoDeviceAdapter& another) const;
 
     private:
         bool isOpened_;
