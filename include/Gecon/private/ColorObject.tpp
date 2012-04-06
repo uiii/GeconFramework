@@ -27,7 +27,8 @@ namespace Gecon
 {
     template< typename ColorSpace >
     ColorObject<ColorSpace>::ColorObject(Color color):
-        color_(color)
+        color_(color),
+        isVisible_(false)
     {
     }
 
@@ -42,6 +43,24 @@ namespace Gecon
     {
         updateConvexHull_(area);
         updateMinimalBoundingBox_(convexHull_);
+    }
+
+    template< typename ColorSpace >
+    bool ColorObject<ColorSpace>::isVisible() const
+    {
+        return isVisible_;
+    }
+
+    template< typename ColorSpace >
+    void ColorObject<ColorSpace>::setVisible(bool visible)
+    {
+        isVisible_ = visible;
+    }
+
+    template< typename ColorSpace >
+    const typename ColorObject<ColorSpace>::Border& ColorObject<ColorSpace>::border() const
+    {
+        return border_;
     }
 
     template< typename ColorSpace >
@@ -123,11 +142,16 @@ namespace Gecon
         ConvexHull leftPoints;
         ConvexHull rightPoints;
 
+        border_.clear();
+
         typename BlockList::const_iterator block = blocks.begin();
         while(block != blocks.end())
         {
             Point leftPoint = {(double)block->begin, (double)block->row};
             Point rightPoint = {(double)block->end, (double)block->row};
+
+            border_.push_front(leftPoint);
+            border_.push_back(rightPoint);
 
             addNextPoint(leftPoint, leftPoints, Orientation::LEFT);
             addNextPoint(rightPoint, rightPoints, Orientation::RIGHT);
@@ -155,6 +179,8 @@ namespace Gecon
     template< typename ColorSpace >
     void ColorObject<ColorSpace>::updateMinimalBoundingBox_(const ConvexHull& convexHull)
     {
+        // TODO krajni pripady
+
         typedef Point Vector;
         typedef typename ConvexHull::const_iterator PointIterator;
 

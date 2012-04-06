@@ -52,6 +52,7 @@ namespace Gecon
         };
 
         typedef std::list<Point> ConvexHull;
+        typedef std::list<Point> Border;
 
         ColorObject(Color color = Color());
 
@@ -59,6 +60,10 @@ namespace Gecon
 
         void update(ColorArea<ColorSpace> *area);
 
+        bool isVisible() const;
+        void setVisible(bool visible);
+
+        const Border& border() const;
         const BoundingBox& boundingBox() const;
         const ConvexHull& convexHull() const;
 
@@ -68,6 +73,9 @@ namespace Gecon
 
         Color color_;
 
+        bool isVisible_;
+
+        Border border_;
         ConvexHull convexHull_;
         BoundingBox boundingBox_;
     };

@@ -190,8 +190,13 @@ namespace Gecon
             if(area != 0 && area->size() > 20) // TODO magic
             {
                 object->update(area);
+                object->setVisible(true);
 
                 visibleObjects.insert(object);
+            }
+            else
+            {
+                object->setVisible(false);
             }
 
             ++objectAreaPair;
