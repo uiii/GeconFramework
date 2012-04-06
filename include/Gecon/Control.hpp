@@ -22,40 +22,18 @@
 
 #include <memory>
 
-#include "DeviceManager.hpp"
+#include <boost/thread.hpp>
 
 namespace Gecon
 {
-    template<
-            typename DevicePolicy,
-            typename ControlPolicy
-            /*typename ObjectPolicy,
-            typename GesturePolicy,
-            typename ActionPolicy*/
-    >
-    class Control :
-        public DevicePolicy,
-        public ControlPolicy
-        /*public ObjectPolicy,
-        public GesturePolicy,
-        public ActionPolicy*/
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy >
+    class Control : public ObjectPolicy, public GesturePolicy
     {
     public:
-        using ControlPolicy::beforeRun;
-        using ControlPolicy::afterRun;
-        using ControlPolicy::recognizeObjects;
-        using ControlPolicy::checkGestures;
-        using ControlPolicy::executeActions;
-
-        typedef Gecon::DeviceManager< DevicePolicy > DeviceManager;
+        typedef typename DevicePolicy::DeviceAdapter DeviceAdapter;
 
         /*typedef std::set< typename ObjectPolicy::Object > ObjectSet;
-        typedef std::set< typename GesturePolicy::Gesture > GestureSet;
-        typedef std::set< typename ActionPolicy::Action > ActionSet;*/
-
-        typedef std::set< typename ControlPolicy::Object > ObjectSet;
-        typedef std::set< typename ControlPolicy::Control > GestureSet;
-        typedef std::set< typename ControlPolicy::Action > ActionSet;
+        typedef std::set< typename GesturePolicy::Gesture > GestureSet;*/
 
         Control();
 
@@ -90,14 +68,14 @@ namespace Gecon
          */
         void operator()();
 
-        DeviceManager& deviceManager();
+        void setDevice(DeviceAdapter device);
+        DeviceAdapter device() const;
 
-        ObjectSet& objects();
-        GestureSet& gestures();
-        ActionSet& actions();
+        /*ObjectSet& objects();
+        GestureSet& gestures();*/
 
     private:
-        Control<DevicePolicy, ControlPolicy> controlLoop_;
+        Gecon::Control<DevicePolicy, ObjectPolicy, GesturePolicy>* controlLoop_;
 
         boost::mutex doControlMutex_;
         bool doControl_;
@@ -107,11 +85,10 @@ namespace Gecon
 
         boost::condition_variable stopCond_;
 
-        DeviceManager deviceManager_;
+        DeviceAdapter device_;
 
-        ObjectSet objects_;
-        GestureSet gestures_;
-        ActionSet actions_;
+        /*ObjectSet objects_;
+        GestureSet gestures_;*/
     };
 } // namespace Gecon
 
