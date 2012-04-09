@@ -17,8 +17,8 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_OBJECTRELATIONCONDITION_HPP
-#define GECON_OBJECTRELATIONCONDITION_HPP
+#ifndef GECON_OBJECTRELATIONGESTURE_HPP
+#define GECON_OBJECTRELATIONGESTURE_HPP
 
 #include "ObjectGesture.hpp"
 #include "ObjectGestureEvent.hpp"
@@ -28,15 +28,15 @@
 namespace Gecon
 {
     template< typename Object, typename PropertyType >
-    class ObjectRelationCondition : public ObjectGesture<Object>
+    class ObjectRelationGesture : public ObjectGesture<Object>
     {
     public:
         typedef std::function<PropertyType(const Object&)> Property;
         typedef std::function<bool(const PropertyType&, const PropertyType&)> Condition;
 
-        typedef ObjectGestureEvent<ObjectRelationCondition<Object, PropertyType> > Event;
+        typedef ObjectGestureEvent<ObjectRelationGesture<Object, PropertyType> > Event;
 
-        ObjectRelationCondition(
+        ObjectRelationGesture(
                 Object* left,
                 Object* right,
                 Property leftProperty,
@@ -67,19 +67,19 @@ namespace Gecon
         Event relationLeaveEvent_;
 
     public:
-        typedef std::shared_ptr<ObjectRelationCondition<Object> > Ptr;
+        typedef std::shared_ptr<ObjectRelationGesture<Object> > Ptr;
     };
 
     template< typename Object, typename PropertyType >
-    typename ObjectRelationCondition<Object, PropertyType>::Ptr makeGestureRelationCondition(
+    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeGestureRelationCondition(
             Object* left,
             Object* right,
-            typename ObjectRelationCondition<Object, PropertyType>::Property leftProperty,
-            typename ObjectRelationCondition<Object, PropertyType>::Property rightProperty,
-            typename ObjectRelationCondition<Object, PropertyType>::Condition condition
+            typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
+            typename ObjectRelationGesture<Object, PropertyType>::Property rightProperty,
+            typename ObjectRelationGesture<Object, PropertyType>::Condition condition
     );
 } // namespace Gecon
 
-#include "ObjectRelationCondition.tpp"
+#include "ObjectRelationGesture.tpp"
 
-#endif // GECON_OBJECTRELATIONCONDITION_HPP
+#endif // GECON_OBJECTRELATIONGESTURE_HPP

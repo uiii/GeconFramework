@@ -17,12 +17,12 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../ObjectMotionCondition.hpp"
+#include "../ObjectMotionGesture.hpp"
 
 namespace Gecon
 {
     template< typename Object >
-    ObjectMotionCondition<Object>::ObjectMotionCondition(Gecon::Object *object, const Motion& motion, const std::string& description):
+    ObjectMotionGesture<Object>::ObjectMotionGesture(Gecon::Object *object, const Motion& motion, const std::string& description):
         object_(object),
         description_(description),
         motion_(motion),
@@ -33,25 +33,25 @@ namespace Gecon
     }
 
     template< typename Object >
-    Gesture::ObjectSet ObjectMotionCondition<Object>::objects() const
+    Gesture::ObjectSet ObjectMotionGesture<Object>::objects() const
     {
         //return { object_ }; TODO
     }
 
     template< typename Object >
-    const std::string& ObjectMotionCondition<Object>::description() const
+    const std::string& ObjectMotionGesture<Object>::description() const
     {
         return description_;
     }
 
     template< typename Object >
-    const Event& ObjectMotionCondition<Object>::motionDoneEvent() const
+    const Event& ObjectMotionGesture<Object>::motionDoneEvent() const
     {
         return motionDoneEvent_;
     }
 
     template< typename Object >
-    bool ObjectMotionCondition<Object>::check() const
+    bool ObjectMotionGesture<Object>::check() const
     {
         bool motionDone = false;
 
@@ -76,7 +76,7 @@ namespace Gecon
     }
 
     template< typename Object >
-    void ObjectMotionCondition<Object>::normalize_(ObjectMotionCondition<Object>::Motion& motion)
+    void ObjectMotionGesture<Object>::normalize_(ObjectMotionGesture<Object>::Motion& motion)
     {
         if(motion.empty())
         {
@@ -130,7 +130,7 @@ namespace Gecon
     }
 
     template< typename Object >
-    void ObjectMotionCondition<Object>::motionToMoves_(const ObjectMotionCondition<Object>::Motion& motion, ObjectMotionCondition<Object>::MoveSequence& moves)
+    void ObjectMotionGesture<Object>::motionToMoves_(const ObjectMotionGesture<Object>::Motion& motion, ObjectMotionGesture<Object>::MoveSequence& moves)
     {
         moves.clear();
 
@@ -222,7 +222,7 @@ namespace Gecon
     }
 
     template< typename Object >
-    std::size_t ObjectMotionCondition<Object>::distance_(const ObjectMotionCondition<Object>::Motion& left, const ObjectMotionCondition<Object>::Motion& right)
+    std::size_t ObjectMotionGesture<Object>::distance_(const ObjectMotionGesture<Object>::Motion& left, const ObjectMotionGesture<Object>::Motion& right)
     {
         std::size_t width = left.size();
         std::size_t height = right.size();
@@ -269,8 +269,8 @@ namespace Gecon
     }
 
     template< typename Object >
-    typename ObjectMotionCondition<Object>::Ptr makeGestureMotionCondition(Object* object, const Motion& motion)
+    typename ObjectMotionGesture<Object>::Ptr makeGestureMotionCondition(Object* object, const Motion& motion)
     {
-        return std::make_shared<ObjectMotionCondition<Object>>(object, motion);
+        return std::make_shared<ObjectMotionGesture<Object>>(object, motion);
     }
 } // namespace Gecon

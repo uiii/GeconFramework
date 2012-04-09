@@ -17,17 +17,17 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../ObjectRelationCondition.hpp"
+#include "../ObjectRelationGesture.hpp"
 
 namespace Gecon
 {
     template< typename Object, typename PropertyType >
-    ObjectRelationCondition<Object, PropertyType>::ObjectRelationCondition(
+    ObjectRelationGesture<Object, PropertyType>::ObjectRelationGesture(
             Object *left,
             Object *right,
-            typename ObjectRelationCondition<Object, PropertyType>::Property leftProperty,
-            typename ObjectRelationCondition<Object, PropertyType>::Property rightProperty,
-            typename ObjectRelationCondition<Object, PropertyType>::Condition condition
+            typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
+            typename ObjectRelationGesture<Object, PropertyType>::Property rightProperty,
+            typename ObjectRelationGesture<Object, PropertyType>::Condition condition
     ):
         left_(left),
         right_(right),
@@ -40,31 +40,31 @@ namespace Gecon
     }
 
     template< typename Object, typename PropertyType >
-    typename Gesture<Object, PropertyType>::ObjectSet ObjectRelationCondition<Object, PropertyType>::objects() const
+    typename Gesture<Object, PropertyType>::ObjectSet ObjectRelationGesture<Object, PropertyType>::objects() const
     {
         return { left_, right_ };
     }
 
     template< typename Object, typename PropertyType >
-    const std::string& ObjectRelationCondition<Object, PropertyType>::description() const
+    const std::string& ObjectRelationGesture<Object, PropertyType>::description() const
     {
         return description_;
     }
 
     template< typename Object, typename PropertyType >
-    const ObjectRelationCondition<Object, PropertyType>::Event& ObjectRelationCondition<Object, PropertyType>::relationEnterEvent() const
+    const ObjectRelationGesture<Object, PropertyType>::Event& ObjectRelationGesture<Object, PropertyType>::relationEnterEvent() const
     {
         return relationEnterEvent_;
     }
 
     template< typename Object, typename PropertyType >
-    const ObjectRelationCondition<Object, PropertyType>::Event& ObjectRelationCondition<Object, PropertyType>::relationLeaveEvent() const
+    const ObjectRelationGesture<Object, PropertyType>::Event& ObjectRelationGesture<Object, PropertyType>::relationLeaveEvent() const
     {
         return relationLeaveEvent_;
     }
 
     template< typename Object, typename PropertyType >
-    bool ObjectRelationCondition<Object, PropertyType>::check() const
+    bool ObjectRelationGesture<Object, PropertyType>::check() const
     {
         if(leftProperty_ != &Object::isVisible && left_->isVisible() == false)
         {
@@ -80,14 +80,14 @@ namespace Gecon
     }
 
     template< typename Object, typename PropertyType >
-    typename ObjectRelationCondition<Object, PropertyType>::Ptr makeGestureRelationCondition(
+    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeGestureRelationCondition(
             Object* left,
             Object* right,
-            typename ObjectRelationCondition<Object, PropertyType>::Property leftProperty,
-            typename ObjectRelationCondition<Object, PropertyType>::Property rightProperty,
-            typename ObjectRelationCondition<Object, PropertyType>::Condition condition
+            typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
+            typename ObjectRelationGesture<Object, PropertyType>::Property rightProperty,
+            typename ObjectRelationGesture<Object, PropertyType>::Condition condition
     )
     {
-        return std::make_shared<ObjectRelationCondition<Object, PropertyType>>(left, right, leftProperty, rightProperty, condition);
+        return std::make_shared<ObjectRelationGesture<Object, PropertyType>>(left, right, leftProperty, rightProperty, condition);
     }
 } // namespace Gecon

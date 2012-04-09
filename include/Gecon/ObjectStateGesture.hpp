@@ -17,8 +17,8 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_OBJECTSTATECONDITION_HPP
-#define GECON_OBJECTSTATECONDITION_HPP
+#ifndef GECON_OBJECTSTATEGESTURE_HPP
+#define GECON_OBJECTSTATEGESTURE_HPP
 
 #include "ObjectGesture.hpp"
 #include "ObjectGestureEvent.hpp"
@@ -28,15 +28,15 @@
 namespace Gecon
 {
     template< typename Object, typename PropertyType >
-    class ObjectStateCondition : public ObjectGesture<Object>
+    class ObjectStateGesture : public ObjectGesture<Object>
     {
     public:
         typedef PropertyType (Object::*Property)();
         typedef std::function<bool(const PropertyType&)> Condition;
 
-        typedef ObjectGestureEvent<ObjectStateCondition<Object, PropertyType> > Event;
+        typedef ObjectGestureEvent<ObjectStateGesture<Object, PropertyType> > Event;
 
-        ObjectStateCondition(Object* object, Property property, Condition condition, const std::string& description = "");
+        ObjectStateGesture(Object* object, Property property, Condition condition, const std::string& description = "");
 
         ObjectSet objects() const;
         const std::string& description() const;
@@ -55,17 +55,17 @@ namespace Gecon
         Event stateLeaveEvent_;
 
     public:
-        typedef std::shared_ptr<ObjectStateCondition> Ptr;
+        typedef std::shared_ptr<ObjectStateGesture> Ptr;
     };
 
     template< typename Object, typename PropertyType >
-    typename ObjectStateCondition<Object, PropertyType>::Ptr makeGestureStateCondition(
+    typename ObjectStateGesture<Object, PropertyType>::Ptr makeGestureStateCondition(
             Object* object,
-            typename ObjectStateCondition<Object, PropertyType>::Property property,
-            typename ObjectStateCondition<Object, PropertyType>::Condition condition
+            typename ObjectStateGesture<Object, PropertyType>::Property property,
+            typename ObjectStateGesture<Object, PropertyType>::Condition condition
     );
 } // namespace Gecon
 
-#include "ObjectStateCondition.tpp"
+#include "ObjectStateGesture.tpp"
 
-#endif // GECON_OBJECTSTATECONDITION_HPP
+#endif // GECON_OBJECTSTATEGESTURE_HPP
