@@ -26,12 +26,12 @@
 
 namespace Gecon
 {
-    const char* v4l2_category_type::name() const
+    const char* v4l2_category_type::name() const throw()
     {
         return "v4l2";
     }
 
-    std::string v4l2_category_type::message(int code) const
+    std::string v4l2_category_type::message(int code) const throw()
     {
         std::string msg;
 

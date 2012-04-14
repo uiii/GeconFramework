@@ -17,33 +17,42 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ObjectGestureEvent.hpp"
+#include "../ObjectGestureEvent.hpp"
 
 namespace Gecon
 {
     template< typename ObjectGesture >
-    ObjectGestureEvent<ObjectGesture>::ObjectGestureEvent(Gecon::ObjectGesture* object):
-        object_(object)
+    ObjectGestureEvent<ObjectGesture>::ObjectGestureEvent():
+        gesture_(0)
     {
     }
 
     template< typename ObjectGesture >
-    const ObjectGesture* ObjectGestureEvent<ObjectGesture>::gesture() const
+    ObjectGestureEvent<ObjectGesture>::~ObjectGestureEvent()
+    {
+        delete gesture_;
+    }
+
+    template< typename ObjectGesture >
+    const ObjectGesture &ObjectGestureEvent<ObjectGesture>::gesture() const
     {
         return gesture_;
     }
 
     template< typename ObjectGesture >
-    void ObjectGestureEvent<ObjectGesture>::raise() const
+    void ObjectGestureEvent<ObjectGesture>::raise(const ObjectGesture& gesture) const
     {
-        for(ActionPtr action : actions_)
+        delete gesture_;
+        gesture_ = new ObjectGesture(gesture);
+
+        for(Action action : actions_)
         {
             action(this);
         }
     }
 
     template< typename ObjectGesture >
-    void ObjectGestureEvent<ObjectGesture>::connect(ObjectGestureEvent<ObjectGesture>::ActionPtr action) const
+    void ObjectGestureEvent<ObjectGesture>::connect(ObjectGestureEvent<ObjectGesture>::Action action) const
     {
         actions_.push_back(action);
     }

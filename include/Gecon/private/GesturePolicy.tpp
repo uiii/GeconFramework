@@ -29,9 +29,11 @@ namespace Gecon
     template< typename Object >
     void GesturePolicy<Object>::prepareGestures(const GesturePolicy<Object>::GestureSet& gestures)
     {
+        objectGestures_.clear();
+
         for(GesturePtr gesture : gestures)
         {
-            ObjectSet objects = gesture.objects();
+            ObjectSet objects = gesture->objects();
             for(ObjectPtr object : objects)
             {
                 objectGestures_[object].insert(gesture);

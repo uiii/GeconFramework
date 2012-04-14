@@ -26,6 +26,12 @@ const double PI = 3.141592653589793238462;
 namespace Gecon
 {
     template< typename ColorSpace >
+    double ColorObject<ColorSpace>::Point::distance(const ColorObject<ColorSpace>::Point &another)
+    {
+        return std::sqrt(std::pow(x - another.x, 2) + std::pow(y - another.y, 2));
+    }
+
+    template< typename ColorSpace >
     ColorObject<ColorSpace>::ColorObject(Color color):
         color_(color),
         isVisible_(false)
@@ -55,6 +61,18 @@ namespace Gecon
     void ColorObject<ColorSpace>::setVisible(bool visible)
     {
         isVisible_ = visible;
+    }
+
+    template< typename ColorSpace >
+    typename ColorObject<ColorSpace>::Point ColorObject<ColorSpace>::position() const
+    {
+        return boundingBox_.position;
+    }
+
+    template< typename ColorSpace >
+    int ColorObject<ColorSpace>::angle() const
+    {
+        return boundingBox_.angle;
     }
 
     template< typename ColorSpace >
@@ -264,8 +282,8 @@ namespace Gecon
             newLine.x = newLine.x / newLineNorm;
             newLine.y = newLine.y / newLineNorm;
 
-            std::cout << "old: " << oldLine.x << " " << oldLine.y << std::endl;
-            std::cout << "new: " << newLine.x << " " << newLine.y << std::endl;
+            //std::cout << "old: " << oldLine.x << " " << oldLine.y << std::endl;
+            //std::cout << "new: " << newLine.x << " " << newLine.y << std::endl;
 
             caliperLine.line = newLine;
         };
@@ -281,9 +299,9 @@ namespace Gecon
                 firstPoint->y + multiple * first.line.y,
             };
 
-            std::cout << "first: " << first.line.x << " " << first.line.y << std::endl;
-            std::cout << "second: " << second.line.x << " " << second.line.y << std::endl;
-            std::cout << multiple << std::endl;
+            //std::cout << "first: " << first.line.x << " " << first.line.y << std::endl;
+            //std::cout << "second: " << second.line.x << " " << second.line.y << std::endl;
+            //std::cout << multiple << std::endl;
             return std::sqrt(std::pow(secondPoint->x - oppositePoint.x, 2) + std::pow(secondPoint->y - oppositePoint.y, 2));
         };
 

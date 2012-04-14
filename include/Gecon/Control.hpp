@@ -46,6 +46,8 @@ namespace Gecon
          */
         void start();
 
+        void restart();
+
         /**
          * Stop control loop.
          */
@@ -75,12 +77,17 @@ namespace Gecon
         GestureSet& gestures();*/
 
     private:
-        Gecon::Control<DevicePolicy, ObjectPolicy, GesturePolicy>* controlLoop_;
+        typedef Gecon::Control<DevicePolicy, ObjectPolicy, GesturePolicy> ControlLoop;
+        ControlLoop* controlLoop_;
+
+        void operator=(const ControlLoop& controlLoop);
+
+        boost::mutex dataMutex_;
 
         boost::mutex doControlMutex_;
         bool doControl_;
 
-        boost::mutex isRunningMutex_;
+        mutable boost::mutex isRunningMutex_;
         bool isRunning_;
 
         boost::condition_variable stopCond_;

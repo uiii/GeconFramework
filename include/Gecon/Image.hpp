@@ -39,6 +39,8 @@ namespace Gecon
         Image(int width, int height);
         Image(int width, int height, const unsigned char* rawData, std::size_t dataLength);
 
+        void reserve(int width, int height);
+
         std::size_t width() const;
         std::size_t height() const;
 

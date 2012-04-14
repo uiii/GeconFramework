@@ -45,13 +45,13 @@ namespace Gecon
                 const std::string& description = ""
         );
 
-        ObjectSet objects() const;
-        const std::string& description() const;
-
         const Event& relationEnterEvent() const;
         const Event& relationLeaveEvent() const;
 
-        bool check() const;
+        ObjectSet objects() const;
+
+        void check();
+        bool needCheck() const;
 
     private:
         Object* left_;
@@ -61,8 +61,6 @@ namespace Gecon
         Property rightProperty_;
         Condition condition_;
 
-        std::string description_;
-
         Event relationEnterEvent_;
         Event relationLeaveEvent_;
 
@@ -71,7 +69,7 @@ namespace Gecon
     };
 
     template< typename Object, typename PropertyType >
-    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeGestureRelationCondition(
+    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeObjectRelationGesture(
             Object* left,
             Object* right,
             typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
@@ -80,6 +78,6 @@ namespace Gecon
     );
 } // namespace Gecon
 
-#include "ObjectRelationGesture.tpp"
+#include "private/ObjectRelationGesture.tpp"
 
 #endif // GECON_OBJECTRELATIONGESTURE_HPP

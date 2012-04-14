@@ -64,7 +64,7 @@ namespace Gecon
     }
 
     template< typename Object, typename PropertyType >
-    bool ObjectRelationGesture<Object, PropertyType>::check() const
+    bool ObjectRelationGesture<Object, PropertyType>::check()
     {
         if(leftProperty_ != &Object::isVisible && left_->isVisible() == false)
         {
@@ -80,7 +80,13 @@ namespace Gecon
     }
 
     template< typename Object, typename PropertyType >
-    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeGestureRelationCondition(
+    bool ObjectRelationGesture<Object, PropertyType>::needCheck() const
+    {
+        return false; // TODO!!!!!!!
+    }
+
+    template< typename Object, typename PropertyType >
+    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeObjectRelationGesture(
             Object* left,
             Object* right,
             typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,

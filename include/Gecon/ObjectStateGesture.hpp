@@ -31,25 +31,33 @@ namespace Gecon
     class ObjectStateGesture : public ObjectGesture<Object>
     {
     public:
-        typedef PropertyType (Object::*Property)();
+        typedef PropertyType (Object::*Property)() const;
         typedef std::function<bool(const PropertyType&)> Condition;
+
+        typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
 
         typedef ObjectGestureEvent<ObjectStateGesture<Object, PropertyType> > Event;
 
-        ObjectStateGesture(Object* object, Property property, Condition condition, const std::string& description = "");
+        ObjectStateGesture();
+        ObjectStateGesture(Object* object, Property property, Condition condition);
 
-        ObjectSet objects() const;
-        const std::string& description() const;
+        const Object& objectState() const;
 
         const Event& stateEnterEvent() const;
         const Event& stateLeaveEvent() const;
 
-        bool check() const;
+        ObjectSet objects() const;
+
+        void check();
+        bool needCheck() const;
 
     private:
         Object* object_;
         Property property_;
         Condition condition_;
+
+        bool inState_;
+        Object objectState_;
 
         Event stateEnterEvent_;
         Event stateLeaveEvent_;
@@ -59,13 +67,13 @@ namespace Gecon
     };
 
     template< typename Object, typename PropertyType >
-    typename ObjectStateGesture<Object, PropertyType>::Ptr makeGestureStateCondition(
+    typename ObjectStateGesture<Object, PropertyType>::Ptr makeObjectStateGesture(
             Object* object,
-            typename ObjectStateGesture<Object, PropertyType>::Property property,
-            typename ObjectStateGesture<Object, PropertyType>::Condition condition
+            PropertyType (Object::*property)() const,
+            std::function<bool(const PropertyType&)> condition
     );
 } // namespace Gecon
 
-#include "ObjectStateGesture.tpp"
+#include "private/ObjectStateGesture.tpp"
 
 #endif // GECON_OBJECTSTATEGESTURE_HPP

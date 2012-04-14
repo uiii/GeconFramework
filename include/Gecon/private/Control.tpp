@@ -39,27 +39,44 @@ namespace Gecon
 
         if(! controlLoop_->isRunning())
         {
-            if(! device_)
-            {
-                throw; // TODO
-            }
-
-            controlLoop_ = *this;
+            *controlLoop_ = *this;
             controlLoop_->doControl_ = true;
 
-            boost::thread thread(controlLoop_);
+            boost::thread thread(std::ref(*controlLoop_));
         }
+    }
+
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::restart()
+    {
+        if(! controlLoop_ || ! controlLoop_->isRunning())
+        {
+            return;
+        }
+
+        boost::unique_lock<boost::mutex> dataLock(controlLoop_->dataMutex_);
+
+        ObjectPolicy& objectPolicy = *controlLoop_;
+        objectPolicy = *this;
+
+        GesturePolicy& gesturePolicy = *controlLoop_;
+        gesturePolicy = *this;
+
+        dataLock.unlock();
+
+        /*
+        // to ensure that the physical device won't be closed
+        DeviceAdapter device = controlLoop_->device();
+        device.open();
+
+        stop();
+        start();*/
     }
 
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
     void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::stop()
     {
-        if(! controlLoop_) // control loop hasn't been initialized yet
-        {
-            return;
-        }
-
-        if(controlLoop_->isRunning())
+        if(controlLoop_ && controlLoop_->isRunning())
         {
             controlLoop_->stop();
         }
@@ -68,7 +85,7 @@ namespace Gecon
         doControl_ = false;
         doControlLock.unlock();
 
-        boost::unique_lock<boost::mutex> isRunningLock(doControlMutex_);
+        boost::unique_lock<boost::mutex> isRunningLock(isRunningMutex_);
         while(isRunning_)
         {
             stopCond_.wait(isRunningLock);
@@ -97,9 +114,12 @@ namespace Gecon
         {
             doControlLock.unlock();
 
-            executeActions(checkGestures(recognizeObjects(device.getSnapshot())));
+            boost::unique_lock<boost::mutex> dataLock(dataMutex_);
+            GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot()));
+            dataLock.unlock();
 
             doControlLock.lock();
+
         }
         doControlLock.unlock();
 
@@ -109,7 +129,7 @@ namespace Gecon
         isRunning_ = false;
         isRunningLock.unlock();
 
-        stopCond_.notify_one();
+        stopCond_.notify_all();
     }
 
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
@@ -122,6 +142,15 @@ namespace Gecon
     typename Control<DevicePolicy, ObjectPolicy, GesturePolicy>::DeviceAdapter Control<DevicePolicy, ObjectPolicy, GesturePolicy>::device() const
     {
         return device_;
+    }
+
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::operator=(const Control::ControlLoop& controlLoop)
+    {
+        ObjectPolicy::operator=(controlLoop);
+        GesturePolicy::operator=(controlLoop);
+
+        device_ = controlLoop.device_;
     }
 
     /*template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>

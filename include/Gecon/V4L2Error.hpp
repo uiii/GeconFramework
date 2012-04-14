@@ -42,8 +42,8 @@ namespace Gecon
     class v4l2_category_type : public std::error_category
     {
     public:
-        virtual const char* name() const;
-        virtual std::string message(int code) const;
+        virtual const char* name() const throw();
+        virtual std::string message(int code) const throw();
     };
 
     const v4l2_category_type& v4l2_category();

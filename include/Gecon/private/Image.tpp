@@ -57,6 +57,20 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
+    void Image<ColorSpace>::reserve(int width, int height)
+    {
+        if(data_.use_count() > 1)
+        {
+            data_ = std::make_shared<RawData>();
+        }
+
+        data_->resize(width * height * ColorSpace::bytesPerPixel, 0);
+
+        width_ = width;
+        height_ = height;
+    }
+
+    template< typename ColorSpace >
     std::size_t Image<ColorSpace>::width() const
     {
         return width_;

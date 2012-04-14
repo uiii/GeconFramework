@@ -29,24 +29,25 @@ namespace Gecon
     class ObjectGestureEvent
     {
     public:
-        typedef std::fuction<void(ObjectGestureEvent<ObjectGesture>*)> Action;
-        typedef Action* ActionPtr;
-        typedef std::list<ActionPtr> ActionList;
+        typedef std::function<void(const ObjectGestureEvent<ObjectGesture>*)> Action;
+        typedef std::list<Action> ActionList;
 
-        ObjectGestureEvent(ObjectGesture* object);
+        ObjectGestureEvent();
+        virtual ~ObjectGestureEvent();
 
-        const ObjectGesture* gesture() const;
+        const ObjectGesture& gesture() const;
 
-        void raise() const;
+        void raise(const ObjectGesture& gesture) const;
 
-        void connect(ActionPtr action) const;
+        void connect(Action action) const;
 
     private:
-        ObjectGesture* gesture_;
+        mutable ObjectGesture* gesture_;
+
         mutable ActionList actions_;
     };
 } // namespace Gecon
 
-#include "ObjectGestureEvent.tpp"
+#include "private/ObjectGestureEvent.tpp"
 
 #endif // GECON_OBJECTGESTUREEVENT_HPP

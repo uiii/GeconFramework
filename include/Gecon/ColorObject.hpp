@@ -37,11 +37,13 @@ namespace Gecon
         {
             double x;
             double y;
+
+            double distance(const Point& another);
         };
 
         struct BoundingBox
         {
-            BoundingBox(): position({0, 0}), width(0), height(0), angle(0) {}
+            //BoundingBox(): position({0, 0}), width(0), height(0), angle(0) {}
 
             Point position;
 
@@ -62,6 +64,9 @@ namespace Gecon
 
         bool isVisible() const;
         void setVisible(bool visible);
+
+        Point position() const;
+        int angle() const;
 
         const Border& border() const;
         const BoundingBox& boundingBox() const;

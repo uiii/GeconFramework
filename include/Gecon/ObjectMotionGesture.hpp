@@ -35,38 +35,42 @@ namespace Gecon
     class ObjectMotionGesture : public ObjectGesture<Object>
     {
     public:
-        struct Point
-        {
-            double x;
-            double y;
-        };
-
+        typedef typename Object::Point Point;
         typedef std::list<Point> PointList;
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
 
+        typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
+
         typedef ObjectGestureEvent<ObjectMotionGesture<Object> > Event;
 
-        ObjectMotionGesture(Object* object, const Motion& motion, const std::string& description = "");
+        struct Size
+        {
+            double width;
+            double height;
+        };
 
-        ObjectSet objects() const;
-        const std::string& description() const;
+        ObjectMotionGesture(Object* object, const Motion& motion);
 
         const Event& motionDoneEvent() const;
 
-        bool check() const;
+        ObjectSet objects() const;
 
-    private:
+        void check();
+        bool needCheck() const;
+
+    protected:
         typedef std::chrono::system_clock::time_point Time;
-        typedef std::chrono::system_clock::duration Duration;
+        typedef std::chrono::milliseconds Timeout;
 
-        void normalize_(Motion& motion);
+        virtual void checkMotion_(const Motion &motion);
+
+        Size getSize_(const Motion& motion);
+        void normalize_(Motion& motion, const Size& size);
         void motionToMoves_(const Motion& motion, MoveSequence& moves);
-        std::size_t distance_(const Motion& left, const Motion& right);
+        std::size_t distance_(const MoveSequence& left, const MoveSequence& right);
 
         Object* object_;
-
-        std::string description_;
 
         Motion motion_;
         MoveSequence moves_;
@@ -74,7 +78,7 @@ namespace Gecon
         Motion recordedMotion_;
         Time lastRecordedMotionTime_;
 
-        Duration timeout_;
+        Timeout timeout_;
 
         Event motionDoneEvent_;
 
@@ -82,10 +86,10 @@ namespace Gecon
         typedef std::shared_ptr<ObjectMotionGesture<Object> > Ptr;
     };
 
-    template< typename Object >
-    typename ObjectMotionGesture<Object>::Ptr makeGestureMotionCondition(Object* object, const Motion& motion);
+    /*template< typename Object >
+    typename ObjectMotionGesture<Object>::Ptr makeObjectMotionGesture(Object* object, const Motion& motion);*/
 } // namespace Gecon
 
-#include "ObjectMotionGesture.tpp"
+#include "private/ObjectMotionGesture.tpp"
 
 #endif // GECON_OBJECTMOTIONGESTURE_HPP

@@ -26,10 +26,7 @@ namespace Gecon
     template< typename Snapshot >
     ColorObjectPolicy::ObjectSet ColorObjectPolicy::recognizeObjects(const Snapshot &snapshot)
     {
-        if(image_.width() != snapshot.width() || image_.height() != snapshot.height())
-        {
-            image_ = OutputImage(snapshot.width(), snapshot.height());
-        }
+        image_.reserve(snapshot.width(), snapshot.height());
 
         AreaBlockList lastRowBlocks;
         AreaBlockList currentRowBlocks;

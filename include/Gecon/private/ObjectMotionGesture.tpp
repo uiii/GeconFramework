@@ -22,65 +22,80 @@
 namespace Gecon
 {
     template< typename Object >
-    ObjectMotionGesture<Object>::ObjectMotionGesture(Gecon::Object *object, const Motion& motion, const std::string& description):
+    ObjectMotionGesture<Object>::ObjectMotionGesture(Object *object, const Motion& motion):
         object_(object),
-        description_(description),
         motion_(motion),
-        lastRecordedMotionTime_(0),
-        timeout_(std::chrono::milliseconds(1000)),
-        motionDoneEvent_(object)
+        timeout_(std::chrono::milliseconds(1000))
     {
+        normalize_(motion_, getSize_(motion_));
+        motionToMoves_(motion_, moves_);
     }
 
     template< typename Object >
-    Gesture::ObjectSet ObjectMotionGesture<Object>::objects() const
+    typename ObjectMotionGesture<Object>::ObjectSet ObjectMotionGesture<Object>::objects() const
     {
-        //return { object_ }; TODO
+        return { object_ };
     }
 
     template< typename Object >
-    const std::string& ObjectMotionGesture<Object>::description() const
-    {
-        return description_;
-    }
-
-    template< typename Object >
-    const Event& ObjectMotionGesture<Object>::motionDoneEvent() const
+    const typename ObjectMotionGesture<Object>::Event& ObjectMotionGesture<Object>::motionDoneEvent() const
     {
         return motionDoneEvent_;
     }
 
     template< typename Object >
-    bool ObjectMotionGesture<Object>::check() const
+    void ObjectMotionGesture<Object>::check()
     {
-        bool motionDone = false;
-
-        Time now = std::chrono::system_clock::now;
+        Time now = std::chrono::system_clock::now();
         if(! recordedMotion_.empty() && now - lastRecordedMotionTime_ > timeout_)
         {
-            // TODO check motion
-            if(distance_(motion_, recordedMotion_) < 20) // TODO magic
+            std::cout << "timeout" << std::endl;
+            Size motionSize = getSize_(recordedMotion_);
+
+            if(std::max(motionSize.width, motionSize.height) > 20) // TODO magic
             {
-                motionDone = true;
-                recordedMotion_.clear();
+                std::cout << "check motion" << std::endl;
+                normalize_(recordedMotion_, motionSize);
+                checkMotion_(recordedMotion_);
+            }
+
+            recordedMotion_.clear();
+        }
+
+        if(object_->isVisible())
+        {
+            if(recordedMotion_.empty() || object_->position().distance(recordedMotion_.back()) > 20) // TODO magic
+            {
+                recordedMotion_.push_back(object_->position());
+                lastRecordedMotionTime_ = now;
             }
         }
-
-        if(object_.isVisible())
-        {
-            recordedMotion_.push_back(object_.position());
-            lastRecordedMotionTime_ = now;
-        }
-
-        return motionDone;
     }
 
     template< typename Object >
-    void ObjectMotionGesture<Object>::normalize_(ObjectMotionGesture<Object>::Motion& motion)
+    bool ObjectMotionGesture<Object>::needCheck() const
+    {
+        return ! recordedMotion_.empty();
+    }
+
+    template< typename Object >
+    void ObjectMotionGesture<Object>::checkMotion_(const Motion &motion)
+    {
+        std::cout << "check motion base" << std::endl;
+        MoveSequence moves;
+        motionToMoves_(motion, moves);
+        if(distance_(moves_, moves) < 20) // TODO magic
+        {
+            motionDoneEvent_.raise(*this);
+        }
+    }
+
+    template< typename Object >
+    typename ObjectMotionGesture<Object>::Size ObjectMotionGesture<Object>::getSize_(const Motion& motion)
     {
         if(motion.empty())
         {
-            return;
+            return { 0.0, 0.0 };
         }
 
         double minX = motion.front().x;
@@ -109,17 +124,23 @@ namespace Gecon
             }
         }
 
-        double motionHeight = maxY - minY;
         double motionWidth = maxX - minX;
+        double motionHeight = maxY - minY;
 
+        return { motionWidth, motionHeight };
+    }
+
+    template< typename Object >
+    void ObjectMotionGesture<Object>::normalize_(ObjectMotionGesture<Object>::Motion& motion, const Size& size)
+    {
         double ratio = 1.0;
-        if(motionHeight > motionWidth)
+        if(size.height > size.width)
         {
-            ratio = 100.0 / motionHeight; // TODO magic
+            ratio = 100.0 / size.height; // TODO magic
         }
         else
         {
-            ratio = 100.0 / motionWidth;
+            ratio = 100.0 / size.width;
         }
 
         for(Point& position : motion)
@@ -141,8 +162,8 @@ namespace Gecon
 
         struct Segment
         {
-            Motion::const_iterator begin;
-            Motion::const_iterator end;
+            typename Motion::const_iterator begin;
+            typename Motion::const_iterator end;
         };
 
         struct Circle
@@ -153,15 +174,15 @@ namespace Gecon
 
         typedef Point Vector;
 
-        auto isInsideCircle = [](const Circle& circle, const Point& point)
+        auto isInsideCircle = [](const Circle& circle, const Point& point) -> bool
         {
             return std::pow(point.x - circle.center.x, 2) + std::pow(point.y - circle.center.y, 2) <= std::pow(circle.radius, 2);
         };
 
         auto getCircleSegmentIntersection = [](const Circle& circle, const Segment& segment) -> Point
         {
-            Vector segmentVector = { segment.end.x - segment.begin.x, segment.end.y - segment.begin.y };
-            Vector centerBeginVector = { segment.begin.x - circle.center.x, segment.begin.y - circle.center.y };
+            Vector segmentVector = { segment.end->x - segment.begin->x, segment.end->y - segment.begin->y };
+            Vector centerBeginVector = { segment.begin->x - circle.center.x, segment.begin->y - circle.center.y };
 
             double a = std::pow(segmentVector.x, 2) + std::pow(segmentVector.y, 2);
             double b = 2 * (centerBeginVector.x * segmentVector.x + centerBeginVector.y * segmentVector.y);
@@ -169,9 +190,14 @@ namespace Gecon
 
             double discriminant = std::pow(b, 2) - 4 * a * c;
 
+            // The bigger result (multiple) is always needed, because
+            // intersection is closer to the end of the segment.
+            // So there is no need to count (-b - std::sqrt(discriminant)) / (2 * a),
+            // 'a' is always positive and (-b - std::sqrt(discriminant))
+            // is less than (-b + std::sqrt(discriminant)).
             double multiple = (-b + std::sqrt(discriminant)) / (2 * a);
 
-            return { segment.begin.x + multiple * segmentVector.x, segment.begin.y + multiple * segmentVector.y };
+            return { segment.begin->x + multiple * segmentVector.x, segment.begin->y + multiple * segmentVector.y };
         };
 
         auto getVectorAngle = [](const Vector& vector) -> double
@@ -180,7 +206,7 @@ namespace Gecon
             {
                 return std::acos(vector.x) * 180 / PI;
             }
-            if(vector.y > 0)
+            else
             {
                 return std::acos(-vector.x) * 180 / PI + 180;
             }
@@ -216,13 +242,12 @@ namespace Gecon
 
                 // move circle
                 currentCircle.center = intersection; // TODO neni pravda - musim posunout ve smeru move (ale mozna ne)
-                currentSegment.begin = intersection;
             }
         }
     }
 
     template< typename Object >
-    std::size_t ObjectMotionGesture<Object>::distance_(const ObjectMotionGesture<Object>::Motion& left, const ObjectMotionGesture<Object>::Motion& right)
+    std::size_t ObjectMotionGesture<Object>::distance_(const ObjectMotionGesture<Object>::MoveSequence& left, const ObjectMotionGesture<Object>::MoveSequence& right)
     {
         std::size_t width = left.size();
         std::size_t height = right.size();
@@ -242,11 +267,11 @@ namespace Gecon
             table[0][row] = row;
         }
 
-        Motion::const_iterator rowIt;
-        Motion::const_iterator colIt;
-        for(rowIt = moves2.begin(), row = 1; rowIt != moves2.end(); ++rowIt, ++row)
+        typename MoveSequence::const_iterator rowIt;
+        typename MoveSequence::const_iterator colIt;
+        for(rowIt = right.begin(), row = 1; rowIt != right.end(); ++rowIt, ++row)
         {
-            for(colIt = moves1.begin(), col = 1; colIt != moves1.end(); ++colIt, ++col)
+            for(colIt = left.begin(), col = 1; colIt != left.end(); ++colIt, ++col)
             {
                 if((*rowIt) == (*colIt))
                 {
@@ -268,9 +293,9 @@ namespace Gecon
         return table[width - 1][height - 1];
     }
 
-    template< typename Object >
-    typename ObjectMotionGesture<Object>::Ptr makeGestureMotionCondition(Object* object, const Motion& motion)
+    /*template< typename Object >
+    typename ObjectMotionGesture<Object>::Ptr makeObjectMotionGesture(Object* object, const Motion& motion)
     {
         return std::make_shared<ObjectMotionGesture<Object>>(object, motion);
-    }
+    }*/
 } // namespace Gecon

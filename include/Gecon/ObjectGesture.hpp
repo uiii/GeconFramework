@@ -34,9 +34,9 @@ namespace Gecon
         virtual ~ObjectGesture() {}
 
         virtual ObjectSet objects() const = 0;
-        virtual const std::string& description() const = 0;
 
-        virtual bool check() const = 0;
+        virtual void check() = 0;
+        virtual bool needCheck() const = 0;
     };
 } // namespace Gecon
 
