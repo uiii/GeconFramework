@@ -42,10 +42,16 @@ namespace Gecon
          *
          * Every change performed on Control object has no effect
          * on the currently running control loop.
-         * All changes will take effect on the next run.
+         * Need to be restarted to take their effect;
          */
         void start();
 
+        /**
+         * Restart control loop.
+         *
+         * Applay changes performed on Control object
+         * on the currently running control loop.
+         */
         void restart();
 
         /**
