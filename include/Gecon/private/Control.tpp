@@ -118,8 +118,9 @@ namespace Gecon
             GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot()));
             dataLock.unlock();
 
-            doControlLock.lock();
+            boost::this_thread::sleep(boost::posix_time::milliseconds(30));
 
+            doControlLock.lock();
         }
         doControlLock.unlock();
 
