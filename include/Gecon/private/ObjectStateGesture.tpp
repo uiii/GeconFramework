@@ -58,6 +58,18 @@ namespace Gecon
     }
 
     template< typename Object >
+    Event* ObjectStateGesture<Object>::inStateEvent()
+    {
+        return &inStateEvent_;
+    }
+
+    template< typename Object >
+    Event* ObjectStateGesture<Object>::notInStateEvent()
+    {
+        return &notInStateEvent_;
+    }
+
+    template< typename Object >
     typename ObjectStateGesture<Object>::ObjectSet ObjectStateGesture<Object>::objects() const
     {
         return { object_ };
@@ -77,6 +89,7 @@ namespace Gecon
         if(condition_(objectState_))
         {
             std::cout << "in state" << std::endl;
+            inStateEvent_.raise();
             if(! inState_)
             {
                 inState_ = true;
@@ -87,6 +100,7 @@ namespace Gecon
         else
         {
             std::cout << "not in state" << std::endl;
+            notInStateEvent_.raise();
             if(inState_)
             {
                 inState_ = false;

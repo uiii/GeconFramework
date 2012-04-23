@@ -28,6 +28,12 @@
 
 namespace Gecon
 {
+    config_variable<std::size_t> V4L2VideoDeviceCapture::SNAPSHOT_WIDTH = 640;
+    config_variable<std::size_t> V4L2VideoDeviceCapture::SNAPSHOT_HEIGHT = 480;
+    config_variable<std::size_t> V4L2VideoDeviceCapture::BUFFER_COUNT = 5;
+    config_variable<std::size_t> V4L2VideoDeviceCapture::WAIT_FOR_DATA_TIMEOUT = 2;
+    config_variable<__u32> V4L2VideoDeviceCapture::PIXEL_FORMAT = V4L2_PIX_FMT_RGB24;
+
     V4L2VideoDeviceCapture::V4L2VideoDeviceCapture(const fs::path &file):
         doCapture_(false),
         captureCrashed_(false),
@@ -128,7 +134,7 @@ namespace Gecon
 
         format.fmt.pix.width = snapshotWidht_;
         format.fmt.pix.height = snapshotHeight_;
-        format.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+        format.fmt.pix.pixelformat = PIXEL_FORMAT;
         format.fmt.pix.field = V4L2_FIELD_INTERLACED;
         format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 

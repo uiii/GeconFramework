@@ -33,12 +33,7 @@
 #include "V4L2DeviceDescriptor.hpp"
 #include "Image.hpp"
 
-#define SNAPSHOT_WIDTH 640 //TODO
-#define SNAPSHOT_HEIGHT 480 //TODO
-
-#define BUFFER_COUNT 5
-
-#define WAIT_FOR_DATA_TIMEOUT 2
+#include "config_variable.hpp"
 
 namespace Gecon
 {
@@ -71,6 +66,12 @@ namespace Gecon
     class V4L2VideoDeviceCapture
     {
     public:
+        static config_variable<std::size_t> SNAPSHOT_WIDTH;
+        static config_variable<std::size_t> SNAPSHOT_HEIGHT;
+        static config_variable<std::size_t> BUFFER_COUNT;
+        static config_variable<std::size_t> WAIT_FOR_DATA_TIMEOUT;
+        static config_variable<__u32> PIXEL_FORMAT;
+
         /**
          * Construct a device capture.
          *

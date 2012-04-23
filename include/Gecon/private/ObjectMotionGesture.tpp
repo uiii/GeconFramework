@@ -23,11 +23,16 @@
 
 namespace Gecon
 {
+    template< typename Object > config_variable<std::chrono::milliseconds::rep> ObjectMotionGesture<Object>::MOTION_TIMEOUT = 1000;
+    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MINIMAL_GESTURE_SIDE = 300;
+    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MINIMAL_MOTION_SIZE = 20;
+    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MAXIMAL_SAME_GESTURE_DISTANCE = 20;
+
     template< typename Object >
     ObjectMotionGesture<Object>::ObjectMotionGesture(Object *object, const Motion& motion):
         object_(object),
         motion_(motion),
-        timeout_(std::chrono::milliseconds(1000))
+        timeout_(std::chrono::milliseconds(MOTION_TIMEOUT))
     {
         normalize_(motion_, getSize_(motion_));
         motionToMoves_(motion_, moves_);
@@ -54,7 +59,7 @@ namespace Gecon
             std::cout << "timeout" << std::endl;
             Size motionSize = getSize_(recordedMotion_);
 
-            if(std::max(motionSize.width, motionSize.height) > 20) // TODO magic
+            if(std::max(motionSize.width, motionSize.height) > MINIMAL_GESTURE_SIDE)
             {
                 std::cout << "check motion" << std::endl;
                 normalize_(recordedMotion_, motionSize);
@@ -66,7 +71,7 @@ namespace Gecon
 
         if(object_->isVisible())
         {
-            if(recordedMotion_.empty() || distance(object_->position(), recordedMotion_.back()) > 20) // TODO magic
+            if(recordedMotion_.empty() || distance(object_->position(), recordedMotion_.back()) > MINIMAL_MOTION_SIZE)
             {
                 recordedMotion_.push_back(object_->position());
                 lastRecordedMotionTime_ = now;
@@ -87,7 +92,7 @@ namespace Gecon
         MoveSequence moves;
         motionToMoves_(motion, moves);
 
-        if(distance_(moves_, moves) < 20) // TODO magic
+        if(distance_(moves_, moves) < MAXIMAL_SAME_GESTURE_DISTANCE)
         {
             std::cout << distance_(moves_, moves) << std::endl;
             motionDoneEvent_.raise();
@@ -140,7 +145,7 @@ namespace Gecon
         double ratio = 1.0;
         if(size.height > size.width)
         {
-            ratio = 100.0 / size.height; // TODO magic
+            ratio = 100.0 / size.height;
         }
         else
         {
@@ -221,7 +226,7 @@ namespace Gecon
             std::next(motion.begin(), 1),
         };
 
-        Circle currentCircle = { motion.front(), 10 }; // TODO magic
+        Circle currentCircle = { motion.front(), MINIMAL_MOTION_SIZE };
 
         while(currentSegment.end != motion.end())
         {

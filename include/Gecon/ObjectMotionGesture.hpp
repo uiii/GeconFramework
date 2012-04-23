@@ -27,6 +27,8 @@
 #include <list>
 #include <chrono>
 
+#include "config_variable.hpp"
+
 namespace Gecon
 {
     // TODO sdilene uloziste pro pohyby objektu aby se nemuselo pocitat nekolikrat
@@ -36,6 +38,11 @@ namespace Gecon
     class ObjectMotionGesture : public ObjectGesture<Object>
     {
     public:
+        static config_variable<std::chrono::milliseconds::rep> MOTION_TIMEOUT;
+        static config_variable<std::size_t> MINIMAL_GESTURE_SIDE;
+        static config_variable<std::size_t> MINIMAL_MOTION_SIZE;
+        static config_variable<std::size_t> MAXIMAL_SAME_GESTURE_DISTANCE;
+
         typedef std::list<Point> PointList;
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
