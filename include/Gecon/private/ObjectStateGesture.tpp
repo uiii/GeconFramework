@@ -23,64 +23,65 @@
 
 namespace Gecon
 {
-    template< typename Object, typename PropertyType >
-    ObjectStateGesture<Object, PropertyType>::ObjectStateGesture():
+    /*template< typename Object >
+    ObjectStateGesture<Object>::ObjectStateGesture():
         object_(0),
-        property_(0)
+        inState_(false)
     {
-    }
+    }*/
 
-    template< typename Object, typename PropertyType >
-    ObjectStateGesture<Object, PropertyType>::ObjectStateGesture(
+    template< typename Object >
+    template< typename PropertyType >
+    ObjectStateGesture<Object>::ObjectStateGesture(
             Object* object,
-            typename ObjectStateGesture<Object, PropertyType>::Property property,
-            typename ObjectStateGesture<Object, PropertyType>::Condition condition
-    ):
+            ObjectStateGesture<Object>::Property<PropertyType> property,
+            Relation<PropertyType> relation,
+            PropertyType value):
         object_(object),
-        property_(property),
-        condition_(condition),
-        inState_(false),
-        objectState_(*object_)
+        objectState_(*object_),
+        mustBeVisible_(needVisible<Object>(property)),
+        condition_(std::bind(relation, std::bind(property, std::placeholders::_1), value)),
+        inState_(false)
     {
     }
 
-    template< typename Object, typename PropertyType >
-    const typename ObjectStateGesture<Object, PropertyType>::Event& ObjectStateGesture<Object, PropertyType>::stateEnterEvent() const
+    template< typename Object >
+    Event* ObjectStateGesture<Object>::stateEnterEvent()
     {
-        return stateEnterEvent_;
+        return &stateEnterEvent_;
     }
 
-    template< typename Object, typename PropertyType >
-    const typename ObjectStateGesture<Object, PropertyType>::Event& ObjectStateGesture<Object, PropertyType>::stateLeaveEvent() const
+    template< typename Object >
+    Event* ObjectStateGesture<Object>::stateLeaveEvent()
     {
-        return stateLeaveEvent_;
+        return &stateLeaveEvent_;
     }
 
-    template< typename Object, typename PropertyType >
-    typename ObjectStateGesture<Object, PropertyType>::ObjectSet ObjectStateGesture<Object, PropertyType>::objects() const
+    template< typename Object >
+    typename ObjectStateGesture<Object>::ObjectSet ObjectStateGesture<Object>::objects() const
     {
         return { object_ };
     }
 
-    template< typename Object, typename PropertyType >
-    void ObjectStateGesture<Object, PropertyType>::check()
+    template< typename Object >
+    void ObjectStateGesture<Object>::check()
     {
         objectState_ = *object_;
 
-        if(property_ != &Object::isVisible && objectState_.isVisible() == false)
+        if(mustBeVisible_ && objectState_.isVisible() == false)
         {
             return;
         }
 
         std::cout << "before check" << std::endl;
-        if(condition_((objectState_.*(property_))()))
+        if(condition_(objectState_))
         {
             std::cout << "in state" << std::endl;
             if(! inState_)
             {
                 inState_ = true;
                 std::cout << "enter event" << std::endl;
-                stateEnterEvent_.raise(*this);
+                stateEnterEvent_.raise();
             }
         }
         else
@@ -90,24 +91,14 @@ namespace Gecon
             {
                 inState_ = false;
                 std::cout << "leave event" << std::endl;
-                stateLeaveEvent_.raise(*this);
+                stateLeaveEvent_.raise();
             }
         }
     }
 
-    template< typename Object, typename PropertyType >
-    bool ObjectStateGesture<Object, PropertyType>::needCheck() const
+    template< typename Object >
+    bool ObjectStateGesture<Object>::needCheck() const
     {
-        return false; // TODO!!!!!
-    }
-
-    template< typename Object, typename PropertyType >
-    typename ObjectStateGesture<Object, PropertyType>::Ptr makeObjectStateGesture(
-            Object* object,
-            PropertyType (Object::*property)() const,
-            std::function<bool(const PropertyType&)> condition
-    )
-    {
-        return std::make_shared<ObjectStateGesture<Object, PropertyType> >(object, property, condition);
+        return inState_ || ! mustBeVisible_;
     }
 } // namespace Gecon

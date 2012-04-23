@@ -99,7 +99,7 @@ namespace Gecon
             {
                 if(currentBlock->end < lastBlock->begin) // this current block doesn't overlap any last block
                 {
-                    if(! currentBlock->area) // this current wans't previously connected to any area
+                    if(! currentBlock->area) // this current block wans't previously connected to any area
                     {
                         // create new area
                         currentBlock->area = createArea_(*currentBlock);
@@ -109,7 +109,7 @@ namespace Gecon
                 }
                 else // blocks overlaps
                 {
-                    if(lastBlock->object == currentBlock->object)
+                    if(lastBlock->object == currentBlock->object) // blocks belong together
                     {
                         if(currentBlock->area) // this current block is already assigned to some area
                         {
@@ -131,6 +131,11 @@ namespace Gecon
                     }
                     else // this last block maybe overlaps next current block
                     {
+                        if(! currentBlock->area) // it may happen when blocks doesn't belong together
+                        {
+                            currentBlock->area = createArea_(*currentBlock);
+                        }
+
                         ++currentBlock;
                     }
                 }

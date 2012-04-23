@@ -21,32 +21,37 @@
 #define GECON_OBJECTRELATIONGESTURE_HPP
 
 #include "ObjectGesture.hpp"
-#include "ObjectGestureEvent.hpp"
+#include "Event.hpp"
 
 #include <functional>
 
 namespace Gecon
 {
-    template< typename Object, typename PropertyType >
+    template< typename Object >
     class ObjectRelationGesture : public ObjectGesture<Object>
     {
     public:
-        typedef std::function<PropertyType(const Object&)> Property;
-        typedef std::function<bool(const PropertyType&, const PropertyType&)> Condition;
+        template< typename PropertyType >
+        using Property = ObjectProperty<Object, PropertyType>;
 
-        typedef ObjectGestureEvent<ObjectRelationGesture<Object, PropertyType> > Event;
+        template< typename PropertyType >
+        using Relation = std::function<bool(const PropertyType&, const PropertyType&)>;
 
+        typedef std::function<bool(const Object&, const Object&)> Condition;
+
+        typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
+
+        template< typename PropertyType >
         ObjectRelationGesture(
                 Object* left,
+                Property<PropertyType> leftProperty,
+                Relation<PropertyType> relation,
                 Object* right,
-                Property leftProperty,
-                Property rightProperty,
-                Condition condition,
-                const std::string& description = ""
+                Property<PropertyType> rightProperty
         );
 
-        const Event& relationEnterEvent() const;
-        const Event& relationLeaveEvent() const;
+        Event* relationEnterEvent();
+        Event* relationLeaveEvent();
 
         ObjectSet objects() const;
 
@@ -57,25 +62,19 @@ namespace Gecon
         Object* left_;
         Object* right_;
 
-        Property leftProperty_;
-        Property rightProperty_;
+        Object leftState_;
+        Object rightState_;
+
+        bool leftMustBeVisible_;
+        bool rightMustBeVisible_;
+
         Condition condition_;
+
+        bool inRelation_;
 
         Event relationEnterEvent_;
         Event relationLeaveEvent_;
-
-    public:
-        typedef std::shared_ptr<ObjectRelationGesture<Object> > Ptr;
     };
-
-    template< typename Object, typename PropertyType >
-    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeObjectRelationGesture(
-            Object* left,
-            Object* right,
-            typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
-            typename ObjectRelationGesture<Object, PropertyType>::Property rightProperty,
-            typename ObjectRelationGesture<Object, PropertyType>::Condition condition
-    );
 } // namespace Gecon
 
 #include "private/ObjectRelationGesture.tpp"

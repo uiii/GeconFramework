@@ -24,5 +24,7 @@ project "GeconFramework"
     includedirs { "../include/Gecon" }
 
     files {
-        "ColorObjectPolicy.cpp"
+        "ColorObjectPolicy.cpp",
+        "Event.cpp",
+        "Point.cpp"
     }

@@ -39,6 +39,8 @@ namespace Gecon
                 objectGestures_[object].insert(gesture);
             }
         }
+
+        gesturesToCheck_.insert(gestures.begin(), gestures.end()); // check all gestures for the first time
     }
 
     template< typename Object >

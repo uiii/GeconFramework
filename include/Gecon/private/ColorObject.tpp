@@ -21,16 +21,10 @@
 
 #include <cassert>
 
-const double PI = 3.141592653589793238462;
+#include "math_constants.hpp"
 
 namespace Gecon
 {
-    template< typename ColorSpace >
-    double ColorObject<ColorSpace>::Point::distance(const ColorObject<ColorSpace>::Point &another)
-    {
-        return std::sqrt(std::pow(x - another.x, 2) + std::pow(y - another.y, 2));
-    }
-
     template< typename ColorSpace >
     ColorObject<ColorSpace>::ColorObject(Color color):
         color_(color),
@@ -64,7 +58,7 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
-    typename ColorObject<ColorSpace>::Point ColorObject<ColorSpace>::position() const
+    Point ColorObject<ColorSpace>::position() const
     {
         return boundingBox_.position;
     }

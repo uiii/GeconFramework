@@ -32,6 +32,8 @@
 #include "ColorObject.hpp"
 #include "Image.hpp"
 
+#include "Point.hpp"
+
 namespace Gecon
 {
     class ColorObjectPolicy

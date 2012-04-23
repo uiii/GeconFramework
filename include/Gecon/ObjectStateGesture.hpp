@@ -21,30 +21,35 @@
 #define GECON_OBJECTSTATEGESTURE_HPP
 
 #include "ObjectGesture.hpp"
-#include "ObjectGestureEvent.hpp"
+#include "Event.hpp"
 
 #include <functional>
 
 namespace Gecon
 {
-    template< typename Object, typename PropertyType >
+    template< typename Object>
     class ObjectStateGesture : public ObjectGesture<Object>
     {
     public:
-        typedef PropertyType (Object::*Property)() const;
-        typedef std::function<bool(const PropertyType&)> Condition;
+        template< typename PropertyType >
+        using Property = ObjectProperty<Object, PropertyType>;
+
+        template< typename PropertyType >
+        using Relation = std::function<bool(const PropertyType&, const PropertyType&)>;
+
+        typedef std::function<bool(const Object&)> Condition;
 
         typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
 
-        typedef ObjectGestureEvent<ObjectStateGesture<Object, PropertyType> > Event;
+        //ObjectStateGesture();
 
-        ObjectStateGesture();
-        ObjectStateGesture(Object* object, Property property, Condition condition);
+        template< typename PropertyType >
+        ObjectStateGesture(Object* object, Property<PropertyType> property, Relation<PropertyType> relation, PropertyType value);
 
         const Object& objectState() const;
 
-        const Event& stateEnterEvent() const;
-        const Event& stateLeaveEvent() const;
+        Event* stateEnterEvent();
+        Event* stateLeaveEvent();
 
         ObjectSet objects() const;
 
@@ -53,25 +58,17 @@ namespace Gecon
 
     private:
         Object* object_;
-        Property property_;
+
+        Object objectState_;
+        bool mustBeVisible_;
+
         Condition condition_;
 
         bool inState_;
-        Object objectState_;
 
         Event stateEnterEvent_;
         Event stateLeaveEvent_;
-
-    public:
-        typedef std::shared_ptr<ObjectStateGesture> Ptr;
     };
-
-    template< typename Object, typename PropertyType >
-    typename ObjectStateGesture<Object, PropertyType>::Ptr makeObjectStateGesture(
-            Object* object,
-            PropertyType (Object::*property)() const,
-            std::function<bool(const PropertyType&)> condition
-    );
 } // namespace Gecon
 
 #include "private/ObjectStateGesture.tpp"

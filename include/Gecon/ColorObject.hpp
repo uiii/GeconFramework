@@ -22,6 +22,7 @@
 
 #include "Color.hpp"
 #include "ColorArea.hpp"
+#include "Point.hpp"
 
 #include <list>
 
@@ -33,17 +34,9 @@ namespace Gecon
     public:
         typedef Gecon::Color<ColorSpace> Color;
 
-        struct Point
-        {
-            double x;
-            double y;
-
-            double distance(const Point& another);
-        };
-
         struct BoundingBox
         {
-            //BoundingBox(): position({0, 0}), width(0), height(0), angle(0) {}
+            BoundingBox(): position(0, 0), width(0), height(0), angle(0) {}
 
             Point position;
 

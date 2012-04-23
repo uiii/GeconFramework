@@ -38,6 +38,21 @@ namespace Gecon
         virtual void check() = 0;
         virtual bool needCheck() const = 0;
     };
+
+    template< typename Object, typename PropertyType >
+    using ObjectProperty = PropertyType(Object::*)() const;
+
+    template< typename Object, typename PropertyType >
+    bool needVisible(ObjectProperty<Object, PropertyType>)
+    {
+        return true;
+    }
+
+    template< typename Object >
+    bool needVisible(ObjectProperty<Object, bool> property)
+    {
+        return property != &Object::isVisible;
+    }
 } // namespace Gecon
 
 #endif // GECON_OBJECTGESTURE_HPP

@@ -21,7 +21,8 @@
 #define GECON_OBJECTMOTIONGESTURE_HPP
 
 #include "ObjectGesture.hpp"
-#include "ObjectGestureEvent.hpp"
+#include "Event.hpp"
+#include "Point.hpp"
 
 #include <list>
 #include <chrono>
@@ -35,14 +36,11 @@ namespace Gecon
     class ObjectMotionGesture : public ObjectGesture<Object>
     {
     public:
-        typedef typename Object::Point Point;
         typedef std::list<Point> PointList;
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
 
         typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
-
-        typedef ObjectGestureEvent<ObjectMotionGesture<Object> > Event;
 
         struct Size
         {
@@ -52,7 +50,7 @@ namespace Gecon
 
         ObjectMotionGesture(Object* object, const Motion& motion);
 
-        const Event& motionDoneEvent() const;
+        Event* motionDoneEvent();
 
         ObjectSet objects() const;
 

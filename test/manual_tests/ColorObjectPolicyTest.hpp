@@ -88,7 +88,7 @@ public slots:
             const Object::ConvexHull& convexHull = object->convexHull();
 
             QPolygon convexHullPolygon;
-            for(const Object::Point& point : convexHull)
+            for(const Gecon::Point& point : convexHull)
             {
                 convexHullPolygon << QPoint(point.x, point.y);
             }

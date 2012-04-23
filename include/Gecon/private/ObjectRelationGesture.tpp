@@ -19,81 +19,97 @@
 
 #include "../ObjectRelationGesture.hpp"
 
+#include <iostream>
+#include <memory>
+
 namespace Gecon
 {
-    template< typename Object, typename PropertyType >
-    ObjectRelationGesture<Object, PropertyType>::ObjectRelationGesture(
-            Object *left,
-            Object *right,
-            typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
-            typename ObjectRelationGesture<Object, PropertyType>::Property rightProperty,
-            typename ObjectRelationGesture<Object, PropertyType>::Condition condition
-    ):
+    template< typename Object >
+    template< typename PropertyType >
+    ObjectRelationGesture<Object>::ObjectRelationGesture(
+            Object* left,
+            ObjectRelationGesture<Object>::Property<PropertyType> leftProperty,
+            ObjectRelationGesture<Object>::Relation<PropertyType> relation,
+            Object* right,
+            ObjectRelationGesture<Object>::Property<PropertyType> rightProperty):
         left_(left),
         right_(right),
-        leftProperty_(leftProperty),
-        rightProperty_(rightProperty),
-        condition_(condition),
-        relationEnterEvent_(left, right),
-        relationLeaveEvent_(left, right)
+        leftState_(*left_),
+        rightState_(*right_),
+        leftMustBeVisible_(needVisible<Object>(leftProperty)),
+        rightMustBeVisible_(needVisible<Object>(rightProperty)),
+        condition_(
+            std::bind(
+                relation,
+                std::bind(leftProperty, std::placeholders::_1),
+                std::bind(rightProperty, std::placeholders::_2)
+            )
+        ),
+        inRelation_(false)
     {
     }
 
-    template< typename Object, typename PropertyType >
-    typename Gesture<Object, PropertyType>::ObjectSet ObjectRelationGesture<Object, PropertyType>::objects() const
+
+    template< typename Object >
+    typename ObjectGesture<Object>::ObjectSet ObjectRelationGesture<Object>::objects() const
     {
         return { left_, right_ };
     }
 
-    template< typename Object, typename PropertyType >
-    const std::string& ObjectRelationGesture<Object, PropertyType>::description() const
+    template< typename Object >
+    Event* ObjectRelationGesture<Object>::relationEnterEvent()
     {
-        return description_;
+        return &relationEnterEvent_;
     }
 
-    template< typename Object, typename PropertyType >
-    const ObjectRelationGesture<Object, PropertyType>::Event& ObjectRelationGesture<Object, PropertyType>::relationEnterEvent() const
+    template< typename Object >
+    Event* ObjectRelationGesture<Object>::relationLeaveEvent()
     {
-        return relationEnterEvent_;
+        return &relationLeaveEvent_;
     }
 
-    template< typename Object, typename PropertyType >
-    const ObjectRelationGesture<Object, PropertyType>::Event& ObjectRelationGesture<Object, PropertyType>::relationLeaveEvent() const
+    template< typename Object >
+    void ObjectRelationGesture<Object>::check()
     {
-        return relationLeaveEvent_;
-    }
+        leftState_ = *left_;
+        rightState_ = *right_;
 
-    template< typename Object, typename PropertyType >
-    bool ObjectRelationGesture<Object, PropertyType>::check()
-    {
-        if(leftProperty_ != &Object::isVisible && left_->isVisible() == false)
+        if(leftMustBeVisible_ && leftState_.isVisible() == false)
         {
-            return false;
+            return;
         }
 
-        if(rightProperty_ != &Object::isVisible && right_->isVisible() == false)
+        if(rightMustBeVisible_ && rightState_.isVisible() == false)
         {
-            return false;
+            return;
         }
 
-        return condition_(*left_, *right_);
+        if(condition_(leftState_, rightState_))
+        {
+            std::cout << "in relation" << std::endl;
+            if(! inRelation_)
+            {
+                inRelation_ = true;
+                std::cout << "enter event" << std::endl;
+                relationEnterEvent_.raise();
+            }
+        }
+        else
+        {
+            std::cout << "not in relation" << std::endl;
+            if(inRelation_)
+            {
+                inRelation_ = false;
+                std::cout << "leave event" << std::endl;
+                relationLeaveEvent_.raise();
+            }
+        }
     }
 
-    template< typename Object, typename PropertyType >
-    bool ObjectRelationGesture<Object, PropertyType>::needCheck() const
+    template< typename Object >
+    bool ObjectRelationGesture<Object>::needCheck() const
     {
-        return false; // TODO!!!!!!!
-    }
-
-    template< typename Object, typename PropertyType >
-    typename ObjectRelationGesture<Object, PropertyType>::Ptr makeObjectRelationGesture(
-            Object* left,
-            Object* right,
-            typename ObjectRelationGesture<Object, PropertyType>::Property leftProperty,
-            typename ObjectRelationGesture<Object, PropertyType>::Property rightProperty,
-            typename ObjectRelationGesture<Object, PropertyType>::Condition condition
-    )
-    {
-        return std::make_shared<ObjectRelationGesture<Object, PropertyType>>(left, right, leftProperty, rightProperty, condition);
+        //return inRelation_ || ! leftMustBeVisible_ || ! rightMustBeVisible_;
+        return true;
     }
 } // namespace Gecon

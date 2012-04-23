@@ -19,6 +19,8 @@
 
 #include "../ObjectMotionGesture.hpp"
 
+#include "math_constants.hpp"
+
 namespace Gecon
 {
     template< typename Object >
@@ -38,9 +40,9 @@ namespace Gecon
     }
 
     template< typename Object >
-    const typename ObjectMotionGesture<Object>::Event& ObjectMotionGesture<Object>::motionDoneEvent() const
+    Event* ObjectMotionGesture<Object>::motionDoneEvent()
     {
-        return motionDoneEvent_;
+        return &motionDoneEvent_;
     }
 
     template< typename Object >
@@ -64,7 +66,7 @@ namespace Gecon
 
         if(object_->isVisible())
         {
-            if(recordedMotion_.empty() || object_->position().distance(recordedMotion_.back()) > 20) // TODO magic
+            if(recordedMotion_.empty() || distance(object_->position(), recordedMotion_.back()) > 20) // TODO magic
             {
                 recordedMotion_.push_back(object_->position());
                 lastRecordedMotionTime_ = now;
@@ -84,9 +86,11 @@ namespace Gecon
         std::cout << "check motion base" << std::endl;
         MoveSequence moves;
         motionToMoves_(motion, moves);
+
         if(distance_(moves_, moves) < 20) // TODO magic
         {
-            motionDoneEvent_.raise(*this);
+            std::cout << distance_(moves_, moves) << std::endl;
+            motionDoneEvent_.raise();
         }
     }
 

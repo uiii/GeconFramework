@@ -25,27 +25,6 @@
 
 namespace Gecon
 {
-    template< typename ObjectGesture >
-    class ObjectGestureEvent
-    {
-    public:
-        typedef std::function<void(const ObjectGestureEvent<ObjectGesture>*)> Action;
-        typedef std::list<Action> ActionList;
-
-        ObjectGestureEvent();
-        virtual ~ObjectGestureEvent();
-
-        const ObjectGesture& gesture() const;
-
-        void raise(const ObjectGesture& gesture) const;
-
-        void connect(Action action) const;
-
-    private:
-        mutable ObjectGesture* gesture_;
-
-        mutable ActionList actions_;
-    };
 } // namespace Gecon
 
 #include "private/ObjectGestureEvent.tpp"

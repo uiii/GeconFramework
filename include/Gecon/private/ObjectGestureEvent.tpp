@@ -21,39 +21,4 @@
 
 namespace Gecon
 {
-    template< typename ObjectGesture >
-    ObjectGestureEvent<ObjectGesture>::ObjectGestureEvent():
-        gesture_(0)
-    {
-    }
-
-    template< typename ObjectGesture >
-    ObjectGestureEvent<ObjectGesture>::~ObjectGestureEvent()
-    {
-        delete gesture_;
-    }
-
-    template< typename ObjectGesture >
-    const ObjectGesture &ObjectGestureEvent<ObjectGesture>::gesture() const
-    {
-        return gesture_;
-    }
-
-    template< typename ObjectGesture >
-    void ObjectGestureEvent<ObjectGesture>::raise(const ObjectGesture& gesture) const
-    {
-        delete gesture_;
-        gesture_ = new ObjectGesture(gesture);
-
-        for(Action action : actions_)
-        {
-            action(this);
-        }
-    }
-
-    template< typename ObjectGesture >
-    void ObjectGestureEvent<ObjectGesture>::connect(ObjectGestureEvent<ObjectGesture>::Action action) const
-    {
-        actions_.push_back(action);
-    }
 } // namespace Gecon
