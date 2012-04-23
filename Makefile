@@ -52,10 +52,10 @@ run-unit-tests:
 run-manual-tests:
 	-@${GDB} ${MANUAL_TESTS}
 
-dev-install: build
+dev-install:
 	@${MAKE} -f ${CONFIG_DIR}/install/install.mk pkg-config INSTALL_PREFIX=${BASE_DIR} --no-print-directory
 
-install: build
+install:
 	@${MAKE} -f ${CONFIG_DIR}/install/install.mk --no-print-directory
 
 uninstall:

@@ -1,0 +1,10 @@
+libdir=${INSTALL_PREFIX}/lib
+includedir=${INSTALL_PREFIX}/include
+
+Name: GeconFramework
+Description: Gesture-based computer control framework
+URL: https://github.com/uiii/GeconFramework
+Version: dev
+Requires: libv4l2
+Cflags: -I${includedir}
+Libs: -L${libdir} -lGeconFramework -lboost_filesystem -lboost_thread -lboost_system
