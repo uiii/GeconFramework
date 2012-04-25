@@ -80,33 +80,32 @@ namespace Gecon
     {
         objectState_ = *object_;
 
-        if(mustBeVisible_ && objectState_.isVisible() == false)
-        {
-            return;
-        }
+        bool correctVisibility = objectState_.isVisible() || ! mustBeVisible_;
 
         std::cout << "before check" << std::endl;
-        if(condition_(objectState_))
+        if(correctVisibility && condition_(objectState_))
         {
-            std::cout << "in state" << std::endl;
-            inStateEvent_.raise();
             if(! inState_)
             {
                 inState_ = true;
                 std::cout << "enter event" << std::endl;
                 stateEnterEvent_.raise();
             }
+
+            std::cout << "in state" << std::endl;
+            inStateEvent_.raise();
         }
         else
         {
-            std::cout << "not in state" << std::endl;
-            notInStateEvent_.raise();
             if(inState_)
             {
                 inState_ = false;
                 std::cout << "leave event" << std::endl;
                 stateLeaveEvent_.raise();
             }
+
+            std::cout << "not in state" << std::endl;
+            notInStateEvent_.raise();
         }
     }
 

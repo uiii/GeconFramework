@@ -53,6 +53,9 @@ namespace Gecon
         Event* relationEnterEvent();
         Event* relationLeaveEvent();
 
+        Event* inRelationEvent();
+        Event* notInRelationEvent();
+
         ObjectSet objects() const;
 
         void check();
@@ -74,6 +77,9 @@ namespace Gecon
 
         Event relationEnterEvent_;
         Event relationLeaveEvent_;
+
+        Event inRelationEvent_;
+        Event notInRelationEvent_;
     };
 } // namespace Gecon
 

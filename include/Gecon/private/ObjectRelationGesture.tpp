@@ -69,40 +69,49 @@ namespace Gecon
     }
 
     template< typename Object >
+    Event* ObjectRelationGesture<Object>::inRelationEvent()
+    {
+        return &inRelationEvent_;
+    }
+
+    template< typename Object >
+    Event* ObjectRelationGesture<Object>::notInRelationEvent()
+    {
+        return &notInRelationEvent_;
+    }
+
+    template< typename Object >
     void ObjectRelationGesture<Object>::check()
     {
         leftState_ = *left_;
         rightState_ = *right_;
 
-        if(leftMustBeVisible_ && leftState_.isVisible() == false)
-        {
-            return;
-        }
+        bool correctLeftVisibility = leftState_.isVisible() || ! leftMustBeVisible_;
+        bool correctRightVisibility = rightState_.isVisible() || ! rightMustBeVisible_;
 
-        if(rightMustBeVisible_ && rightState_.isVisible() == false)
+        if(correctLeftVisibility && correctRightVisibility && condition_(leftState_, rightState_))
         {
-            return;
-        }
-
-        if(condition_(leftState_, rightState_))
-        {
-            std::cout << "in relation" << std::endl;
             if(! inRelation_)
             {
                 inRelation_ = true;
                 std::cout << "enter event" << std::endl;
                 relationEnterEvent_.raise();
             }
+
+            std::cout << "in relation" << std::endl;
+            inRelationEvent_.raise();
         }
         else
         {
-            std::cout << "not in relation" << std::endl;
             if(inRelation_)
             {
                 inRelation_ = false;
                 std::cout << "leave event" << std::endl;
                 relationLeaveEvent_.raise();
             }
+
+            std::cout << "not in relation" << std::endl;
+            notInRelationEvent_.raise();
         }
     }
 
