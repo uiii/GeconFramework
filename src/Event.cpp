@@ -142,7 +142,7 @@ namespace Gecon
 
         for(Trigger::Switch* s : offSwitches_)
         {
-            s->on();
+            s->off();
         }
     }
 } // namespace Gecon
