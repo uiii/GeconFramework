@@ -51,38 +51,40 @@ namespace Gecon
 
 
     template< typename Object >
-    typename ObjectGesture<Object>::ObjectSet ObjectRelationGesture<Object>::objects() const
+    typename ObjectGesture<Object>::Objects ObjectRelationGesture<Object>::objects() const
     {
         return { left_, right_ };
     }
 
     template< typename Object >
-    Event* ObjectRelationGesture<Object>::relationEnterEvent()
+    typename ObjectRelationGesture<Object>::Event* ObjectRelationGesture<Object>::relationEnterEvent()
     {
         return &relationEnterEvent_;
     }
 
     template< typename Object >
-    Event* ObjectRelationGesture<Object>::relationLeaveEvent()
+    typename ObjectRelationGesture<Object>::Event* ObjectRelationGesture<Object>::relationLeaveEvent()
     {
         return &relationLeaveEvent_;
     }
 
     template< typename Object >
-    Event* ObjectRelationGesture<Object>::inRelationEvent()
+    typename ObjectRelationGesture<Object>::Event* ObjectRelationGesture<Object>::inRelationEvent()
     {
         return &inRelationEvent_;
     }
 
     template< typename Object >
-    Event* ObjectRelationGesture<Object>::notInRelationEvent()
+    typename ObjectRelationGesture<Object>::Event* ObjectRelationGesture<Object>::notInRelationEvent()
     {
         return &notInRelationEvent_;
     }
 
     template< typename Object >
-    void ObjectRelationGesture<Object>::check()
+    typename ObjectRelationGesture<Object>::Events ObjectRelationGesture<Object>::check()
     {
+        Events events;
+
         leftState_ = *left_;
         rightState_ = *right_;
 
@@ -95,11 +97,11 @@ namespace Gecon
             {
                 inRelation_ = true;
                 std::cout << "enter event" << std::endl;
-                relationEnterEvent_.raise();
+                events.insert(&relationEnterEvent_);
             }
 
             std::cout << "in relation" << std::endl;
-            inRelationEvent_.raise();
+            events.insert(&inRelationEvent_);
         }
         else
         {
@@ -107,18 +109,27 @@ namespace Gecon
             {
                 inRelation_ = false;
                 std::cout << "leave event" << std::endl;
-                relationLeaveEvent_.raise();
+                events.insert(&relationLeaveEvent_);
             }
 
             std::cout << "not in relation" << std::endl;
-            notInRelationEvent_.raise();
+            events.insert(&notInRelationEvent_);
         }
+
+        return events;
     }
 
     template< typename Object >
     bool ObjectRelationGesture<Object>::needCheck() const
     {
+        // TODO
         //return inRelation_ || ! leftMustBeVisible_ || ! rightMustBeVisible_;
         return true;
+    }
+
+    template< typename Object >
+    void ObjectRelationGesture<Object>::reset()
+    {
+        inRelation_ = false;
     }
 } // namespace Gecon

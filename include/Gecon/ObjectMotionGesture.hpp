@@ -21,7 +21,6 @@
 #define GECON_OBJECTMOTIONGESTURE_HPP
 
 #include "ObjectGesture.hpp"
-#include "Event.hpp"
 #include "Point.hpp"
 
 #include <list>
@@ -47,7 +46,9 @@ namespace Gecon
         typedef PointList Motion;
         typedef std::list<std::size_t> MoveSequence;
 
-        typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
+        typedef typename ObjectGesture<Object>::Event Event;
+        typedef typename ObjectGesture<Object>::Events Events;
+        typedef typename ObjectGesture<Object>::Objects Objects;
 
         struct Size
         {
@@ -59,16 +60,18 @@ namespace Gecon
 
         Event* motionDoneEvent();
 
-        ObjectSet objects() const;
+        Objects objects() const;
 
-        void check();
+        Events check();
         bool needCheck() const;
+
+        void reset();
 
     protected:
         typedef std::chrono::system_clock::time_point Time;
         typedef std::chrono::milliseconds Timeout;
 
-        virtual void checkMotion_(const Motion &motion);
+        virtual bool checkMotion_(const Motion &motion);
 
         Size getSize_(const Motion& motion);
         void normalize_(Motion& motion, const Size& size);

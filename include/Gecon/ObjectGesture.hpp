@@ -29,14 +29,21 @@ namespace Gecon
     class ObjectGesture
     {
     public:
-        typedef std::set<Object*> ObjectSet;
+        class Event
+        {
+        };
+
+        typedef std::set<Event*> Events;
+        typedef std::set<Object*> Objects;
 
         virtual ~ObjectGesture() {}
 
-        virtual ObjectSet objects() const = 0;
+        virtual Objects objects() const = 0;
 
-        virtual void check() = 0;
+        virtual Events check() = 0;
         virtual bool needCheck() const = 0;
+
+        virtual void reset() = 0;
     };
 
     template< typename Object, typename PropertyType >

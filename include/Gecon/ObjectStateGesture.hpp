@@ -21,7 +21,6 @@
 #define GECON_OBJECTSTATEGESTURE_HPP
 
 #include "ObjectGesture.hpp"
-#include "Event.hpp"
 
 #include <functional>
 
@@ -39,14 +38,14 @@ namespace Gecon
 
         typedef std::function<bool(const Object&)> Condition;
 
-        typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
-
-        //ObjectStateGesture();
+        typedef typename ObjectGesture<Object>::Event Event;
+        typedef typename ObjectGesture<Object>::Events Events;
+        typedef typename ObjectGesture<Object>::Objects Objects;
 
         template< typename PropertyType >
         ObjectStateGesture(Object* object, Property<PropertyType> property, Relation<PropertyType> relation, PropertyType value);
 
-        const Object& objectState() const;
+        const Object& objectState() const; // TODO remove
 
         Event* stateEnterEvent();
         Event* stateLeaveEvent();
@@ -54,15 +53,17 @@ namespace Gecon
         Event* inStateEvent();
         Event* notInStateEvent();
 
-        ObjectSet objects() const;
+        Objects objects() const;
 
-        void check();
+        Events check();
         bool needCheck() const;
+
+        void reset();
 
     private:
         Object* object_;
 
-        Object objectState_;
+        Object objectState_; // TODO remove
         bool mustBeVisible_;
 
         Condition condition_;

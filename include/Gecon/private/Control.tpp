@@ -21,20 +21,20 @@
 
 namespace Gecon
 {
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    Control<DevicePolicy, ObjectPolicy, GesturePolicy>::Control():
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::Control():
         controlLoop_(0),
         doControl_(false),
         isRunning_(false)
     {
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::start()
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::start()
     {
         if(controlLoop_ == 0)
         {
-            controlLoop_ = new Control<DevicePolicy, ObjectPolicy, GesturePolicy>;
+            controlLoop_ = new Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>;
         }
 
         if(! controlLoop_->isRunning())
@@ -46,8 +46,8 @@ namespace Gecon
         }
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::restart()
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::restart()
     {
         if(! controlLoop_ || ! controlLoop_->isRunning())
         {
@@ -73,8 +73,8 @@ namespace Gecon
         start();*/
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::stop()
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::stop()
     {
         if(controlLoop_ && controlLoop_->isRunning())
         {
@@ -93,15 +93,15 @@ namespace Gecon
         isRunningLock.unlock();
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    bool Control<DevicePolicy, ObjectPolicy, GesturePolicy>::isRunning() const
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    bool Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::isRunning() const
     {
         boost::lock_guard<boost::mutex> lock(isRunningMutex_);
         return isRunning_;
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::operator()()
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::operator()()
     {
         boost::unique_lock<boost::mutex> isRunningLock(isRunningMutex_);
         isRunning_ = true;
@@ -115,7 +115,7 @@ namespace Gecon
             doControlLock.unlock();
 
             boost::unique_lock<boost::mutex> dataLock(dataMutex_);
-            GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot()));
+            ActionPolicy::checkActionTriggers(GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot())));
             dataLock.unlock();
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(30));
@@ -133,30 +133,31 @@ namespace Gecon
         stopCond_.notify_all();
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::setDevice(Control::DeviceAdapter device)
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::setDevice(Control::DeviceAdapter device)
     {
         device_ = device;
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    typename Control<DevicePolicy, ObjectPolicy, GesturePolicy>::DeviceAdapter Control<DevicePolicy, ObjectPolicy, GesturePolicy>::device() const
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    typename Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::DeviceAdapter Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::device() const
     {
         return device_;
     }
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    void Control<DevicePolicy, ObjectPolicy, GesturePolicy>::operator=(const Control::ControlLoop& controlLoop)
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::operator=(const Control::ControlLoop& controlLoop)
     {
         ObjectPolicy::operator=(controlLoop);
         GesturePolicy::operator=(controlLoop);
+        ActionPolicy::operator=(controlLoop);
 
         device_ = controlLoop.device_;
     }
 
-    /*template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    ObjectSet& Control<Device, ObjectPolicy, GesturePolicy>::objects();
+    /*template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    ObjectSet& Control<Device, ObjectPolicy, GesturePolicy, ActionPolicy>::objects();
 
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy>
-    GestureSet& Control<Device, ObjectPolicy, GesturePolicy>::gestures();*/
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    GestureSet& Control<Device, ObjectPolicy, GesturePolicy, ActionPolicy>::gestures();*/
 } // namespace Gecon

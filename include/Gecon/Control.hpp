@@ -26,8 +26,8 @@
 
 namespace Gecon
 {
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy >
-    class Control : public ObjectPolicy, public GesturePolicy
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy >
+    class Control : public ObjectPolicy, public GesturePolicy, public ActionPolicy
     {
     public:
         typedef typename DevicePolicy::DeviceAdapter DeviceAdapter;
@@ -83,7 +83,7 @@ namespace Gecon
         GestureSet& gestures();*/
 
     private:
-        typedef Gecon::Control<DevicePolicy, ObjectPolicy, GesturePolicy> ControlLoop;
+        typedef Gecon::Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy> ControlLoop;
         ControlLoop* controlLoop_;
 
         void operator=(const ControlLoop& controlLoop);

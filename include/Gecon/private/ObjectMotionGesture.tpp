@@ -39,20 +39,22 @@ namespace Gecon
     }
 
     template< typename Object >
-    typename ObjectMotionGesture<Object>::ObjectSet ObjectMotionGesture<Object>::objects() const
+    typename ObjectMotionGesture<Object>::Objects ObjectMotionGesture<Object>::objects() const
     {
         return { object_ };
     }
 
     template< typename Object >
-    Event* ObjectMotionGesture<Object>::motionDoneEvent()
+    typename ObjectMotionGesture<Object>::Event* ObjectMotionGesture<Object>::motionDoneEvent()
     {
         return &motionDoneEvent_;
     }
 
     template< typename Object >
-    void ObjectMotionGesture<Object>::check()
+    typename ObjectMotionGesture<Object>::Events ObjectMotionGesture<Object>::check()
     {
+        Events events;
+
         Time now = std::chrono::system_clock::now();
         if(! recordedMotion_.empty() && now - lastRecordedMotionTime_ > timeout_)
         {
@@ -63,7 +65,10 @@ namespace Gecon
             {
                 std::cout << "check motion" << std::endl;
                 normalize_(recordedMotion_, motionSize);
-                checkMotion_(recordedMotion_);
+                if(checkMotion_(recordedMotion_))
+                {
+                    events.insert(&motionDoneEvent_);
+                }
             }
 
             recordedMotion_.clear();
@@ -77,6 +82,8 @@ namespace Gecon
                 lastRecordedMotionTime_ = now;
             }
         }
+
+        return events;
     }
 
     template< typename Object >
@@ -86,7 +93,14 @@ namespace Gecon
     }
 
     template< typename Object >
-    void ObjectMotionGesture<Object>::checkMotion_(const Motion &motion)
+    void ObjectMotionGesture<Object>::reset()
+    {
+        recordedMotion_.clear();
+        lastRecordedMotionTime_ = Time();
+    }
+
+    template< typename Object >
+    bool ObjectMotionGesture<Object>::checkMotion_(const Motion &motion)
     {
         std::cout << "check motion base" << std::endl;
         MoveSequence moves;
@@ -95,8 +109,10 @@ namespace Gecon
         if(distance_(moves_, moves) < MAXIMAL_SAME_GESTURE_DISTANCE)
         {
             std::cout << distance_(moves_, moves) << std::endl;
-            motionDoneEvent_.raise();
+            return true;
         }
+
+        return false;
     }
 
     template< typename Object >

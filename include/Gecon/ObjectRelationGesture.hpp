@@ -21,7 +21,6 @@
 #define GECON_OBJECTRELATIONGESTURE_HPP
 
 #include "ObjectGesture.hpp"
-#include "Event.hpp"
 
 #include <functional>
 
@@ -39,7 +38,9 @@ namespace Gecon
 
         typedef std::function<bool(const Object&, const Object&)> Condition;
 
-        typedef typename ObjectGesture<Object>::ObjectSet ObjectSet;
+        typedef typename ObjectGesture<Object>::Event Event;
+        typedef typename ObjectGesture<Object>::Events Events;
+        typedef typename ObjectGesture<Object>::Objects Objects;
 
         template< typename PropertyType >
         ObjectRelationGesture(
@@ -56,17 +57,19 @@ namespace Gecon
         Event* inRelationEvent();
         Event* notInRelationEvent();
 
-        ObjectSet objects() const;
+        Objects objects() const;
 
-        void check();
+        Events check();
         bool needCheck() const;
+
+        void reset();
 
     private:
         Object* left_;
         Object* right_;
 
-        Object leftState_;
-        Object rightState_;
+        Object leftState_; // TODO remove
+        Object rightState_; // TODO remove
 
         bool leftMustBeVisible_;
         bool rightMustBeVisible_;

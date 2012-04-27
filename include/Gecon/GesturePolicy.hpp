@@ -31,21 +31,21 @@ namespace Gecon
     class GesturePolicy
     {
     public:
-        typedef Object* ObjectPtr;
         typedef ObjectGesture<Object> Gesture;
-        typedef Gesture* GesturePtr;
+        typedef typename Gesture::Event Event;
 
-        typedef std::set<ObjectPtr> ObjectSet;
-        typedef std::set<GesturePtr> GestureSet;
+        typedef std::set<Object*> Objects;
+        typedef std::set<Gesture*> Gestures;
+        typedef std::set<Event*> Events;
 
         GesturePolicy();
 
-        void prepareGestures(const GestureSet& gestures);
-        void checkGestures(const ObjectSet& objects);
+        void prepareGestures(const Gestures& gestures);
+        Events checkGestures(const Objects& objects);
 
     private:
-        std::map<ObjectPtr, GestureSet> objectGestures_;
-        GestureSet gesturesToCheck_;
+        std::map<Object*, Gestures> objectGestures_;
+        Gestures gesturesToCheck_;
     };
 } // namespace Gecon
 

@@ -27,14 +27,17 @@ namespace Gecon
     }
 
     template< typename Object >
-    void GesturePolicy<Object>::prepareGestures(const GesturePolicy<Object>::GestureSet& gestures)
+    void GesturePolicy<Object>::prepareGestures(const GesturePolicy<Object>::Gestures& gestures)
     {
         objectGestures_.clear();
+        gesturesToCheck_.clear();
 
-        for(GesturePtr gesture : gestures)
+        for(Gesture* gesture : gestures)
         {
-            ObjectSet objects = gesture->objects();
-            for(ObjectPtr object : objects)
+            gesture->reset();
+
+            Objects objects = gesture->objects();
+            for(Object* object : objects)
             {
                 objectGestures_[object].insert(gesture);
             }
@@ -44,18 +47,22 @@ namespace Gecon
     }
 
     template< typename Object >
-    void GesturePolicy<Object>::checkGestures(const GesturePolicy<Object>::ObjectSet& objects)
+    typename GesturePolicy<Object>::Events GesturePolicy<Object>::checkGestures(const GesturePolicy<Object>::Objects& objects)
     {
-        for(ObjectPtr object : objects)
+        for(Object* object : objects)
         {
-            GestureSet gestures = objectGestures_[object];
+            Gestures gestures = objectGestures_[object];
             gesturesToCheck_.insert(gestures.begin(), gestures.end());
         }
 
-        GestureSet needCheck;
-        for(GesturePtr gesture : gesturesToCheck_)
+        Events events;
+
+        Gestures needCheck;
+        for(Gesture* gesture : gesturesToCheck_)
         {
-            gesture->check();
+            Events gestureEvents = gesture->check();
+
+            events.insert(gestureEvents.begin(), gestureEvents.end());
 
             if(gesture->needCheck())
             {
@@ -64,5 +71,7 @@ namespace Gecon
         }
 
         std::swap(gesturesToCheck_, needCheck);
+
+        return events;
     }
 } // namespace Gecon

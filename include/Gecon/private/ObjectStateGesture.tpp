@@ -23,13 +23,6 @@
 
 namespace Gecon
 {
-    /*template< typename Object >
-    ObjectStateGesture<Object>::ObjectStateGesture():
-        object_(0),
-        inState_(false)
-    {
-    }*/
-
     template< typename Object >
     template< typename PropertyType >
     ObjectStateGesture<Object>::ObjectStateGesture(
@@ -46,38 +39,40 @@ namespace Gecon
     }
 
     template< typename Object >
-    Event* ObjectStateGesture<Object>::stateEnterEvent()
+    typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::stateEnterEvent()
     {
         return &stateEnterEvent_;
     }
 
     template< typename Object >
-    Event* ObjectStateGesture<Object>::stateLeaveEvent()
+    typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::stateLeaveEvent()
     {
         return &stateLeaveEvent_;
     }
 
     template< typename Object >
-    Event* ObjectStateGesture<Object>::inStateEvent()
+    typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::inStateEvent()
     {
         return &inStateEvent_;
     }
 
     template< typename Object >
-    Event* ObjectStateGesture<Object>::notInStateEvent()
+    typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::notInStateEvent()
     {
         return &notInStateEvent_;
     }
 
     template< typename Object >
-    typename ObjectStateGesture<Object>::ObjectSet ObjectStateGesture<Object>::objects() const
+    typename ObjectStateGesture<Object>::Objects ObjectStateGesture<Object>::objects() const
     {
         return { object_ };
     }
 
     template< typename Object >
-    void ObjectStateGesture<Object>::check()
+    typename ObjectStateGesture<Object>::Events ObjectStateGesture<Object>::check()
     {
+        Events events;
+
         objectState_ = *object_;
 
         bool correctVisibility = objectState_.isVisible() || ! mustBeVisible_;
@@ -89,11 +84,11 @@ namespace Gecon
             {
                 inState_ = true;
                 std::cout << "enter event" << std::endl;
-                stateEnterEvent_.raise();
+                events.insert(&stateEnterEvent_);
             }
 
             std::cout << "in state" << std::endl;
-            inStateEvent_.raise();
+            events.insert(&inStateEvent_);
         }
         else
         {
@@ -101,17 +96,25 @@ namespace Gecon
             {
                 inState_ = false;
                 std::cout << "leave event" << std::endl;
-                stateLeaveEvent_.raise();
+                events.insert(&stateLeaveEvent_);
             }
 
             std::cout << "not in state" << std::endl;
-            notInStateEvent_.raise();
+            events.insert(&notInStateEvent_);
         }
+
+        return events;
     }
 
     template< typename Object >
     bool ObjectStateGesture<Object>::needCheck() const
     {
         return inState_ || ! mustBeVisible_;
+    }
+
+    template< typename Object >
+    void ObjectStateGesture<Object>::reset()
+    {
+        inState_ = false;
     }
 } // namespace Gecon

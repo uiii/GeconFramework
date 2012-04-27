@@ -25,6 +25,5 @@ project "GeconFramework"
 
     files {
         "ColorObjectPolicy.cpp",
-        "Event.cpp",
         "Point.cpp"
     }
