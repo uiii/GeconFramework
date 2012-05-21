@@ -33,6 +33,7 @@ namespace Gecon
     config_variable<std::size_t> V4L2VideoDeviceCapture::BUFFER_COUNT = 5;
     config_variable<std::size_t> V4L2VideoDeviceCapture::WAIT_FOR_DATA_TIMEOUT = 2;
     config_variable<__u32> V4L2VideoDeviceCapture::PIXEL_FORMAT = V4L2_PIX_FMT_RGB24;
+    config_variable<bool> V4L2VideoDeviceCapture::MIRRORED = true;
 
     V4L2VideoDeviceCapture::V4L2VideoDeviceCapture(const fs::path &file):
         doCapture_(false),
@@ -103,6 +104,11 @@ namespace Gecon
             newRecentBuffer_ = false;
         }
         recentBufferLock.unlock();
+
+        if(MIRRORED)
+        {
+            mirrorBuffer_(snapshotWidht_, snapshotWidht_, buffers_[capturedBufferIndex_]);
+        }
 
         return { snapshotWidht_, snapshotHeight_, buffers_[capturedBufferIndex_].data, buffers_[capturedBufferIndex_].bytesused };
     }
@@ -378,6 +384,33 @@ namespace Gecon
         else if(result == 0)
         {
             throw v4l2_device_error(device.file(), "cannot get data from %device%");
+        }
+    }
+
+    void V4L2VideoDeviceCapture::mirrorBuffer_(std::size_t width, std::size_t height, Buffer& buffer)
+    {
+        auto swap = [](unsigned char& a, unsigned char& b) -> void
+        {
+            a ^= b;
+            b ^= a;
+            a ^= b;
+        };
+
+        unsigned char* pointer = buffer.data;
+        for(std::size_t row = 0; row < height; ++row)
+        {
+            for(std::size_t col = 0; col < width / 2 - 1; ++col)
+            {
+                for(std::size_t byte = 0; byte < 3; ++byte)
+                {
+                    swap(
+                        pointer[col * 3 + byte],
+                        pointer[(width - 1 - col) * 3 + byte]
+                    );
+                }
+            }
+
+            pointer += width * 3;
         }
     }
 } // namespace Gecon

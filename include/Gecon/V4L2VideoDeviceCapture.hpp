@@ -71,6 +71,7 @@ namespace Gecon
         static config_variable<std::size_t> BUFFER_COUNT;
         static config_variable<std::size_t> WAIT_FOR_DATA_TIMEOUT;
         static config_variable<__u32> PIXEL_FORMAT;
+        static config_variable<bool> MIRRORED;
 
         /**
          * Construct a device capture.
@@ -249,6 +250,8 @@ namespace Gecon
          *     When the time is out.
          */
         void waitForData_(V4L2DeviceDescriptor device);
+
+        void mirrorBuffer_(std::size_t width, std::size_t height, Buffer& buffer);
 
         boost::thread captureThread_;
 

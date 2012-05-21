@@ -39,24 +39,30 @@ namespace Gecon
     public:
         static config_variable<std::chrono::milliseconds::rep> MOTION_TIMEOUT;
         static config_variable<std::size_t> MINIMAL_GESTURE_SIDE;
-        static config_variable<std::size_t> MINIMAL_MOTION_SIZE;
+        static config_variable<std::size_t> NOT_MOTION_TOLERANCE;
         static config_variable<std::size_t> MAXIMAL_SAME_GESTURE_DISTANCE;
 
         typedef std::list<Point> PointList;
         typedef PointList Motion;
-        typedef std::list<std::size_t> MoveSequence;
+        typedef std::vector<std::size_t> MoveSequence;
 
         typedef typename ObjectGesture<Object>::Event Event;
         typedef typename ObjectGesture<Object>::Events Events;
         typedef typename ObjectGesture<Object>::Objects Objects;
 
-        struct Size
+        typedef std::chrono::system_clock::time_point Time;
+
+        struct MotionRecord
         {
-            double width;
-            double height;
+            Motion motion;
+            MoveSequence moves;
+            Time lastRecordedMotionTime;
+            Time movesGenerationTime;
         };
 
-        ObjectMotionGesture(Object* object, const Motion& motion);
+        typedef std::map<Object*, MotionRecord> MotionStorage;
+
+        ObjectMotionGesture(Object* object, const Motion& motion, MotionStorage* motionStorage);
 
         Event* motionDoneEvent();
 
@@ -68,23 +74,28 @@ namespace Gecon
         void reset();
 
     protected:
-        typedef std::chrono::system_clock::time_point Time;
         typedef std::chrono::milliseconds Timeout;
 
-        virtual bool checkMotion_(const Motion &motion);
+        struct Size
+        {
+            double width;
+            double height;
+        };
+
+        void recordMotion_();
+        virtual void processRecord_(MotionRecord& record, const Size& size);
 
         Size getSize_(const Motion& motion);
         void normalize_(Motion& motion, const Size& size);
         void motionToMoves_(const Motion& motion, MoveSequence& moves);
-        std::size_t distance_(const MoveSequence& left, const MoveSequence& right);
+        std::size_t distance_(const MoveSequence& left, const MoveSequence& right, std::size_t maxDistance);
 
         Object* object_;
 
         Motion motion_;
         MoveSequence moves_;
 
-        Motion recordedMotion_;
-        Time lastRecordedMotionTime_;
+        MotionStorage* motionStorage_;
 
         Timeout timeout_;
 
@@ -93,9 +104,6 @@ namespace Gecon
     public:
         typedef std::shared_ptr<ObjectMotionGesture<Object> > Ptr;
     };
-
-    /*template< typename Object >
-    typename ObjectMotionGesture<Object>::Ptr makeObjectMotionGesture(Object* object, const Motion& motion);*/
 } // namespace Gecon
 
 #include "private/ObjectMotionGesture.tpp"

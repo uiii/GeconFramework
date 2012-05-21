@@ -62,7 +62,12 @@ namespace Gecon
         GesturePolicy& gesturePolicy = *controlLoop_;
         gesturePolicy = *this;
 
+        ActionPolicy& actionPolicy = *controlLoop_;
+        actionPolicy = *this;
+
         dataLock.unlock();
+
+        std::cout << "restarted" << std::endl;
 
         /*
         // to ensure that the physical device won't be closed
@@ -97,12 +102,24 @@ namespace Gecon
     bool Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::isRunning() const
     {
         boost::lock_guard<boost::mutex> lock(isRunningMutex_);
-        return isRunning_;
+        if(controlLoop_) // this is not control loop
+        {
+            return controlLoop_->isRunning();
+        }
+        else // this is control loop
+        {
+            return isRunning_;
+        }
     }
 
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
     void Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::operator()()
     {
+        if(controlLoop_) // this is not control loop
+        {
+            return;
+        }
+
         boost::unique_lock<boost::mutex> isRunningLock(isRunningMutex_);
         isRunning_ = true;
         isRunningLock.unlock();

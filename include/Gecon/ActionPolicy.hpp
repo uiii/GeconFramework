@@ -18,12 +18,22 @@ namespace Gecon
         typedef std::set<ActionTrigger*> ActionTriggers;
 
         ActionPolicy();
+        ActionPolicy(const ActionPolicy<Event>& another);
+
+        ActionPolicy<Event>& operator=(const ActionPolicy<Event>& another);
 
         void prepareActionTriggers(const ActionTriggers& triggers);
         void checkActionTriggers(const Events& events);
 
+        void setPerformActions(bool perform);
+
     private:
+        ActionTriggers triggers_;
         std::map<Event*, ActionTriggers> eventActionTriggers_;
+
+        ActionTriggers triggersToCheck_;
+
+        bool performActions_;
     };
 } // namespace Gecon
 

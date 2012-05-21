@@ -17,37 +17,51 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../GesturePolicy.hpp"
+#include "../ObjectGesturePolicy.hpp"
 
 namespace Gecon
 {
-    template< typename Object >
-    GesturePolicy<Object>::GesturePolicy()
+    template< typename Object, typename ObjectContainer >
+    ObjectGesturePolicy<Object, ObjectContainer>::ObjectGesturePolicy()
     {
     }
 
-    template< typename Object >
-    void GesturePolicy<Object>::prepareGestures(const GesturePolicy<Object>::Gestures& gestures)
+    template< typename Object, typename ObjectContainer >
+    ObjectGesturePolicy<Object, ObjectContainer>::ObjectGesturePolicy(const ObjectGesturePolicy<Object, ObjectContainer>& another)
     {
+        prepareGestures(another.gestures_);
+    }
+
+    template< typename Object, typename ObjectContainer >
+    ObjectGesturePolicy<Object, ObjectContainer>& ObjectGesturePolicy<Object, ObjectContainer>::operator =(const ObjectGesturePolicy<Object, ObjectContainer>& another)
+    {
+        prepareGestures(another.gestures_);
+        return *this;
+    }
+
+    template< typename Object, typename ObjectContainer >
+    void ObjectGesturePolicy<Object, ObjectContainer>::prepareGestures(const ObjectGesturePolicy<Object, ObjectContainer>::Gestures& gestures)
+    {
+        gestures_ = gestures;
+
         objectGestures_.clear();
         gesturesToCheck_.clear();
 
-        for(Gesture* gesture : gestures)
+        for(Gesture* gesture : gestures_)
         {
             gesture->reset();
 
-            Objects objects = gesture->objects();
-            for(Object* object : objects)
+            for(Object* object : gesture->objects())
             {
                 objectGestures_[object].insert(gesture);
             }
         }
 
-        gesturesToCheck_.insert(gestures.begin(), gestures.end()); // check all gestures for the first time
+        gesturesToCheck_.insert(gestures_.begin(), gestures_.end()); // check all gestures for the first time
     }
 
-    template< typename Object >
-    typename GesturePolicy<Object>::Events GesturePolicy<Object>::checkGestures(const GesturePolicy<Object>::Objects& objects)
+    template< typename Object, typename ObjectContainer >
+    typename ObjectGesturePolicy<Object, ObjectContainer>::Events ObjectGesturePolicy<Object, ObjectContainer>::checkGestures(const ObjectGesturePolicy<Object, ObjectContainer>::Objects& objects)
     {
         for(Object* object : objects)
         {
@@ -57,13 +71,20 @@ namespace Gecon
 
         Events events;
 
-        Gestures needCheck;
         for(Gesture* gesture : gesturesToCheck_)
         {
             Events gestureEvents = gesture->check();
 
             events.insert(gestureEvents.begin(), gestureEvents.end());
+        }
 
+        Gestures needCheck;
+        // "need check" cyckle is separated from
+        // "check" cycle, because needCheck()
+        // of one gesture may be affected
+        // by check() of another one.
+        for(Gesture* gesture : gesturesToCheck_)
+        {
             if(gesture->needCheck())
             {
                 needCheck.insert(gesture);

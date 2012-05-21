@@ -7,10 +7,11 @@
 namespace Gecon
 {
     template< typename Event >
-    ActionTrigger<Event>::ActionTrigger(ActionTrigger<Event>::Action action):
+    ActionTrigger<Event>::ActionTrigger(ActionTrigger<Event>::Action action, bool repeted):
         action_(action),
-        needCheck_(false)
+        repeted_(repeted)
     {
+        std::cout << "con repeted: " << repeted_ << std::endl;
     }
 
     template< typename Event >
@@ -57,8 +58,6 @@ namespace Gecon
         for(Switch* s : onEventSwitches_[event])
         {
             s->on();
-
-            needCheck_ = true;
         }
 
         for(Switch* s : offEventSwitches_[event])
@@ -81,26 +80,29 @@ namespace Gecon
         {
             std::cout << "perform action" << std::endl;
             action_();
-
-            needCheck_ = false;
         }
     }
 
     template< typename Event >
-    bool ActionTrigger<Event>::needCheck()
+    bool ActionTrigger<Event>::needCheck() const
     {
-        return needCheck_;
+        std::cout << "repeted: " << repeted_ << std::endl;
+        return repeted_;
     }
 
     template< typename Event >
-    void ActionTrigger<Event>::reset_()
+    bool ActionTrigger<Event>::repeted() const
+    {
+        return repeted_;
+    }
+
+    template< typename Event >
+    void ActionTrigger<Event>::reset()
     {
         for(Switch* s : switches_)
         {
             s->off();
         }
-
-        needCheck_ = false;
     }
 
 

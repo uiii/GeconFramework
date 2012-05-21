@@ -22,63 +22,31 @@
 #include <algorithm>
 #include <cmath>
 
-#define Y_RANGE 50
-#define CB_RANGE 20
-#define CR_RANGE 20
-
 namespace Gecon
 {
-    ColorObjectPolicy::ColorObjectPolicy():
-        yMap_(256),
-        cbMap_(256),
-        crMap_(256)
+    config_variable<std::size_t> ColorObjectPolicy::MINIMAL_OBJECT_SIZE_FRACTION = 1000;
+
+    ColorObjectPolicy::ColorObjectPolicy()
     {
     }
 
-    void ColorObjectPolicy::prepareObjects(const ColorObjectPolicy::ObjectSet& definedObjects)
+    ColorObjectPolicy::ColorObjectPolicy(const ColorObjectPolicy& another)
     {
-        std::size_t objectCount = definedObjects.size();
-
-        objects_.assign(definedObjects.begin(), definedObjects.end());
-
-        // TODO magic 255
-        yMap_.assign(256, Bitset(objectCount));
-        cbMap_.assign(256, Bitset(objectCount));
-        crMap_.assign(256, Bitset(objectCount));
-
-        for(std::size_t i = 0; i < objects_.size(); ++i)
-        {
-            Color objectColor = objects_.at(i)->color();
-            Bitset objectBitset(objectCount);
-            objectBitset.set(i, true);
-
-            int yMapBegin = objectColor.y - Y_RANGE;
-            int yMapEnd = objectColor.y + Y_RANGE;
-
-            if(yMapBegin < 0) yMapBegin = 0;
-            if(yMapEnd > 255) yMapEnd = 255;
-
-            int cbMapBegin = objectColor.cb - CB_RANGE;
-            int cbMapEnd = objectColor.cb + CB_RANGE;
-
-            if(cbMapBegin < 0) cbMapBegin = 0;
-            if(cbMapEnd > 255) cbMapEnd = 255;
-
-            int crMapBegin = objectColor.cr - CR_RANGE;
-            int crMapEnd = objectColor.cr + CR_RANGE;
-
-            if(crMapBegin < 0) crMapBegin = 0;
-            if(crMapEnd > 255) crMapEnd = 255;
-
-            auto addObject = [&objectBitset](Bitset& set){ set |= objectBitset; };
-
-            std::for_each(yMap_.begin() + yMapBegin, yMap_.begin() + yMapEnd, addObject);
-            std::for_each(cbMap_.begin() + cbMapBegin, cbMap_.begin() + cbMapEnd, addObject);
-            std::for_each(crMap_.begin() + crMapBegin, crMap_.begin() + crMapEnd, addObject);
-        }
+        prepareObjects(another.objects_);
     }
 
-    ColorObjectPolicy::OutputImage ColorObjectPolicy::image()
+    ColorObjectPolicy& ColorObjectPolicy::operator =(const ColorObjectPolicy& another)
+    {
+        prepareObjects(another.objects_);
+        return *this;
+    }
+
+    void ColorObjectPolicy::prepareObjects(const ColorObjectPolicy::Objects& definedObjects)
+    {
+        objects_ = definedObjects;
+    }
+
+    const ColorObjectPolicy::OutputImage &ColorObjectPolicy::segmentedImage()
     {
         return image_;
     }
@@ -155,29 +123,29 @@ namespace Gecon
         }
     }
 
-    ColorObjectPolicy::AreaPtr ColorObjectPolicy::createArea_(const ColorObjectPolicy::AreaBlock& block)
+    ColorObjectPolicy::Area* ColorObjectPolicy::createArea_(const ColorObjectPolicy::AreaBlock& block)
     {
-        AreaPtr area = new Area(block);
+        Area* area = new Area(block);
         areas_.push_back(area);
 
         return area;
     }
 
-    void ColorObjectPolicy::selectVisibleObjects_(ObjectSet& visibleObjects)
+    void ColorObjectPolicy::selectVisibleObjects_(Objects &visibleObjects, Point snapshotSize)
     {
         // choose biggest areas for objects
-        std::map<ObjectPtr, AreaPtr> objectAreaMap;
-        for(ObjectPtr object : objects_)
+        std::map<Object*, Area*> objectAreaMap;
+        for(Object* object : objects_)
         {
             objectAreaMap[object] = 0;
         }
 
-        for(AreaPtr area : areas_)
+        for(Area* area : areas_)
         {
             if(! area->nested())
             {
-                ObjectPtr object = area->object();
-                AreaPtr objectCurrentArea = objectAreaMap[object];
+                Object* object = area->object();
+                Area* objectCurrentArea = objectAreaMap[object];
 
                 if(objectCurrentArea == 0 || objectCurrentArea->size() < area->size())
                 {
@@ -189,18 +157,20 @@ namespace Gecon
         auto objectAreaPair = objectAreaMap.begin();
         while(objectAreaPair != objectAreaMap.end())
         {
-            ObjectPtr object = objectAreaPair->first;
-            AreaPtr area = objectAreaPair->second;
+            Object* object = objectAreaPair->first;
+            Area* area = objectAreaPair->second;
 
-            if(area != 0 && area->size() > 20) // TODO magic
+            std::size_t minimalSize = snapshotSize.x * snapshotSize.y / MINIMAL_OBJECT_SIZE_FRACTION;
+            if(area != 0 && area->size() > minimalSize)
             {
-                object->update(area);
+                object->update(area, snapshotSize);
                 object->setVisible(true);
 
                 visibleObjects.insert(object);
             }
             else
             {
+                object->update(0, Point(1,1));
                 object->setVisible(false);
             }
 

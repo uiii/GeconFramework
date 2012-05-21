@@ -50,9 +50,6 @@ namespace Gecon
         Event* stateEnterEvent();
         Event* stateLeaveEvent();
 
-        Event* inStateEvent();
-        Event* notInStateEvent();
-
         Objects objects() const;
 
         Events check();
@@ -72,9 +69,6 @@ namespace Gecon
 
         Event stateEnterEvent_;
         Event stateLeaveEvent_;
-
-        Event inStateEvent_;
-        Event notInStateEvent_;
     };
 } // namespace Gecon
 

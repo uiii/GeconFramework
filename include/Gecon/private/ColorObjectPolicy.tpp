@@ -24,7 +24,7 @@
 namespace Gecon
 {
     template< typename Snapshot >
-    ColorObjectPolicy::ObjectSet ColorObjectPolicy::recognizeObjects(const Snapshot &snapshot)
+    ColorObjectPolicy::Objects ColorObjectPolicy::recognizeObjects(const Snapshot &snapshot)
     {
         image_.reserve(snapshot.width(), snapshot.height());
 
@@ -40,8 +40,8 @@ namespace Gecon
             std::swap(lastRowBlocks, currentRowBlocks);
         }
 
-        ObjectSet visibleObjects;
-        selectVisibleObjects_(visibleObjects);
+        Objects visibleObjects;
+        selectVisibleObjects_(visibleObjects, Point(snapshot.width(), snapshot.height()));
 
         // remove all areas
         while(! areas_.empty())
@@ -58,22 +58,15 @@ namespace Gecon
     {
         currentRowBlocks.clear();
 
-        ObjectPtr lastObject = 0;
+        Object* lastObject = 0;
 
         for(std::size_t column = 0; column < snapshot.width(); ++column)
         {
             Color pixelColor = snapshot.at(column, row);
 
-            Bitset pixelBitset(objects_.size());
-            pixelBitset.set();
-            pixelBitset &= yMap_[pixelColor.y];
-            pixelBitset &= cbMap_[pixelColor.cb];
-            pixelBitset &= crMap_[pixelColor.cr];
-
-            if(pixelBitset.any())
+            Object* object = objects_.find(pixelColor);
+            if(object)
             {
-                ObjectPtr object = objects_.at(pixelBitset.find_first());
-
                 if(object == lastObject)
                 {
                     currentRowBlocks.back().end = column + 1;
@@ -85,13 +78,19 @@ namespace Gecon
 
                 lastObject = object;
 
-                image_.setAt(column, row, Gecon::Color<RGB>({255,255,255}));
+                //image_.setAt(column, row, Gecon::Color<RGB>({255,255,255}));
+                Gecon::Color<YCbCr> col = snapshot.at(column, row);
+                col.y = 128;
+                image_.setAt(column, row, col);
             }
             else
             {
                 lastObject = 0;
 
-                image_.setAt(column, row, Gecon::Color<RGB>());
+                //image_.setAt(column, row, Gecon::Color<RGB>());
+                Gecon::Color<YCbCr> col = snapshot.at(column, row);
+                col.y = 128;
+                image_.setAt(column, row, col);
             }
         }
     }

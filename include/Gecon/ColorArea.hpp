@@ -89,8 +89,8 @@ namespace Gecon
         std::size_t size_;
     };
 
-    template< typename Object >
-    void joinAreas(ColorArea<Object>* first, ColorArea<Object>* second);
+    template< typename ColorSpace >
+    void joinAreas(ColorArea<ColorSpace>* first, ColorArea<ColorSpace>* second);
 } // namespace Gecon
 
 #include "private/ColorArea.tpp"

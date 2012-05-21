@@ -32,9 +32,6 @@ namespace Gecon
     public:
         typedef typename DevicePolicy::DeviceAdapter DeviceAdapter;
 
-        /*typedef std::set< typename ObjectPolicy::Object > ObjectSet;
-        typedef std::set< typename GesturePolicy::Gesture > GestureSet;*/
-
         Control();
 
         /**
@@ -69,18 +66,23 @@ namespace Gecon
         /**
          * Main control loop.
          *
-         * WARNING: Don't call it directly.
+         * @warning Don't call it directly.
          * Instead of it call start() method to start control loop.
          *
          * @see start().
          */
         void operator()();
 
+        /**
+         * Set device to control.
+         *
+         * @note Control must be restarted to take effect.
+         *
+         * @param device
+         *     Device to set.
+         */
         void setDevice(DeviceAdapter device);
         DeviceAdapter device() const;
-
-        /*ObjectSet& objects();
-        GestureSet& gestures();*/
 
     private:
         typedef Gecon::Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy> ControlLoop;
@@ -99,9 +101,6 @@ namespace Gecon
         boost::condition_variable stopCond_;
 
         DeviceAdapter device_;
-
-        /*ObjectSet objects_;
-        GestureSet gestures_;*/
     };
 } // namespace Gecon
 

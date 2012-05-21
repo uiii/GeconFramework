@@ -23,8 +23,10 @@
 #include "Color.hpp"
 #include "ColorArea.hpp"
 #include "Point.hpp"
+#include "Fraction.hpp"
 
 #include <list>
+#include <chrono>
 
 namespace Gecon
 {
@@ -49,17 +51,24 @@ namespace Gecon
         typedef std::list<Point> ConvexHull;
         typedef std::list<Point> Border;
 
+        typedef std::chrono::system_clock::time_point Time;
+
         ColorObject(Color color = Color());
 
         Color color() const;
+        void setColor(Color color);
 
-        void update(ColorArea<ColorSpace> *area);
+        void update(ColorArea<ColorSpace>* area, Point maxPosition);
+
+        Time updateTime();
 
         bool isVisible() const;
         void setVisible(bool visible);
 
         Point position() const;
         int angle() const;
+        Fraction areaSize() const;
+        double aspectRatio() const;
 
         const Border& border() const;
         const BoundingBox& boundingBox() const;
@@ -70,6 +79,9 @@ namespace Gecon
         void updateMinimalBoundingBox_(const ConvexHull& convexHull);
 
         Color color_;
+
+        Time updateTime_;
+        Point maxPosition_;
 
         bool isVisible_;
 

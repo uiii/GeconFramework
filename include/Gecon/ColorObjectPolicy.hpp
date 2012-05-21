@@ -30,6 +30,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include "ColorObject.hpp"
+#include "ColorObjectSet.hpp"
 #include "Image.hpp"
 
 #include "Point.hpp"
@@ -39,17 +40,16 @@ namespace Gecon
     class ColorObjectPolicy
     {
     public:
+        static config_variable<std::size_t> MINIMAL_OBJECT_SIZE_FRACTION;
+
         typedef YCbCr ColorSpace;
         typedef Gecon::Color<ColorSpace> Color;
 
         typedef ColorObject<ColorSpace> Object;
-        typedef Object* ObjectPtr;
-        typedef std::set<ObjectPtr> ObjectSet;
-        typedef std::vector<ObjectPtr> ObjectVector;
+        typedef ColorObjectSet<ColorSpace> Objects;
 
         typedef Gecon::ColorArea<ColorSpace> Area;
-        typedef Area* AreaPtr;
-        typedef std::list<AreaPtr> AreaList;
+        typedef std::list<Area*> Areas;
 
         typedef Area::Block AreaBlock;
         typedef Area::BlockList AreaBlockList;
@@ -61,30 +61,29 @@ namespace Gecon
         typedef Gecon::Color<RGB> OutputImageColor;
 
         ColorObjectPolicy();
+        ColorObjectPolicy(const ColorObjectPolicy& another);
 
-        void prepareObjects(const ObjectSet& definedObjects);
+        ColorObjectPolicy& operator=(const ColorObjectPolicy& another);
+
+        void prepareObjects(const Objects& definedObjects);
 
         template< typename Snapshot >
-        ObjectSet recognizeObjects(const Snapshot& snapshot);
+        Objects recognizeObjects(const Snapshot& snapshot);
 
-        OutputImage image();
+        const OutputImage& segmentedImage();
 
     private:
         template< typename Snapshot >
         void createBlocks_(Snapshot snapshot, std::size_t row, AreaBlockList &currentRowBlocks);
 
         void connectBlocks_(const AreaBlockList& lastRow, AreaBlockList& currentRow);
-        AreaPtr createArea_(const AreaBlock& block);
+        Area* createArea_(const AreaBlock& block);
 
-        void selectVisibleObjects_(ObjectSet &visibleObjects);
+        void selectVisibleObjects_(Objects& visibleObjects, Point snapshotSize);
 
-        ObjectVector objects_;
+        Objects objects_;
 
-        ColorMap yMap_;
-        ColorMap cbMap_;
-        ColorMap crMap_;
-
-        AreaList areas_;
+        Areas areas_;
 
         OutputImage image_;
     };

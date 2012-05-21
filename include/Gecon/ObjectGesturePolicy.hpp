@@ -17,8 +17,8 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_GESTUREPOLICY_HPP
-#define GECON_GESTUREPOLICY_HPP
+#ifndef GECON_OBJECTGESTUREPOLICY_HPP
+#define GECON_OBJECTGESTUREPOLICY_HPP
 
 #include <set>
 #include <map>
@@ -27,28 +27,34 @@
 
 namespace Gecon
 {
-    template< typename Object >
-    class GesturePolicy
+    template< typename Object, typename ObjectContainer = std::set<Object*> >
+    class ObjectGesturePolicy
     {
     public:
         typedef ObjectGesture<Object> Gesture;
-        typedef typename Gesture::Event Event;
-
-        typedef std::set<Object*> Objects;
         typedef std::set<Gesture*> Gestures;
+
+        typedef ObjectContainer Objects;
+
+        typedef typename Gesture::Event Event;
         typedef std::set<Event*> Events;
 
-        GesturePolicy();
+        ObjectGesturePolicy();
+        ObjectGesturePolicy(const ObjectGesturePolicy<Object, ObjectContainer>& another);
+
+        ObjectGesturePolicy<Object, ObjectContainer>& operator=(const ObjectGesturePolicy<Object, ObjectContainer>& another);
 
         void prepareGestures(const Gestures& gestures);
         Events checkGestures(const Objects& objects);
 
     private:
+        Gestures gestures_;
         std::map<Object*, Gestures> objectGestures_;
+
         Gestures gesturesToCheck_;
     };
 } // namespace Gecon
 
-#include "private/GesturePolicy.tpp"
+#include "private/ObjectGesturePolicy.tpp"
 
-#endif // GECON_GESTUREPOLICY_HPP
+#endif // GECON_OBJECTGESTUREPOLICY_HPP

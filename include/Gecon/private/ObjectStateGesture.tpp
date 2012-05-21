@@ -51,18 +51,6 @@ namespace Gecon
     }
 
     template< typename Object >
-    typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::inStateEvent()
-    {
-        return &inStateEvent_;
-    }
-
-    template< typename Object >
-    typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::notInStateEvent()
-    {
-        return &notInStateEvent_;
-    }
-
-    template< typename Object >
     typename ObjectStateGesture<Object>::Objects ObjectStateGesture<Object>::objects() const
     {
         return { object_ };
@@ -86,9 +74,6 @@ namespace Gecon
                 std::cout << "enter event" << std::endl;
                 events.insert(&stateEnterEvent_);
             }
-
-            std::cout << "in state" << std::endl;
-            events.insert(&inStateEvent_);
         }
         else
         {
@@ -98,9 +83,6 @@ namespace Gecon
                 std::cout << "leave event" << std::endl;
                 events.insert(&stateLeaveEvent_);
             }
-
-            std::cout << "not in state" << std::endl;
-            events.insert(&notInStateEvent_);
         }
 
         return events;

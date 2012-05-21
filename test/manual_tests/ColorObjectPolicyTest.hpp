@@ -34,9 +34,9 @@ class ObjectRecognitionUI : public ImageProcessUI
 {
     Q_OBJECT
 
-    typedef Gecon::ColorObjectPolicy::ObjectSet ObjectList;
+    typedef Gecon::ColorObjectPolicy::Objects Objects;
     typedef Gecon::ColorObjectPolicy::Object Object;
-    typedef Gecon::ColorObjectPolicy::ObjectPtr ObjectPtr;
+    typedef Gecon::ColorObjectPolicy::Object* ObjectPtr;
     typedef Gecon::ColorObjectPolicy::Color Color;
 
 public:
@@ -74,10 +74,10 @@ public slots:
     {
         raw_ = getImage();
 
-        ObjectList objects = cor_.recognizeObjects(raw_);
+        Objects objects = cor_.recognizeObjects(raw_);
 
         original_ = toQImage(raw_);
-        segmented_ = toQImage(cor_.image());
+        segmented_ = toQImage(cor_.segmentedImage());
 
         QPainter painter(&segmented_);
 
@@ -136,7 +136,7 @@ private:
     QImage original_;
     QImage segmented_;
 
-    ObjectList objects_;
+    Objects objects_;
 };
 
 class ObjectPolicyTest : public ManualTestSuite

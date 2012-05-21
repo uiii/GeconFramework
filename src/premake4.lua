@@ -25,5 +25,6 @@ project "GeconFramework"
 
     files {
         "ColorObjectPolicy.cpp",
-        "Point.cpp"
+        "Point.cpp",
+        "Fraction.cpp"
     }

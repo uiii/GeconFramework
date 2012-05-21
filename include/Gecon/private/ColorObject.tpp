@@ -28,6 +28,7 @@ namespace Gecon
     template< typename ColorSpace >
     ColorObject<ColorSpace>::ColorObject(Color color):
         color_(color),
+        maxPosition_(1,1),
         isVisible_(false)
     {
     }
@@ -39,10 +40,29 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
-    void ColorObject<ColorSpace>::update(ColorArea<ColorSpace>* area)
+    void ColorObject<ColorSpace>::setColor(ColorObject<ColorSpace>::Color color)
     {
-        updateConvexHull_(area);
-        updateMinimalBoundingBox_(convexHull_);
+        color_ = color;
+    }
+
+    template< typename ColorSpace >
+    void ColorObject<ColorSpace>::update(ColorArea<ColorSpace>* area, Point maxPosition)
+    {
+        if(area)
+        {
+            updateConvexHull_(area);
+            updateMinimalBoundingBox_(convexHull_);
+        }
+
+        maxPosition_ = maxPosition;
+
+        updateTime_ = std::chrono::system_clock::now();
+    }
+
+    template< typename ColorSpace >
+    typename ColorObject<ColorSpace>::Time ColorObject<ColorSpace>::updateTime()
+    {
+        return updateTime_;
     }
 
     template< typename ColorSpace >
@@ -60,13 +80,28 @@ namespace Gecon
     template< typename ColorSpace >
     Point ColorObject<ColorSpace>::position() const
     {
-        return boundingBox_.position;
+        return Point(
+            boundingBox_.position.x / maxPosition_.x,
+            boundingBox_.position.y / maxPosition_.y
+        );
     }
 
     template< typename ColorSpace >
     int ColorObject<ColorSpace>::angle() const
     {
         return boundingBox_.angle;
+    }
+
+    template< typename ColorSpace >
+    double ColorObject<ColorSpace>::aspectRatio() const
+    {
+        return boundingBox_.width / boundingBox_.height;
+    }
+
+    template< typename ColorSpace >
+    Fraction ColorObject<ColorSpace>::areaSize() const
+    {
+        return Fraction(1, int((maxPosition_.x * maxPosition_.y) / (boundingBox_.width * boundingBox_.height)));
     }
 
     template< typename ColorSpace >

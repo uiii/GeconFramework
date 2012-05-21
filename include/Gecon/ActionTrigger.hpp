@@ -14,17 +14,21 @@ namespace Gecon
         typedef std::function<void()> Action;
         typedef std::set<Event*> Events;
 
-        ActionTrigger(Action action);
+        ActionTrigger(Action action, bool repeted = false);
         virtual ~ActionTrigger();
 
-        void addSwitch(Event* onEvent);
+        void addSwitch(Event* onEvent); // TODO remove - default offEvent
         void addSwitch(Event* onEvent, Event* offEvent);
 
         Events events();
         void eventOccured(Event* event);
 
         void check();
-        bool needCheck();
+        bool needCheck() const;
+
+        bool repeted() const;
+
+        void reset();
 
     private:
         class Switch
@@ -44,11 +48,9 @@ namespace Gecon
         typedef std::set<Switch*> Switches;
         typedef std::map<Event*, std::set<Switch*> > EventSwitches;
 
-        void reset_();
-
         Action action_;
 
-        bool needCheck_;
+        bool repeted_;
 
         Switches switches_;
         Events events_;
