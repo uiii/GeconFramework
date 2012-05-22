@@ -10,6 +10,14 @@
 
 namespace Gecon
 {
+    /**
+     * Container representing set of color objects.
+     *
+     * Provides fast lookup by color. 
+     *
+     * Can work with objects of any color space.
+     * But stores them using YCbCr color space.
+     */
     template< typename ColorSpace >
     class ColorObjectSet
     {
@@ -28,22 +36,47 @@ namespace Gecon
         ColorObjectSet();
         virtual ~ColorObjectSet();
 
+        /**
+         * Find object by color.
+         *
+         * @returns
+         *    Object if found, otherwise NULL.
+         */
         Object* find(Color color) const;
 
+        /**
+         * Insert new object into the set.
+         *
+         * For one color zone can be inserted only one object.
+         * If too similar object (their color zones intersect)
+         * is already in the set, throws an exception.
+         *
+         * @trows std::logic_error
+         *     If too similar object already inserted.
+         */
         void insert(Object* object);
 
         /**
-        * Update object in the set.
-        *
-        * @warning Must be called when object's
-        * color has been changed. Otherwise
-        * find method will return wrong object.
-        *
-        * @param object
-        *     Object to update.
-        */
+         * Update object in the set.
+         *
+         * @warning Must be called when object's
+         * color has been changed. Otherwise
+         * find method will return wrong object.
+         *
+         * @param object
+         *     Object to update.
+         *
+         * @trows std::logic_error
+         *     If too similar object already inserted.
+         */
         void update(Object* object);
 
+        /**
+         * Remove object from the set.
+         *
+         * If no such object is in the set,
+         * nothing happens.
+         */
         void remove(Object* object);
 
         const_iterator begin() const;
@@ -60,13 +93,53 @@ namespace Gecon
         typedef typename ColorSpace::Component Component;
         typedef std::pair<Component, Component> ComponentRange;
 
+        /**
+         * Compute color zone range for specifed color component.
+         */
         ComponentRange applyRange_(Component component, std::size_t range);
-        void checkCollision(Object* object);
-        void clearObjectInMap(std::size_t index);
+
+        /**
+         * Check if there is no too similar object.
+         *
+         * @throws std::logic_error
+         *     If there is such object.
+         */
+        void checkCollision_(Object* object);
+
+        /**
+         * Remove object indication from component maps.
+         *
+         * Unset bit with speecified index in indicators
+         * at each level of component maps.
+         *
+         * @param index
+         *     Index of bit in the indicators.
+         */
+        void clearObjectInMap_(std::size_t index);
+
+        /**
+         * Include object indication in component maps.
+         *
+         * Set bit with speecified index in indicators
+         * at appropriate levels (corresponding to color zone ranges)
+         * of component maps.
+         *
+         * @param index
+         *     Index of bit in the indicators.
+         *
+         * @param color
+         *     Color to compute color zone ranges.
+         */
         void setObjectInMap_(std::size_t index, Color color);
 
-
+        /**
+         * Increase capacity of the indicators.
+         */
         void reserve_();
+
+        /**
+         * Clear component maps and include again all objects.
+         */
         void rebuild_();
 
         ComponentMap yMap_;

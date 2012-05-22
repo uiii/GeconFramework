@@ -41,7 +41,7 @@ namespace Gecon
     template< typename ColorSpace >
     void ColorObjectSet<ColorSpace>::insert(ColorObjectSet<ColorSpace>::Object *object)
      {
-        checkCollision(object);
+        checkCollision_(object);
 
         if(size() + 1 > capacity_)
         {
@@ -56,7 +56,7 @@ namespace Gecon
     template< typename ColorSpace >
     void ColorObjectSet<ColorSpace>::update(ColorObjectSet<ColorSpace>::Object *object)
     {
-        checkCollision(object);
+        checkCollision_(object);
 
         typename ObjectVector::iterator it = std::find(objects_.begin(), objects_.end(), object);
         if(it == objects_.end())
@@ -64,7 +64,7 @@ namespace Gecon
             return;
         }
 
-        clearObjectInMap(it - objects_.begin());
+        clearObjectInMap_(it - objects_.begin());
         setObjectInMap_(it - objects_.begin(), object->color());
     }
 
@@ -124,7 +124,7 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
-    void ColorObjectSet<ColorSpace>::checkCollision(ColorObjectSet<ColorSpace>::Object *object)
+    void ColorObjectSet<ColorSpace>::checkCollision_(ColorObjectSet<ColorSpace>::Object *object)
     {
         Color color = object->color();
         auto yRange = applyRange_(color.y, Y_RANGE);
@@ -147,7 +147,7 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
-    void ColorObjectSet<ColorSpace>::clearObjectInMap(std::size_t index)
+    void ColorObjectSet<ColorSpace>::clearObjectInMap_(std::size_t index)
     {
         Bitset bitset(capacity_);
         bitset.set();

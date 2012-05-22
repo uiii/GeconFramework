@@ -30,6 +30,9 @@
 
 namespace Gecon
 {
+    /**
+     * Color object reprezentation.
+     */
     template< typename ColorSpace >
     class ColorObject
     {
@@ -53,6 +56,9 @@ namespace Gecon
 
         typedef std::chrono::system_clock::time_point Time;
 
+        /**
+         * Construct object from color.
+         */
         ColorObject(Color color = Color());
 
         Color color() const;

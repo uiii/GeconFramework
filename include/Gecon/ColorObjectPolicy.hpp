@@ -37,6 +37,12 @@
 
 namespace Gecon
 {
+    /**
+     * Object policy to manipulate with color objects.
+     *
+     * Works with image-like snapshot
+     * and recognizes color objects in it.
+     */
     class ColorObjectPolicy
     {
     public:
@@ -65,20 +71,81 @@ namespace Gecon
 
         ColorObjectPolicy& operator=(const ColorObjectPolicy& another);
 
+        /**
+         * Prepare objects to control
+         *
+         * @param definedObjects
+         *     Objects to prepare
+         */
         void prepareObjects(const Objects& definedObjects);
 
+        /**
+         * Recognize objects in the snapshot
+         *
+         * @param snapshot
+         *     Must have these methods:
+         *     + std::size_t width()
+         *     + std::size_t height()
+         *     + Color at(std::size_t column, std::size_t row)
+         *
+         * @returns
+         *     Recognised objects
+         */
         template< typename Snapshot >
         Objects recognizeObjects(const Snapshot& snapshot);
 
-        const OutputImage& segmentedImage();
+        const OutputImage& segmentedImage(); // TODO remove
 
     private:
+        /**
+         * Divide one row of snapshot to color blocks.
+         *
+         * @param snapshot
+         *     @see recognizeObjects.
+         *
+         * @param row
+         *     Number of row to divide.
+         *
+         * @param currentRowBlocks
+         *     Container where to place obtained blocks
+         *     (passed by reference).
+         */
         template< typename Snapshot >
         void createBlocks_(Snapshot snapshot, std::size_t row, AreaBlockList &currentRowBlocks);
 
+        /**
+         * Connect block areas from current row with block areas from previous row.
+         * Or if needed, create new areas.
+         *
+         * @param lastRow
+         *     Blocks from previous row
+         *
+         * @param currentRow
+         *     Blocks form current row
+         */
         void connectBlocks_(const AreaBlockList& lastRow, AreaBlockList& currentRow);
+
+        /**
+         * Create new area and initialize it with block.
+         *
+         * @param block
+         *     Block to area initialization.
+         *
+         * @returns
+         *     Created area
+         */
         Area* createArea_(const AreaBlock& block);
 
+        /**
+         * Go through all objects, update their states
+         * with detected areas and select the visible ones.
+         *
+         * @param visibleObjects
+         *     Container for visible objects.
+         *
+         * @param snapshotSize
+         *     Size of snapshot to update object's max position.
+         */
         void selectVisibleObjects_(Objects& visibleObjects, Point snapshotSize);
 
         Objects objects_;

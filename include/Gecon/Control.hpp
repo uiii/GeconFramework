@@ -82,6 +82,11 @@ namespace Gecon
          *     Device to set.
          */
         void setDevice(DeviceAdapter device);
+
+        /**
+         * @returns
+         *     Device set to control.
+         */
         DeviceAdapter device() const;
 
     private:
