@@ -50,7 +50,7 @@ namespace Gecon {
     template< typename Event >
     void ActionPolicy<Event>::checkActionTriggers(const ActionPolicy<Event>::Events& events)
     {
-        std::cout << "action check: " << events.size() << std::endl;
+        //std::cout << "action check: " << events.size() << std::endl;
 
         for(Event* event : events)
         {

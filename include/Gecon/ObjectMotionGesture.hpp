@@ -30,6 +30,9 @@
 
 namespace Gecon
 {
+    template< typename T >
+    std::size_t levenshteinDistance(const std::vector<T>& left, const std::vector<T>& right, std::size_t maxDistance);
+
     template< typename Object >
     class ObjectMotionGesture : public ObjectGesture<Object>
     {
@@ -56,12 +59,6 @@ namespace Gecon
             MoveSequence moves;
             Time lastRecordedMotionTime;
             Time movesGenerationTime;
-
-            std::size_t gestureCount;
-            std::size_t checkedGestureCount;
-
-            std::size_t minDistance;
-            ObjectMotionGesture* closestGesture;
         };
 
         typedef std::map<Object*, MotionRecord> MotionStorage;
@@ -74,6 +71,7 @@ namespace Gecon
         Event* motionDoneEvent();
 
         Objects objects() const;
+        const MoveSequence& moves() const;
 
         Events check();
         bool needCheck() const;
@@ -95,7 +93,6 @@ namespace Gecon
         Size getSize_(const Motion& motion);
         void normalize_(Motion& motion, const Size& size);
         void motionToMoves_(const Motion& motion, MoveSequence& moves);
-        std::size_t distance_(const MoveSequence& left, const MoveSequence& right, std::size_t maxDistance);
 
         Object* object_;
 
@@ -107,10 +104,10 @@ namespace Gecon
         Timeout timeout_;
 
         Event motionDoneEvent_;
-
-    public:
-        typedef std::shared_ptr<ObjectMotionGesture<Object> > Ptr;
     };
+
+    template< typename Object >
+    std::size_t gestureDistance(ObjectMotionGesture<Object>* first, ObjectMotionGesture<Object>* second, std::size_t maxDistance);
 } // namespace Gecon
 
 #include "private/ObjectMotionGesture.tpp"

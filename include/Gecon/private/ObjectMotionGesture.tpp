@@ -66,6 +66,12 @@ namespace Gecon
     }
 
     template< typename Object >
+    const typename ObjectMotionGesture<Object>::MoveSequence& ObjectMotionGesture<Object>::moves() const
+    {
+        return moves_;
+    }
+
+    template< typename Object >
     typename ObjectMotionGesture<Object>::Event* ObjectMotionGesture<Object>::motionDoneEvent()
     {
         return &motionDoneEvent_;
@@ -81,7 +87,7 @@ namespace Gecon
         MoveSequence& moves = (*motionStorage_)[object_].moves;
         if(! moves.empty())
         {
-            std::size_t distance = distance_(moves_, moves, 10000);//MAXIMAL_SAME_GESTURE_DISTANCE);
+            std::size_t distance = levenshteinDistance(moves_, moves, 10000);//MAXIMAL_SAME_GESTURE_DISTANCE);
             std::cout << "distance: " << distance << std::endl;
             if(distance < MAXIMAL_SAME_GESTURE_DISTANCE)
             {
@@ -95,7 +101,7 @@ namespace Gecon
     template< typename Object >
     bool ObjectMotionGesture<Object>::needCheck() const
     {
-        std::cout << "needCheck: " << ! (*motionStorage_)[object_].motion.empty() << std::endl;
+        //std::cout << "needCheck: " << ! (*motionStorage_)[object_].motion.empty() << std::endl;
         return ! (*motionStorage_)[object_].motion.empty();
     }
 
@@ -317,7 +323,13 @@ namespace Gecon
     }
 
     template< typename Object >
-    std::size_t ObjectMotionGesture<Object>::distance_(const MoveSequence& left, const MoveSequence& right, std::size_t maxDistance)
+    std::size_t gestureDistance(ObjectMotionGesture<Object>* first, ObjectMotionGesture<Object>* second, std::size_t maxDistance)
+    {
+        return levenshteinDistance(first->moves(), second->moves(), maxDistance);
+    }
+
+    template< typename T >
+    std::size_t levenshteinDistance(const std::vector<T>& left, const std::vector<T>& right, std::size_t maxDistance)
     {
         std::size_t width = right.size();
         std::size_t height = left.size();
@@ -348,7 +360,7 @@ namespace Gecon
             std::size_t colBegin = std::max((int)row - (int)maxDistance, 1);
             std::size_t colEnd = std::min(row + maxDistance + 1, width + 1);
 
-            std::cout << std::endl;
+            //std::cout << std::endl;
 
             if(colBegin > 1)
             {
@@ -377,9 +389,9 @@ namespace Gecon
                     ) + 1;
                 }
 
-                std::cout << table[row][col] << " ";
+                //std::cout << table[row][col] << " ";
             }
-            std::cout << std::endl;
+            //std::cout << std::endl;
         }
 
         return table[height][width];
