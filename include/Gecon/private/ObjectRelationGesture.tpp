@@ -57,6 +57,22 @@ namespace Gecon
     }
 
     template< typename Object >
+    ObjectRelationGesture<Object> &ObjectRelationGesture<Object>::operator=(const ObjectRelationGesture<Object>& another)
+    {
+        left_ = another.left_;
+        right_ = another.right_;
+
+        leftMustBeVisible_ = another.leftMustBeVisible_;
+        rightMustBeVisible_ = another.rightMustBeVisible_;
+
+        condition_ = another.condition_;
+
+        reset();
+
+        return *this;
+    }
+
+    template< typename Object >
     typename ObjectRelationGesture<Object>::Event* ObjectRelationGesture<Object>::relationEnterEvent()
     {
         return &relationEnterEvent_;

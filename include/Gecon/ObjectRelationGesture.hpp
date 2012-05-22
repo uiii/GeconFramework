@@ -51,6 +51,8 @@ namespace Gecon
                 Property<PropertyType> rightProperty
         );
 
+        ObjectRelationGesture<Object>& operator=(const ObjectRelationGesture& another);
+
         Event* relationEnterEvent();
         Event* relationLeaveEvent();
 

@@ -39,6 +39,18 @@ namespace Gecon
     }
 
     template< typename Object >
+    ObjectStateGesture<Object>& ObjectStateGesture<Object>::operator =(const ObjectStateGesture<Object>& another)
+    {
+        object_ = another.object_;
+        mustBeVisible_ = another.mustBeVisible_;
+        condition_ = another.condition_;
+
+        reset();
+
+        return *this;
+    }
+
+    template< typename Object >
     typename ObjectStateGesture<Object>::Event* ObjectStateGesture<Object>::stateEnterEvent()
     {
         return &stateEnterEvent_;

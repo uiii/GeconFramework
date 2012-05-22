@@ -45,6 +45,8 @@ namespace Gecon
         template< typename PropertyType >
         ObjectStateGesture(Object* object, Property<PropertyType> property, Relation<PropertyType> relation, PropertyType value);
 
+        ObjectStateGesture& operator=(const ObjectStateGesture<Object>& another);
+
         const Object& objectState() const; // TODO remove
 
         Event* stateEnterEvent();

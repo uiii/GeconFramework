@@ -87,6 +87,18 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
+    Point ColorObject<ColorSpace>::absolutePosition() const
+    {
+        return boundingBox_.position;
+    }
+
+    template< typename ColorSpace >
+    Point ColorObject<ColorSpace>::maxPosition() const
+    {
+        return maxPosition_;
+    }
+
+    template< typename ColorSpace >
     int ColorObject<ColorSpace>::angle() const
     {
         return boundingBox_.angle;

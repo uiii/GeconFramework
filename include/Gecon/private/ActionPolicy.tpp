@@ -32,6 +32,7 @@ namespace Gecon {
         triggers_ = triggers;
 
         eventActionTriggers_.clear();
+        triggersToCheck_.clear();
 
         for(ActionTrigger* trigger : triggers_)
         {

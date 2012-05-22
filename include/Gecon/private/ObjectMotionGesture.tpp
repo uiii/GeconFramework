@@ -28,7 +28,8 @@ namespace Gecon
     template< typename Object > config_variable<std::chrono::milliseconds::rep> ObjectMotionGesture<Object>::MOTION_TIMEOUT = 1000;
     template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MINIMAL_GESTURE_SIDE = 150;
     template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::NOT_MOTION_TOLERANCE = 10;
-    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MAXIMAL_SAME_GESTURE_DISTANCE = 20;
+    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MAXIMAL_SAME_GESTURE_DISTANCE = 50;
+    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MOVE_SEGMENT_LENGTH = 3;
 
     template< typename Object >
     ObjectMotionGesture<Object>::ObjectMotionGesture(Object *object, const Motion& motion, MotionStorage* motionStorage):
@@ -39,6 +40,23 @@ namespace Gecon
     {
         normalize_(motion_, getSize_(motion_));
         motionToMoves_(motion_, moves_);
+    }
+
+    template< typename Object >
+    ObjectMotionGesture<Object>::~ObjectMotionGesture()
+    {
+    }
+
+    template< typename Object >
+    ObjectMotionGesture<Object>& ObjectMotionGesture<Object>::operator=(const ObjectMotionGesture<Object>& another)
+    {
+        object_ = another.object_;
+        motion_ = another.motion_;
+        motionStorage_ = another.motionStorage_;
+
+        reset();
+
+        return *this;
     }
 
     template< typename Object >
@@ -63,7 +81,9 @@ namespace Gecon
         MoveSequence& moves = (*motionStorage_)[object_].moves;
         if(! moves.empty())
         {
-            if(distance_(moves_, moves, MAXIMAL_SAME_GESTURE_DISTANCE) < MAXIMAL_SAME_GESTURE_DISTANCE)
+            std::size_t distance = distance_(moves_, moves, 10000);//MAXIMAL_SAME_GESTURE_DISTANCE);
+            std::cout << "distance: " << distance << std::endl;
+            if(distance < MAXIMAL_SAME_GESTURE_DISTANCE)
             {
                 events.insert(&motionDoneEvent_);
             }
@@ -115,9 +135,9 @@ namespace Gecon
 
         if(object_->isVisible())
         {
-            if(record.motion.empty() || distance(object_->position(), record.motion.back()) > NOT_MOTION_TOLERANCE)
+            if(record.motion.empty() || distance(object_->absolutePosition(), record.motion.back()) > NOT_MOTION_TOLERANCE)
             {
-                record.motion.push_back(object_->position());
+                record.motion.push_back(object_->absolutePosition());
                 record.lastRecordedMotionTime = now;
             }
         }
@@ -257,8 +277,7 @@ namespace Gecon
             std::next(motion.begin(), 1),
         };
 
-        //Circle currentCircle = { motion.front(), MINIMAL_MOTION_SIZE };
-        Circle currentCircle = { motion.front(), 2 };
+        Circle currentCircle = { motion.front(), MOVE_SEGMENT_LENGTH };
 
         while(currentSegment.end != motion.end())
         {
@@ -272,19 +291,19 @@ namespace Gecon
             {
                 Point intersection = getCircleSegmentIntersection(currentCircle, currentSegment);
 
-                std::cout << ">>> intersection: " << intersection.x << " " << intersection.y << std::endl;
+                //std::cout << ">>> intersection: " << intersection.x << " " << intersection.y << std::endl;
 
                 Vector moveVector = {
                     (intersection.x - currentCircle.center.x) / currentCircle.radius,
                     (intersection.y - currentCircle.center.y) / currentCircle.radius
                 };
 
-                std::cout << ">>> moveVector: " << moveVector.x << " " << moveVector.y << std::endl;
-                std::cout << ">>> angle: " << getVectorAngle(moveVector) << std::endl;
+                //std::cout << ">>> moveVector: " << moveVector.x << " " << moveVector.y << std::endl;
+                //std::cout << ">>> angle: " << getVectorAngle(moveVector) << std::endl;
 
                 std::size_t move = int(std::round(getVectorAngle(moveVector) / 45.0)) % 8;
 
-                std::cout << ">>> move: " << move << std::endl;
+                //std::cout << ">>> move: " << move << std::endl;
                 moves.push_back(move);
 
                 // move circle
@@ -324,10 +343,12 @@ namespace Gecon
             table[row][0] = row;
         }
 
-        for(row = 1; row < height; ++row)
+        for(row = 1; row < height + 1; ++row)
         {
             std::size_t colBegin = std::max((int)row - (int)maxDistance, 1);
-            std::size_t colEnd = std::min(row + maxDistance, width + 1);
+            std::size_t colEnd = std::min(row + maxDistance + 1, width + 1);
+
+            std::cout << std::endl;
 
             if(colBegin > 1)
             {
@@ -355,7 +376,10 @@ namespace Gecon
                             )
                     ) + 1;
                 }
+
+                std::cout << table[row][col] << " ";
             }
+            std::cout << std::endl;
         }
 
         return table[height][width];

@@ -30,9 +30,6 @@
 
 namespace Gecon
 {
-    // TODO sdilene uloziste pro pohyby objektu aby se nemuselo pocitat nekolikrat
-    // - preda se jako odkaz v konstruktoru
-
     template< typename Object >
     class ObjectMotionGesture : public ObjectGesture<Object>
     {
@@ -41,6 +38,7 @@ namespace Gecon
         static config_variable<std::size_t> MINIMAL_GESTURE_SIDE;
         static config_variable<std::size_t> NOT_MOTION_TOLERANCE;
         static config_variable<std::size_t> MAXIMAL_SAME_GESTURE_DISTANCE;
+        static config_variable<std::size_t> MOVE_SEGMENT_LENGTH;
 
         typedef std::list<Point> PointList;
         typedef PointList Motion;
@@ -58,11 +56,20 @@ namespace Gecon
             MoveSequence moves;
             Time lastRecordedMotionTime;
             Time movesGenerationTime;
+
+            std::size_t gestureCount;
+            std::size_t checkedGestureCount;
+
+            std::size_t minDistance;
+            ObjectMotionGesture* closestGesture;
         };
 
         typedef std::map<Object*, MotionRecord> MotionStorage;
 
         ObjectMotionGesture(Object* object, const Motion& motion, MotionStorage* motionStorage);
+        virtual ~ObjectMotionGesture();
+
+        ObjectMotionGesture& operator=(const ObjectMotionGesture& another);
 
         Event* motionDoneEvent();
 

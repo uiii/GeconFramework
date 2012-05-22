@@ -96,6 +96,8 @@ namespace Gecon
             stopCond_.wait(isRunningLock);
         }
         isRunningLock.unlock();
+
+        std::cout << "stoped !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     }
 
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
@@ -120,11 +122,15 @@ namespace Gecon
             return;
         }
 
+        std::cout << "before open" << std::endl;
+
         boost::unique_lock<boost::mutex> isRunningLock(isRunningMutex_);
         isRunning_ = true;
         isRunningLock.unlock();
 
         device_.open();
+
+        std::cout << "after open" << std::endl;
 
         boost::unique_lock<boost::mutex> doControlLock(doControlMutex_);
         while(doControl_)

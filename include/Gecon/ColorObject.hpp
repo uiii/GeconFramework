@@ -66,6 +66,10 @@ namespace Gecon
         void setVisible(bool visible);
 
         Point position() const;
+        Point absolutePosition() const;
+
+        Point maxPosition() const;
+
         int angle() const;
         Fraction areaSize() const;
         double aspectRatio() const;
