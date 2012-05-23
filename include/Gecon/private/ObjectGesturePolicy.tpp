@@ -29,69 +29,37 @@ namespace Gecon
     template< typename Object, typename ObjectContainer >
     ObjectGesturePolicy<Object, ObjectContainer>::ObjectGesturePolicy(const ObjectGesturePolicy<Object, ObjectContainer>& another)
     {
-        prepareGestures(another.gestures_);
+        prepareGestureCheckers(another.checkers_);
     }
 
     template< typename Object, typename ObjectContainer >
     ObjectGesturePolicy<Object, ObjectContainer>& ObjectGesturePolicy<Object, ObjectContainer>::operator =(const ObjectGesturePolicy<Object, ObjectContainer>& another)
     {
-        prepareGestures(another.gestures_);
+        prepareGestureCheckers(another.checkers_);
         return *this;
     }
 
     template< typename Object, typename ObjectContainer >
-    void ObjectGesturePolicy<Object, ObjectContainer>::prepareGestures(const ObjectGesturePolicy<Object, ObjectContainer>::Gestures& gestures)
+    void ObjectGesturePolicy<Object, ObjectContainer>::prepareGestureCheckers(const ObjectGesturePolicy<Object, ObjectContainer>::GestureCheckers& checkers)
     {
-        gestures_ = gestures;
+        checkers_ = checkers;
 
-        objectGestures_.clear();
-        gesturesToCheck_.clear();
-
-        for(Gesture* gesture : gestures_)
+        for(GestureChecker* checker : checkers_)
         {
-            gesture->reset();
-
-            for(Object* object : gesture->objects())
-            {
-                objectGestures_[object].insert(gesture);
-            }
+            checker->reset();
         }
-
-        gesturesToCheck_.insert(gestures_.begin(), gestures_.end()); // check all gestures for the first time
     }
 
     template< typename Object, typename ObjectContainer >
     typename ObjectGesturePolicy<Object, ObjectContainer>::Events ObjectGesturePolicy<Object, ObjectContainer>::checkGestures(const ObjectGesturePolicy<Object, ObjectContainer>::Objects& objects)
     {
-        for(Object* object : objects)
-        {
-            Gestures gestures = objectGestures_[object];
-            gesturesToCheck_.insert(gestures.begin(), gestures.end());
-        }
-
         Events events;
 
-        for(Gesture* gesture : gesturesToCheck_)
+        for(GestureChecker* checker : checkers_)
         {
-            Events gestureEvents = gesture->check();
-
-            events.insert(gestureEvents.begin(), gestureEvents.end());
+            Events checkerEvents = checker->check(objects);
+            events.insert(checkerEvents.begin(), checkerEvents.end());
         }
-
-        Gestures needCheck;
-        // "need check" cyckle is separated from
-        // "check" cycle, because needCheck()
-        // of one gesture may be affected
-        // by check() of another one.
-        for(Gesture* gesture : gesturesToCheck_)
-        {
-            if(gesture->needCheck())
-            {
-                needCheck.insert(gesture);
-            }
-        }
-
-        std::swap(gesturesToCheck_, needCheck);
 
         return events;
     }

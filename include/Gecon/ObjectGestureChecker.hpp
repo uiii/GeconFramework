@@ -17,16 +17,32 @@
  * along with Gecon Framework. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GECON_OBJECTGESTUREEVENT_HPP
-#define GECON_OBJECTGESTUREEVENT_HPP
+#ifndef GECON_OBJECTGESTURECHECKER_HPP
+#define GECON_OBJECTGESTURECHECKER_HPP
 
-#include <functional>
-#include <list>
+#include <set>
+#include <string>
+
+#include "ObjectGesture.hpp"
 
 namespace Gecon
 {
+    template< typename Object, typename ObjectContainer = std::set<Object*> >
+    class ObjectGestureChecker
+    {
+    public:
+        typedef typename ObjectGesture<Object>::Event Event;
+        typedef std::set<Event*> Events;
+
+        typedef ObjectContainer Objects;
+
+        virtual ~ObjectGestureChecker() {}
+
+        virtual Events check(const Objects& objects) = 0;
+
+        virtual void clear() = 0;
+        virtual void reset() = 0;
+    };
 } // namespace Gecon
 
-#include "private/ObjectGestureEvent.tpp"
-
-#endif // GECON_OBJECTGESTUREEVENT_HPP
+#endif // GECON_OBJECTGESTURECHECKER_HPP

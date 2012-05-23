@@ -34,16 +34,8 @@ namespace Gecon
         };
 
         typedef std::set<Event*> Events;
-        typedef std::set<Object*> Objects;
 
         virtual ~ObjectGesture() {}
-
-        virtual Objects objects() const = 0;
-
-        virtual Events check() = 0;
-        virtual bool needCheck() const = 0;
-
-        virtual void reset() = 0;
     };
 
     template< typename Object, typename PropertyType >

@@ -40,7 +40,6 @@ namespace Gecon
 
         typedef typename ObjectGesture<Object>::Event Event;
         typedef typename ObjectGesture<Object>::Events Events;
-        typedef typename ObjectGesture<Object>::Objects Objects;
 
         template< typename PropertyType >
         ObjectRelationGesture(
@@ -56,7 +55,8 @@ namespace Gecon
         Event* relationEnterEvent();
         Event* relationLeaveEvent();
 
-        Objects objects() const;
+        Object* leftObject() const;
+        Object* rightObject() const;
 
         Events check();
         bool needCheck() const;
@@ -66,9 +66,6 @@ namespace Gecon
     private:
         Object* left_;
         Object* right_;
-
-        Object leftState_; // TODO remove
-        Object rightState_; // TODO remove
 
         bool leftMustBeVisible_;
         bool rightMustBeVisible_;

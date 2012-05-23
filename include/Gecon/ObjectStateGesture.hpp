@@ -40,19 +40,16 @@ namespace Gecon
 
         typedef typename ObjectGesture<Object>::Event Event;
         typedef typename ObjectGesture<Object>::Events Events;
-        typedef typename ObjectGesture<Object>::Objects Objects;
 
         template< typename PropertyType >
         ObjectStateGesture(Object* object, Property<PropertyType> property, Relation<PropertyType> relation, PropertyType value);
 
         ObjectStateGesture& operator=(const ObjectStateGesture<Object>& another);
 
-        const Object& objectState() const; // TODO remove
-
         Event* stateEnterEvent();
         Event* stateLeaveEvent();
 
-        Objects objects() const;
+        Object* object() const;
 
         Events check();
         bool needCheck() const;
@@ -62,7 +59,6 @@ namespace Gecon
     private:
         Object* object_;
 
-        Object objectState_; // TODO remove
         bool mustBeVisible_;
 
         Condition condition_;

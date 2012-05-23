@@ -34,8 +34,6 @@ namespace Gecon
             ObjectRelationGesture<Object>::Property<PropertyType> rightProperty):
         left_(left),
         right_(right),
-        leftState_(*left_),
-        rightState_(*right_),
         leftMustBeVisible_(needVisible<Object>(leftProperty)),
         rightMustBeVisible_(needVisible<Object>(rightProperty)),
         condition_(
@@ -47,13 +45,6 @@ namespace Gecon
         ),
         inRelation_(false)
     {
-    }
-
-
-    template< typename Object >
-    typename ObjectGesture<Object>::Objects ObjectRelationGesture<Object>::objects() const
-    {
-        return { left_, right_ };
     }
 
     template< typename Object >
@@ -85,17 +76,26 @@ namespace Gecon
     }
 
     template< typename Object >
+    Object* ObjectRelationGesture<Object>::leftObject() const
+    {
+        return left_;
+    }
+
+    template< typename Object >
+    Object* ObjectRelationGesture<Object>::rightObject() const
+    {
+        return right_;
+    }
+
+    template< typename Object >
     typename ObjectRelationGesture<Object>::Events ObjectRelationGesture<Object>::check()
     {
         Events events;
 
-        leftState_ = *left_;
-        rightState_ = *right_;
+        bool correctLeftVisibility = left_->isVisible() || ! leftMustBeVisible_;
+        bool correctRightVisibility = right_->isVisible() || ! rightMustBeVisible_;
 
-        bool correctLeftVisibility = leftState_.isVisible() || ! leftMustBeVisible_;
-        bool correctRightVisibility = rightState_.isVisible() || ! rightMustBeVisible_;
-
-        if(correctLeftVisibility && correctRightVisibility && condition_(leftState_, rightState_))
+        if(correctLeftVisibility && correctRightVisibility && condition_(*left_, *right_))
         {
             if(! inRelation_)
             {
@@ -120,9 +120,7 @@ namespace Gecon
     template< typename Object >
     bool ObjectRelationGesture<Object>::needCheck() const
     {
-        // TODO
-        //return inRelation_ || ! leftMustBeVisible_ || ! rightMustBeVisible_;
-        return true;
+        return inRelation_ || ! leftMustBeVisible_ || ! rightMustBeVisible_;
     }
 
     template< typename Object >

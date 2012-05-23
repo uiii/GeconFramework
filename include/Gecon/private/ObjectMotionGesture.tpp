@@ -25,20 +25,15 @@
 
 namespace Gecon
 {
-    template< typename Object > config_variable<std::chrono::milliseconds::rep> ObjectMotionGesture<Object>::MOTION_TIMEOUT = 1000;
-    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MINIMAL_GESTURE_SIDE = 150;
-    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::NOT_MOTION_TOLERANCE = 10;
-    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MAXIMAL_SAME_GESTURE_DISTANCE = 50;
     template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MOVE_SEGMENT_LENGTH = 3;
 
     template< typename Object >
-    ObjectMotionGesture<Object>::ObjectMotionGesture(Object *object, const Motion& motion, MotionStorage* motionStorage):
+    ObjectMotionGesture<Object>::ObjectMotionGesture(Object *object, const Motion& motion):
         object_(object),
-        motion_(motion),
-        motionStorage_(motionStorage),
-        timeout_(std::chrono::milliseconds(MOTION_TIMEOUT))
+        motion_(motion)
     {
-        normalize_(motion_, getSize_(motion_));
+        originalSize_ = getSize_(motion_);
+        normalize_(motion_, originalSize_);
         motionToMoves_(motion_, moves_);
     }
 
@@ -50,19 +45,14 @@ namespace Gecon
     template< typename Object >
     ObjectMotionGesture<Object>& ObjectMotionGesture<Object>::operator=(const ObjectMotionGesture<Object>& another)
     {
+        originalSize_ = another.originalSize_;
         object_ = another.object_;
         motion_ = another.motion_;
-        motionStorage_ = another.motionStorage_;
 
-        reset();
+        normalize_(motion_, originalSize_);
+        motionToMoves_(motion_, moves_);
 
         return *this;
-    }
-
-    template< typename Object >
-    typename ObjectMotionGesture<Object>::Objects ObjectMotionGesture<Object>::objects() const
-    {
-        return { object_ };
     }
 
     template< typename Object >
@@ -78,82 +68,9 @@ namespace Gecon
     }
 
     template< typename Object >
-    typename ObjectMotionGesture<Object>::Events ObjectMotionGesture<Object>::check()
+    Object* ObjectMotionGesture<Object>::object() const
     {
-        Events events;
-
-        recordMotion_();
-
-        MoveSequence& moves = (*motionStorage_)[object_].moves;
-        if(! moves.empty())
-        {
-            std::size_t distance = levenshteinDistance(moves_, moves, 10000);//MAXIMAL_SAME_GESTURE_DISTANCE);
-            std::cout << "distance: " << distance << std::endl;
-            if(distance < MAXIMAL_SAME_GESTURE_DISTANCE)
-            {
-                events.insert(&motionDoneEvent_);
-            }
-        }
-
-        return events;
-    }
-
-    template< typename Object >
-    bool ObjectMotionGesture<Object>::needCheck() const
-    {
-        //std::cout << "needCheck: " << ! (*motionStorage_)[object_].motion.empty() << std::endl;
-        return ! (*motionStorage_)[object_].motion.empty();
-    }
-
-    template< typename Object >
-    void ObjectMotionGesture<Object>::reset()
-    {
-        MotionRecord& record = (*motionStorage_)[object_];
-
-        record.motion.clear();
-        record.moves.clear();
-        record.lastRecordedMotionTime = Time();
-        record.movesGenerationTime = Time();
-    }
-
-    template< typename Object >
-    void ObjectMotionGesture<Object>::recordMotion_()
-    {
-        MotionRecord& record = (*motionStorage_)[object_];
-
-        Time now = object_->updateTime();
-        if(now > record.movesGenerationTime)
-        {
-            record.moves.clear();
-        }
-
-        if(! record.motion.empty() && now - record.lastRecordedMotionTime > timeout_)
-        {
-            Size motionSize = getSize_(record.motion);
-            if(std::max(motionSize.width, motionSize.height) > MINIMAL_GESTURE_SIDE)
-            {
-                processRecord_(record, motionSize);
-                record.movesGenerationTime = now;
-            }
-
-            record.motion.clear();
-        }
-
-        if(object_->isVisible())
-        {
-            if(record.motion.empty() || distance(object_->absolutePosition(), record.motion.back()) > NOT_MOTION_TOLERANCE)
-            {
-                record.motion.push_back(object_->absolutePosition());
-                record.lastRecordedMotionTime = now;
-            }
-        }
-    }
-
-    template< typename Object >
-    void ObjectMotionGesture<Object>::processRecord_(ObjectMotionGesture<Object>::MotionRecord& record, const typename ObjectMotionGesture<Object>::Size& motionSize)
-    {
-        normalize_(record.motion, motionSize);
-        motionToMoves_(record.motion, record.moves);
+        return object_;
     }
 
     template< typename Object >
@@ -323,77 +240,8 @@ namespace Gecon
     }
 
     template< typename Object >
-    std::size_t gestureDistance(ObjectMotionGesture<Object>* first, ObjectMotionGesture<Object>* second, std::size_t maxDistance)
+    typename ObjectMotionGesture<Object>::Size ObjectMotionGesture<Object>::originalSize() const
     {
-        return levenshteinDistance(first->moves(), second->moves(), maxDistance);
-    }
-
-    template< typename T >
-    std::size_t levenshteinDistance(const std::vector<T>& left, const std::vector<T>& right, std::size_t maxDistance)
-    {
-        std::size_t width = right.size();
-        std::size_t height = left.size();
-
-        if((std::size_t)std::abs((int)width - (int)height) > maxDistance)
-        {
-            // distance is at least maxDistance + 1
-            return maxDistance + 1;
-        }
-
-        std::size_t table[height + 1][width + 1];
-
-        std::size_t col = 0;
-        std::size_t row = 0;
-
-        for(col = 0; col < std::min(maxDistance + 1, width + 1); ++col)
-        {
-            table[0][col] = col;
-        }
-
-        for(row = 0; row < std::min(maxDistance + 1, height + 1); ++row)
-        {
-            table[row][0] = row;
-        }
-
-        for(row = 1; row < height + 1; ++row)
-        {
-            std::size_t colBegin = std::max((int)row - (int)maxDistance, 1);
-            std::size_t colEnd = std::min(row + maxDistance + 1, width + 1);
-
-            //std::cout << std::endl;
-
-            if(colBegin > 1)
-            {
-                table[row][colBegin - 1] = -1;
-            }
-
-            if(colEnd < width + 1)
-            {
-                table[row][colEnd] = -1;
-            }
-
-            for(col = colBegin; col < colEnd; ++col)
-            {
-                if(left[row - 1] == right[col - 1])
-                {
-                    table[row][col] = table[row - 1][col - 1];
-                }
-                else
-                {
-                    table[row][col] = std::min(
-                            table[row - 1][col - 1],
-                            std::min(
-                                table[row - 1][col],
-                                table[row][col - 1]
-                            )
-                    ) + 1;
-                }
-
-                //std::cout << table[row][col] << " ";
-            }
-            //std::cout << std::endl;
-        }
-
-        return table[height][width];
+        return originalSize_;
     }
 } // namespace Gecon

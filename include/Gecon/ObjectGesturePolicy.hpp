@@ -23,7 +23,7 @@
 #include <set>
 #include <map>
 
-#include "ObjectGesture.hpp"
+#include "ObjectGestureChecker.hpp"
 
 namespace Gecon
 {
@@ -31,27 +31,23 @@ namespace Gecon
     class ObjectGesturePolicy
     {
     public:
-        typedef ObjectGesture<Object> Gesture;
-        typedef std::set<Gesture*> Gestures;
+        typedef ObjectGestureChecker<Object, ObjectContainer> GestureChecker;
+        typedef std::set<GestureChecker*> GestureCheckers;
 
         typedef ObjectContainer Objects;
-
-        typedef typename Gesture::Event Event;
-        typedef std::set<Event*> Events;
+        typedef typename GestureChecker::Event Event;
+        typedef typename GestureChecker::Events Events;
 
         ObjectGesturePolicy();
         ObjectGesturePolicy(const ObjectGesturePolicy<Object, ObjectContainer>& another);
 
         ObjectGesturePolicy<Object, ObjectContainer>& operator=(const ObjectGesturePolicy<Object, ObjectContainer>& another);
 
-        void prepareGestures(const Gestures& gestures);
+        void prepareGestureCheckers(const GestureCheckers& checkers);
         Events checkGestures(const Objects& objects);
 
     private:
-        Gestures gestures_;
-        std::map<Object*, Gestures> objectGestures_;
-
-        Gestures gesturesToCheck_;
+        GestureCheckers checkers_;
     };
 } // namespace Gecon
 

@@ -31,7 +31,6 @@ namespace Gecon
             Relation<PropertyType> relation,
             PropertyType value):
         object_(object),
-        objectState_(*object_),
         mustBeVisible_(needVisible<Object>(property)),
         condition_(std::bind(relation, std::bind(property, std::placeholders::_1), value)),
         inState_(false)
@@ -63,9 +62,9 @@ namespace Gecon
     }
 
     template< typename Object >
-    typename ObjectStateGesture<Object>::Objects ObjectStateGesture<Object>::objects() const
+    Object* ObjectStateGesture<Object>::object() const
     {
-        return { object_ };
+        return object_;
     }
 
     template< typename Object >
@@ -73,12 +72,12 @@ namespace Gecon
     {
         Events events;
 
-        objectState_ = *object_;
-
-        bool correctVisibility = objectState_.isVisible() || ! mustBeVisible_;
+        bool correctVisibility = object_->isVisible() || ! mustBeVisible_;
 
         std::cout << "before check" << std::endl;
-        if(correctVisibility && condition_(objectState_))
+        std::cout << "correct visibility: " << correctVisibility << std::endl;
+        std::cout << "condition: " << condition_(*object_) << std::endl;
+        if(correctVisibility && condition_(*object_))
         {
             if(! inState_)
             {
