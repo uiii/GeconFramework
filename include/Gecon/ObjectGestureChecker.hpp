@@ -27,6 +27,9 @@
 
 namespace Gecon
 {
+    /**
+     * Represents gesture checking procedure.
+     */
     template< typename Object, typename ObjectContainer = std::set<Object*> >
     class ObjectGestureChecker
     {
@@ -38,6 +41,16 @@ namespace Gecon
 
         virtual ~ObjectGestureChecker() {}
 
+        /**
+         * Check gestures related to this checker.
+         *
+         * @param objects
+         *     Visible objects.
+         *     Gestures are checked acording to their states.
+         *
+         * @return
+         *     Occured gesture events.
+         */
         virtual Events check(const Objects& objects) = 0;
 
         virtual void clear() = 0;
