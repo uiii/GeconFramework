@@ -24,12 +24,6 @@ namespace Gecon
     }
 
     template< typename Event >
-    void ActionTrigger<Event>::addSwitch(Event *onEvent)
-    {
-        addSwitch(onEvent, 0);
-    }
-
-    template< typename Event >
     void ActionTrigger<Event>::addSwitch(Event *onEvent, Event *offEvent)
     {
         Switch* s = new Switch;

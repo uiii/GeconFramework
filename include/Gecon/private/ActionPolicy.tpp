@@ -5,14 +5,12 @@
 namespace Gecon {
     
     template< typename Event >
-    ActionPolicy<Event>::ActionPolicy():
-        performActions_(true)
+    ActionPolicy<Event>::ActionPolicy()
     {
     }
 
     template< typename Event >
-    ActionPolicy<Event>::ActionPolicy(const ActionPolicy<Event> &another):
-        performActions_(true)
+    ActionPolicy<Event>::ActionPolicy(const ActionPolicy<Event> &another)
     {
         prepareActionTriggers(another.triggers_);
     }
@@ -20,7 +18,6 @@ namespace Gecon {
     template< typename Event >
     ActionPolicy<Event>& ActionPolicy<Event>::operator=(const ActionPolicy<Event>& another)
     {
-        performActions_ = another.performActions_;
         prepareActionTriggers(another.triggers_);
 
         return *this;
@@ -65,13 +62,10 @@ namespace Gecon {
             }
         }
 
-        if(performActions_)
+        for(ActionTrigger* trigger : triggersToCheck_)
         {
-            for(ActionTrigger* trigger : triggersToCheck_)
-            {
-                std::cout << "\tcheck trigger: " << trigger << std::endl;
-                trigger->check();
-            }
+            std::cout << "\tcheck trigger: " << trigger << std::endl;
+            trigger->check();
         }
 
         ActionTriggers needCheck;
@@ -85,11 +79,5 @@ namespace Gecon {
         }
 
         std::swap(triggersToCheck_, needCheck);
-    }
-
-    template< typename Event >
-    void ActionPolicy<Event>::setPerformActions(bool perform)
-    {
-        performActions_ = perform;
     }
 } // namespace Gecon

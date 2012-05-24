@@ -8,6 +8,9 @@
 
 namespace Gecon
 {
+    /**
+     * Standard action policy
+     */
     template< typename Event >
     class ActionPolicy
     {
@@ -22,18 +25,25 @@ namespace Gecon
 
         ActionPolicy<Event>& operator=(const ActionPolicy<Event>& another);
 
+        /**
+         * Prepare action triggers to control
+         */
         void prepareActionTriggers(const ActionTriggers& triggers);
-        void checkActionTriggers(const Events& events);
 
-        void setPerformActions(bool perform);
+        /**
+         * Check if some triggers have all switches.
+         * And perform appropriate actions.
+         *
+         * @param events
+         *     Events to switch triggers' switches
+         */
+        void checkActionTriggers(const Events& events);
 
     private:
         ActionTriggers triggers_;
         std::map<Event*, ActionTriggers> eventActionTriggers_;
 
         ActionTriggers triggersToCheck_;
-
-        bool performActions_;
     };
 } // namespace Gecon
 

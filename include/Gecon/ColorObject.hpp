@@ -61,23 +61,66 @@ namespace Gecon
          */
         ColorObject(Color color = Color());
 
+        /**
+         * Get object's color.
+         */
         Color color() const;
+
+        /**
+         * Set object's color.
+         */
         void setColor(Color color);
 
+        /**
+         * Update object's state acording to
+         * recognised color area in the snapshot.
+         *
+         * @param area
+         *     Recognised area
+         *
+         * @param maxPosition
+         *     It is similar to snapshot size.
+         *     It is used to compute relative position of image.
+         */
         void update(ColorArea<ColorSpace>* area, Point maxPosition);
 
+        /**
+         * Time of last update.
+         */
         Time updateTime();
 
         bool isVisible() const;
         void setVisible(bool visible);
 
+        /**
+         * Get object's position relative to the snapshot size.
+         */
         Point position() const;
+        
+        /**
+         * Get object's absolute position in the snapshot.
+         */
         Point absolutePosition() const;
 
+        /**
+         * Get object's maximum position in the snapshot.
+         * It is the same as snapshot size.
+         */
         Point maxPosition() const;
 
+        /**
+         * Angle of object's rotation.
+         */
         int angle() const;
+
+        /**
+         * Area of object's bounding box.
+         */
         Fraction areaSize() const;
+
+        /**
+         * Aspect ration of object's bounding box sides.
+         */
         double aspectRatio() const;
 
         const Border& border() const;
@@ -85,7 +128,14 @@ namespace Gecon
         const ConvexHull& convexHull() const;
 
     private:
+        /**
+         * Computes object's convex hull.
+         */
         void updateConvexHull_(ColorArea<ColorSpace> *area);
+
+        /**
+         * Computes objects's bounding box from object's convex hull.
+         */
         void updateMinimalBoundingBox_(const ConvexHull& convexHull);
 
         Color color_;
