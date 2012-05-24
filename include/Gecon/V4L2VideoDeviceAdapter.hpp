@@ -45,9 +45,36 @@ namespace Gecon
 
         fs::path file() const;
 
+        /**
+         * Open a prepare device for use.
+         *
+         * Upon successful completion it's guaranteed
+         * the device is ready to use.
+         * Otherwise an exception will be thrown.
+         *
+         * @throws std::logic_error
+         *     When this does not represent any physical device.
+         */
         void open();
+
+        /**
+         * Close device.
+         *
+         * Every opened device should be closed
+         * when is not further needed.
+         */
         void close();
 
+        /**
+         * Get device snapshot
+         *
+         * @throws std::logic_error
+         *     When the device is not opened.
+         *
+         * @throws std::v4l2_device_error
+         *     When capture is not started.
+         *     When capture crashed.
+         */
         Snapshot getSnapshot();
 
         bool operator==(const V4L2VideoDeviceAdapter& another) const;

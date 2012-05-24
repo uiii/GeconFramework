@@ -66,21 +66,12 @@ namespace Gecon
         return capture_->file();
     }
 
-    /**
-     * Open a prepare device for use.
-     *
-     * Upon successful completion it's guaranteed
-     * the device is ready to use.
-     * Otherwise an exception will be thrown.
-     *
-     * @throws // TODO
-     */
     template< typename Snapshot >
     void V4L2VideoDeviceAdapter<Snapshot>::open()
     {
         if(! capture_)
         {
-            return;
+            throw std::logic_error("Device adapter does not reprezent any physical device.");
         }
 
         if(! isOpened_)
@@ -91,12 +82,6 @@ namespace Gecon
         }
     }
 
-    /**
-     * Close device.
-     *
-     * Any opened device should be closed
-     * when is not further needed.
-     */
     template< typename Snapshot >
     void V4L2VideoDeviceAdapter<Snapshot>::close()
     {
@@ -116,9 +101,9 @@ namespace Gecon
     template< typename Snapshot >
     Snapshot V4L2VideoDeviceAdapter<Snapshot>::getSnapshot()
     {
-        if(! capture_)
+        if(! isOpened_)
         {
-            return Snapshot();
+            throw std::logic_error("The device is not opened.");
         }
 
         try
