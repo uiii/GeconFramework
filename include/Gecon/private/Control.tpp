@@ -22,6 +22,9 @@
 namespace Gecon
 {
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
+    config_variable<std::size_t> Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::SLEEP_TIME = 30;
+
+    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
     Control<DevicePolicy, ObjectPolicy, GesturePolicy, ActionPolicy>::Control():
         controlLoop_(0),
         doControl_(false),
@@ -141,7 +144,7 @@ namespace Gecon
             ActionPolicy::checkActionTriggers(GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot())));
             dataLock.unlock();
 
-            boost::this_thread::sleep(boost::posix_time::milliseconds(30));
+            boost::this_thread::sleep(boost::posix_time::milliseconds(SLEEP_TIME));
 
             doControlLock.lock();
         }

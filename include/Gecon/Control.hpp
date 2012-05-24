@@ -24,12 +24,16 @@
 
 #include <boost/thread.hpp>
 
+#include "config_variable.hpp"
+
 namespace Gecon
 {
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy >
     class Control : public ObjectPolicy, public GesturePolicy, public ActionPolicy
     {
     public:
+        static config_variable<std::size_t> SLEEP_TIME;
+
         typedef typename DevicePolicy::DeviceAdapter DeviceAdapter;
 
         Control();

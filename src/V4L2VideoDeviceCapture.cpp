@@ -28,8 +28,8 @@
 
 namespace Gecon
 {
-    config_variable<std::size_t> V4L2VideoDeviceCapture::SNAPSHOT_WIDTH = 640;
-    config_variable<std::size_t> V4L2VideoDeviceCapture::SNAPSHOT_HEIGHT = 480;
+    config_variable<std::size_t> V4L2VideoDeviceCapture::SNAPSHOT_WIDTH = 480;
+    config_variable<std::size_t> V4L2VideoDeviceCapture::SNAPSHOT_HEIGHT = 320;
     config_variable<std::size_t> V4L2VideoDeviceCapture::BUFFER_COUNT = 5;
     config_variable<std::size_t> V4L2VideoDeviceCapture::WAIT_FOR_DATA_TIMEOUT = 2;
     config_variable<__u32> V4L2VideoDeviceCapture::PIXEL_FORMAT = V4L2_PIX_FMT_RGB24;

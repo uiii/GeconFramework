@@ -5,7 +5,7 @@ namespace Gecon
     template< typename Object, typename ObjectContainer >
     config_variable<std::chrono::milliseconds::rep> ObjectMotionGestureChecker<Object, ObjectContainer>::MOTION_TIMEOUT = 1000;
     template< typename Object, typename ObjectContainer >
-    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_GESTURE_SIDE = 150;
+    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_GESTURE_SIDE_FRACTION = 4;
     template< typename Object, typename ObjectContainer >
     config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::NOT_MOTION_TOLERANCE = 10;
     template< typename Object, typename ObjectContainer >
@@ -125,7 +125,11 @@ namespace Gecon
         {
             Gesture gesture(object, record.motion);
             typename Gesture::Size gestureSize = gesture.originalSize();
-            if(std::max(gestureSize.width, gestureSize.height) > MINIMAL_GESTURE_SIDE)
+
+            std::cout << gestureSize.width << " " << gestureSize.height << " " << MINIMAL_GESTURE_SIDE_FRACTION << std::endl;
+
+            std::size_t minimalGestureSide = std::max(object->maxPosition().x, object->maxPosition().y) / MINIMAL_GESTURE_SIDE_FRACTION;
+            if(std::max(gestureSize.width, gestureSize.height) > minimalGestureSide)
             {
                 record.moves = gesture.moves();
                 motionDone_(record);

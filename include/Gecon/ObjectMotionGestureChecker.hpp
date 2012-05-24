@@ -11,7 +11,7 @@ namespace Gecon
     {
     public:
         static config_variable<std::chrono::milliseconds::rep> MOTION_TIMEOUT;
-        static config_variable<std::size_t> MINIMAL_GESTURE_SIDE;
+        static config_variable<std::size_t> MINIMAL_GESTURE_SIDE_FRACTION;
         static config_variable<std::size_t> NOT_MOTION_TOLERANCE;
         static config_variable<std::size_t> MINIMAL_DIFFERENT_GESTURE_DISTANCE;
         static config_variable<std::size_t> MAXIMAL_SAME_GESTURE_DISTANCE;
