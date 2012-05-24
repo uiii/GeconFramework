@@ -131,7 +131,15 @@ namespace Gecon
         isRunning_ = true;
         isRunningLock.unlock();
 
-        device_.open();
+        try
+        {
+            device_.open();
+        }
+        catch(const std::exception& e)
+        {
+            std::cout << "Error: " << e.what() << std::endl;
+            doControl_ = false;
+        }
 
         std::cout << "after open" << std::endl;
 
@@ -141,7 +149,15 @@ namespace Gecon
             doControlLock.unlock();
 
             boost::unique_lock<boost::mutex> dataLock(dataMutex_);
-            ActionPolicy::checkActionTriggers(GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot())));
+            try
+            {
+                ActionPolicy::checkActionTriggers(GesturePolicy::checkGestures(ObjectPolicy::recognizeObjects(device_.getSnapshot())));
+            }
+            catch(const std::exception& e)
+            {
+                std::cout << "Error: " << e.what() << std::endl;
+                doControl_ = false;
+            }
             dataLock.unlock();
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(SLEEP_TIME));
@@ -180,10 +196,4 @@ namespace Gecon
 
         device_ = controlLoop.device_;
     }
-
-    /*template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
-    ObjectSet& Control<Device, ObjectPolicy, GesturePolicy, ActionPolicy>::objects();
-
-    template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
-    GestureSet& Control<Device, ObjectPolicy, GesturePolicy, ActionPolicy>::gestures();*/
 } // namespace Gecon

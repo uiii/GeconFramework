@@ -105,7 +105,7 @@ namespace Gecon
     }
 
     template< typename ColorSpace >
-    double ColorObject<ColorSpace>::aspectRatio() const
+    double ColorObject<ColorSpace>::sidesAspectRatio() const
     {
         return boundingBox_.width / boundingBox_.height;
     }

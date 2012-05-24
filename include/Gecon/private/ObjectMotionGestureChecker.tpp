@@ -3,15 +3,15 @@
 namespace Gecon
 {
     template< typename Object, typename ObjectContainer >
-    config_variable<std::chrono::milliseconds::rep> ObjectMotionGestureChecker<Object, ObjectContainer>::MOTION_TIMEOUT = 1000;
+    config_variable<std::chrono::milliseconds::rep> ObjectMotionGestureChecker<Object, ObjectContainer>::MOTION_TIMEOUT = 800;
     template< typename Object, typename ObjectContainer >
     config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_GESTURE_SIDE_FRACTION = 4;
     template< typename Object, typename ObjectContainer >
-    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::NOT_MOTION_TOLERANCE = 10;
+    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::NOT_MOTION_TOLERANCE_FRACTION = 64;
     template< typename Object, typename ObjectContainer >
-    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_DIFFERENT_GESTURE_DISTANCE = 50;
+    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_DIFFERENT_GESTURE_DISTANCE = 70;
     template< typename Object, typename ObjectContainer >
-    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MAXIMAL_SAME_GESTURE_DISTANCE = 30;
+    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MAXIMAL_SAME_GESTURE_DISTANCE = 100;
 
     template< typename Object, typename ObjectContainer >
     ObjectMotionGestureChecker<Object, ObjectContainer>::ObjectMotionGestureChecker():
@@ -140,7 +140,8 @@ namespace Gecon
 
         if(object->isVisible())
         {
-            if(record.motion.empty() || distance(object->absolutePosition(), record.motion.back()) > NOT_MOTION_TOLERANCE)
+            std::size_t notMotionTolerance = std::max(object->maxPosition().x, object->maxPosition().y) / NOT_MOTION_TOLERANCE_FRACTION;
+            if(record.motion.empty() || distance(object->absolutePosition(), record.motion.back()) > notMotionTolerance)
             {
                 record.motion.push_back(object->absolutePosition());
                 record.lastRecordedMotionTime = now;

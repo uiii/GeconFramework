@@ -29,10 +29,7 @@ namespace Gecon
         for(Object* object : objects)
         {
             Gestures gestures = objectGestures_[object];
-            std::cout << "object: " << object << std::endl;
-            std::cout << "gest: " << gestures.size() << std::endl;
             gesturesToCheck_.insert(gestures.begin(), gestures.end());
-            std::cout << "gtch: " << gesturesToCheck_.size() << std::endl;
         }
 
         Events events;
@@ -40,7 +37,7 @@ namespace Gecon
         Gestures needCheck;
         for(Gesture* gesture : gesturesToCheck_)
         {
-            std::cout << "gesture: " << gesture << std::endl;
+            //std::cout << "gesture: " << gesture << std::endl;
             Events gestureEvents = gesture->check();
             events.insert(gestureEvents.begin(), gestureEvents.end());
 

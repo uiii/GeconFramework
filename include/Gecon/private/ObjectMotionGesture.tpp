@@ -25,7 +25,7 @@
 
 namespace Gecon
 {
-    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MOVE_SEGMENT_LENGTH = 3;
+    template< typename Object > config_variable<std::size_t> ObjectMotionGesture<Object>::MOVE_SEGMENT_LENGTH = 2;
 
     template< typename Object >
     ObjectMotionGesture<Object>::ObjectMotionGesture(Object *object, const Motion& motion):

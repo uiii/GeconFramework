@@ -121,7 +121,7 @@ namespace Gecon
         /**
          * Aspect ration of object's bounding box sides.
          */
-        double aspectRatio() const;
+        double sidesAspectRatio() const;
 
         const Border& border() const;
         const BoundingBox& boundingBox() const;

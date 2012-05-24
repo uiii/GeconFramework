@@ -71,7 +71,7 @@ namespace Gecon
     {
         if(! capture_)
         {
-            throw std::logic_error("Device adapter does not reprezent any physical device.");
+            throw std::logic_error("Device adapter does not represent any physical device.");
         }
 
         if(! isOpened_)

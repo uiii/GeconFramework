@@ -74,9 +74,7 @@ namespace Gecon
 
         bool correctVisibility = object_->isVisible() || ! mustBeVisible_;
 
-        std::cout << "before check" << std::endl;
-        std::cout << "correct visibility: " << correctVisibility << std::endl;
-        std::cout << "condition: " << condition_(*object_) << std::endl;
+        //std::cout << "before check" << std::endl;
         if(correctVisibility && condition_(*object_))
         {
             if(! inState_)
