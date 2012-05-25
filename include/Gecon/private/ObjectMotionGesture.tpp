@@ -214,19 +214,13 @@ namespace Gecon
             {
                 Point intersection = getCircleSegmentIntersection(currentCircle, currentSegment);
 
-                //std::cout << ">>> intersection: " << intersection.x << " " << intersection.y << std::endl;
-
                 Vector moveVector = {
                     (intersection.x - currentCircle.center.x) / currentCircle.radius,
                     (intersection.y - currentCircle.center.y) / currentCircle.radius
                 };
 
-                //std::cout << ">>> moveVector: " << moveVector.x << " " << moveVector.y << std::endl;
-                //std::cout << ">>> angle: " << getVectorAngle(moveVector) << std::endl;
-
                 std::size_t move = int(std::round(getVectorAngle(moveVector) / 45.0)) % 8;
 
-                //std::cout << ">>> move: " << move << std::endl;
                 moves.push_back(move);
 
                 // move circle

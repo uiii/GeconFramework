@@ -100,7 +100,6 @@ namespace Gecon
             if(! inRelation_)
             {
                 inRelation_ = true;
-                std::cout << "enter event" << std::endl;
                 events.insert(&relationEnterEvent_);
             }
         }
@@ -109,7 +108,6 @@ namespace Gecon
             if(inRelation_)
             {
                 inRelation_ = false;
-                std::cout << "leave event" << std::endl;
                 events.insert(&relationLeaveEvent_);
             }
         }

@@ -29,7 +29,6 @@ namespace Gecon
             std::size_t distance = levenshteinDistance(gesture->moves(), motionGesture->moves(), minDistance);
             if(distance < minDistance)
             {
-                std::cout << "too similar distance: " << distance << std::endl;
                 tooSimilarGesture = gesture;
                 break;
             }
@@ -69,7 +68,6 @@ namespace Gecon
                 for(Gesture* gesture : motionStorage_[object].gestures)
                 {
                     std::size_t distance = levenshteinDistance(gesture->moves(), moves, MAXIMAL_SAME_GESTURE_DISTANCE);
-                    std::cout << "distance: " << distance << std::endl;
                     if(distance < minDistance)
                     {
                         minDistance = distance;
@@ -125,8 +123,6 @@ namespace Gecon
         {
             Gesture gesture(object, record.motion);
             typename Gesture::Size gestureSize = gesture.originalSize();
-
-            std::cout << gestureSize.width << " " << gestureSize.height << " " << MINIMAL_GESTURE_SIDE_FRACTION << std::endl;
 
             std::size_t minimalGestureSide = std::max(object->maxPosition().x, object->maxPosition().y) / MINIMAL_GESTURE_SIDE_FRACTION;
             if(std::max(gestureSize.width, gestureSize.height) > minimalGestureSide)
@@ -186,8 +182,6 @@ namespace Gecon
             std::size_t colBegin = std::max((int)row - (int)maxDistance, 1);
             std::size_t colEnd = std::min(row + maxDistance + 1, width + 1);
 
-            //std::cout << std::endl;
-
             if(colBegin > 1)
             {
                 table[row][colBegin - 1] = -1;
@@ -214,10 +208,7 @@ namespace Gecon
                             )
                     ) + 1;
                 }
-
-                //std::cout << table[row][col] << " ";
             }
-            //std::cout << std::endl;
         }
 
         return table[height][width];

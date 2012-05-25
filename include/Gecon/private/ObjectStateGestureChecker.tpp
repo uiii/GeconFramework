@@ -37,7 +37,6 @@ namespace Gecon
         Gestures needCheck;
         for(Gesture* gesture : gesturesToCheck_)
         {
-            //std::cout << "gesture: " << gesture << std::endl;
             Events gestureEvents = gesture->check();
             events.insert(gestureEvents.begin(), gestureEvents.end());
 

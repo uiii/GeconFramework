@@ -323,9 +323,6 @@ namespace Gecon
             newLine.x = newLine.x / newLineNorm;
             newLine.y = newLine.y / newLineNorm;
 
-            //std::cout << "old: " << oldLine.x << " " << oldLine.y << std::endl;
-            //std::cout << "new: " << newLine.x << " " << newLine.y << std::endl;
-
             caliperLine.line = newLine;
         };
 
@@ -340,9 +337,6 @@ namespace Gecon
                 firstPoint->y + multiple * first.line.y,
             };
 
-            //std::cout << "first: " << first.line.x << " " << first.line.y << std::endl;
-            //std::cout << "second: " << second.line.x << " " << second.line.y << std::endl;
-            //std::cout << multiple << std::endl;
             return std::sqrt(std::pow(secondPoint->x - oppositePoint.x, 2) + std::pow(secondPoint->y - oppositePoint.y, 2));
         };
 

@@ -18,9 +18,6 @@ namespace Gecon
 
     bool isOver(const Point& first, const Point& second)
     {
-        std::cout << "is over?" << std::endl;
-        std::cout << "\t" << first.x << " " << first.y << std::endl;
-        std::cout << "\t" << second.x << " " << second.y << std::endl;
         return first.y < second.y;
     }
 

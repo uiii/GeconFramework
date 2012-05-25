@@ -60,7 +60,6 @@ namespace Gecon
 
         if(startCount_ == 0)
         {
-            std::cout << "start capture loop" << std::endl;
             startCaptureLoop_();
         }
 

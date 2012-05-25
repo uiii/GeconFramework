@@ -11,7 +11,6 @@ namespace Gecon
         action_(action),
         repeted_(repeted)
     {
-        std::cout << "con repeted: " << repeted_ << std::endl;
     }
 
     template< typename Event >
@@ -79,7 +78,6 @@ namespace Gecon
 
         if(allOn)
         {
-            std::cout << "perform action" << std::endl;
             action_();
         }
     }
@@ -87,7 +85,6 @@ namespace Gecon
     template< typename Event >
     bool ActionTrigger<Event>::needCheck() const
     {
-        std::cout << "repeted: " << repeted_ << std::endl;
         return repeted_;
     }
 

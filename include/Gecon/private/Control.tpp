@@ -69,16 +69,6 @@ namespace Gecon
         actionPolicy = *this;
 
         dataLock.unlock();
-
-        std::cout << "restarted" << std::endl;
-
-        /*
-        // to ensure that the physical device won't be closed
-        DeviceAdapter device = controlLoop_->device();
-        device.open();
-
-        stop();
-        start();*/
     }
 
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
@@ -99,8 +89,6 @@ namespace Gecon
             stopCond_.wait(isRunningLock);
         }
         isRunningLock.unlock();
-
-        std::cout << "stoped !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     }
 
     template< typename DevicePolicy, typename ObjectPolicy, typename GesturePolicy, typename ActionPolicy>
@@ -125,8 +113,6 @@ namespace Gecon
             return;
         }
 
-        std::cout << "before open" << std::endl;
-
         boost::unique_lock<boost::mutex> isRunningLock(isRunningMutex_);
         isRunning_ = true;
         isRunningLock.unlock();
@@ -137,11 +123,8 @@ namespace Gecon
         }
         catch(const std::exception& e)
         {
-            std::cout << "Error: " << e.what() << std::endl;
             doControl_ = false;
         }
-
-        std::cout << "after open" << std::endl;
 
         boost::unique_lock<boost::mutex> doControlLock(doControlMutex_);
         while(doControl_)
@@ -155,7 +138,6 @@ namespace Gecon
             }
             catch(const std::exception& e)
             {
-                std::cout << "Error: " << e.what() << std::endl;
                 doControl_ = false;
             }
             dataLock.unlock();

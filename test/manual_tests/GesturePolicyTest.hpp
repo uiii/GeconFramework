@@ -98,10 +98,6 @@ public slots:
             painter.save();
             painter.setPen(Qt::red);
 
-            std::cout << "pos: " << boundingBox.position.x << " " << boundingBox.position.y << std::endl;
-            std::cout << "size: " << boundingBox.width << " " << boundingBox.height << std::endl;
-            std::cout << "angle: " << boundingBox.angle << std::endl;
-
             painter.translate(boundingBox.position.x, boundingBox.position.y);
             painter.rotate(-(boundingBox.angle));
             painter.translate(-boundingBox.width / 2.0, -boundingBox.height / 2.0);

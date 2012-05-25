@@ -74,13 +74,11 @@ namespace Gecon
 
         bool correctVisibility = object_->isVisible() || ! mustBeVisible_;
 
-        //std::cout << "before check" << std::endl;
         if(correctVisibility && condition_(*object_))
         {
             if(! inState_)
             {
                 inState_ = true;
-                std::cout << "enter event" << std::endl;
                 events.insert(&stateEnterEvent_);
             }
         }
@@ -89,7 +87,6 @@ namespace Gecon
             if(inState_)
             {
                 inState_ = false;
-                std::cout << "leave event" << std::endl;
                 events.insert(&stateLeaveEvent_);
             }
         }
