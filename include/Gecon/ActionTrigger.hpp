@@ -79,15 +79,18 @@ namespace Gecon
         class Switch
         {
         public:
-            Switch();
+            Switch(bool switchOffAfterCheck);
 
             void on();
             void off();
 
             bool isOn() const;
 
+            bool switchOffAfterCheck() const;
+
         private:
             bool isOn_;
+            bool switchOffAfterCheck_;
         };
 
         typedef std::set<Switch*> Switches;

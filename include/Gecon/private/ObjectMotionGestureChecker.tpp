@@ -3,11 +3,11 @@
 namespace Gecon
 {
     template< typename Object, typename ObjectContainer >
-    config_variable<std::chrono::milliseconds::rep> ObjectMotionGestureChecker<Object, ObjectContainer>::MOTION_TIMEOUT = 800;
+    config_variable<std::chrono::milliseconds::rep> ObjectMotionGestureChecker<Object, ObjectContainer>::MOTION_TIMEOUT = 700;
     template< typename Object, typename ObjectContainer >
     config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_GESTURE_SIDE_FRACTION = 4;
     template< typename Object, typename ObjectContainer >
-    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::NOT_MOTION_TOLERANCE_FRACTION = 64;
+    config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::NOT_MOTION_TOLERANCE_FRACTION = 100;
     template< typename Object, typename ObjectContainer >
     config_variable<std::size_t> ObjectMotionGestureChecker<Object, ObjectContainer>::MINIMAL_DIFFERENT_GESTURE_DISTANCE = 70;
     template< typename Object, typename ObjectContainer >
@@ -68,7 +68,7 @@ namespace Gecon
                 Gesture* closestGesture = 0;
                 for(Gesture* gesture : motionStorage_[object].gestures)
                 {
-                    std::size_t distance = levenshteinDistance(gesture->moves(), moves, 10000);//MAXIMAL_SAME_GESTURE_DISTANCE); //TODO
+                    std::size_t distance = levenshteinDistance(gesture->moves(), moves, MAXIMAL_SAME_GESTURE_DISTANCE);
                     std::cout << "distance: " << distance << std::endl;
                     if(distance < minDistance)
                     {

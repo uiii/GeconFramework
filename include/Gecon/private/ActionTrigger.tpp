@@ -26,7 +26,9 @@ namespace Gecon
     template< typename Event >
     void ActionTrigger<Event>::addSwitch(Event *onEvent, Event *offEvent)
     {
-        Switch* s = new Switch;
+        bool switchOffAfterCheck = (offEvent == 0);
+
+        Switch* s = new Switch(switchOffAfterCheck);
 
         switches_.insert(s);
 
@@ -68,6 +70,11 @@ namespace Gecon
         for(Switch* s : switches_)
         {
             allOn = allOn && s->isOn();
+
+            if(s->switchOffAfterCheck())
+            {
+                s->off();
+            }
         }
 
         if(allOn)
@@ -101,8 +108,9 @@ namespace Gecon
 
 
     template< typename Event >
-    ActionTrigger<Event>::Switch::Switch():
-        isOn_(false)
+    ActionTrigger<Event>::Switch::Switch(bool switchOffAfterCheck):
+        isOn_(false),
+        switchOffAfterCheck_(switchOffAfterCheck)
     {
     }
 
@@ -122,5 +130,11 @@ namespace Gecon
     bool ActionTrigger<Event>::Switch::isOn() const
     {
         return isOn_;
+    }
+
+    template< typename Event >
+    bool ActionTrigger<Event>::Switch::switchOffAfterCheck() const
+    {
+        return switchOffAfterCheck_;
     }
 } // namespace Gecon

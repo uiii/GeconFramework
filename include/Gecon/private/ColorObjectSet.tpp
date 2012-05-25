@@ -3,8 +3,8 @@
 namespace Gecon
 {
     template< typename ColorSpace > config_variable<std::size_t> ColorObjectSet<ColorSpace>::Y_RANGE = 80;
-    template< typename ColorSpace > config_variable<std::size_t> ColorObjectSet<ColorSpace>::CB_RANGE = 15;
-    template< typename ColorSpace > config_variable<std::size_t> ColorObjectSet<ColorSpace>::CR_RANGE = 15;
+    template< typename ColorSpace > config_variable<std::size_t> ColorObjectSet<ColorSpace>::CB_RANGE = 20;
+    template< typename ColorSpace > config_variable<std::size_t> ColorObjectSet<ColorSpace>::CR_RANGE = 20;
 
     template< typename ColorSpace >
     ColorObjectSet<ColorSpace>::ColorObjectSet():
