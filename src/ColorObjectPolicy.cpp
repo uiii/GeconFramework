@@ -170,7 +170,7 @@ namespace Gecon
             }
             else
             {
-                object->update(0, Point(1,1));
+                object->update(0, snapshotSize);
                 object->setVisible(false);
             }
 

@@ -30,6 +30,9 @@
 
 namespace Gecon
 {
+    /**
+     * Represents motion gesture.
+     */
     template< typename Object >
     class ObjectMotionGesture : public ObjectGesture<Object>
     {
@@ -48,6 +51,9 @@ namespace Gecon
             double height;
         };
 
+        /**
+         * Constructs gesture and initialize with object and motion
+         */
         ObjectMotionGesture(Object* object, const Motion& motion);
         virtual ~ObjectMotionGesture();
 
@@ -62,7 +68,15 @@ namespace Gecon
 
     protected:
         Size getSize_(const Motion& motion);
+
+        /**
+         * Normalize motion
+         */
         void normalize_(Motion& motion, const Size& size);
+
+        /**
+         * Converts motion to moves
+         */
         void motionToMoves_(const Motion& motion, MoveSequence& moves);
 
         Object* object_;
